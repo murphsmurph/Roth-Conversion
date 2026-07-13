@@ -338,7 +338,7 @@
       </div>
 
       <p class="foot">
-        <b>How it works:</b> Each year, inflation-adjusted living expenses are funded from Social Security and other income, then RMDs, then by drawing accounts <b>taxable &rarr; traditional &rarr; Roth</b>. Federal and state tax are computed with <b>true progressive brackets</b> on each year's taxable income (not a flat rate); qualified dividends and long-term gains <b>stack on top of ordinary income</b> at 0/15/20% rates, and the <b>3.8% NIIT</b> applies above the statutory MAGI thresholds ($200k single / $250k MFJ, unindexed). <b>QCDs</b> (70&frac12;+, 2026 limit $111,000/person) go straight from IRA to charity — excluded from income and MAGI, satisfying the RMD first. The conversion's tax cost is the <b>exact marginal difference</b> between the year's tax with and without the conversion — so torpedo, bracket-shift, and NIIT effects are all captured in it. RMDs use IRS Uniform Lifetime divisors per spouse. Social Security taxation uses the provisional-income formula (50%/85% tiers). At first death the household switches to <b>Single</b> brackets and the survivor keeps the larger benefit (the "widow's penalty"). IRMAA applies the 2026 surcharge with a 2-year MAGI lookback. Legacy is valued after-tax: Roth tax-free; remaining traditional reduced by the inheriting party's rate (SECURE Act 10-year drain for children).
+        <b>How it works:</b> Each year, inflation-adjusted living expenses are funded from Social Security and other income, then RMDs, then by drawing accounts <b>taxable &rarr; traditional &rarr; Roth</b>. Federal and state tax are computed with <b>true progressive brackets</b> on each year's taxable income (not a flat rate); qualified dividends and long-term gains <b>stack on top of ordinary income</b> at 0/15/20% rates, and the <b>3.8% NIIT</b> applies above the statutory MAGI thresholds ($200k single / $250k MFJ, unindexed). <b>QCDs</b> (70&frac12;+, 2026 limit $111,000/person) go straight from IRA to charity — excluded from income and MAGI, satisfying the RMD first. The conversion's tax cost is the <b>exact marginal difference</b> between the year's tax with and without the conversion — so torpedo, bracket-shift, and NIIT effects are all captured in it. RMDs use IRS Uniform Lifetime divisors per spouse. Social Security taxation uses the provisional-income formula (50%/85% tiers). At first death the household switches to <b>Single</b> brackets and the survivor keeps the larger benefit (the "widow's penalty"). IRMAA applies the 2026 surcharge with a 2-year MAGI lookback (realized gains included in MAGI), <b>prorated to the number of spouses enrolled in Medicare</b> (65+). The tax on account withdrawals taken to fund spending or to pay the conversion tax is computed at each year's <b>progressive marginal rates</b> and booked to that year, so the year-by-year table's tax column reconciles exactly to the lifetime-tax totals. Legacy is valued after-tax: Roth tax-free; remaining traditional reduced by the inheriting party's rate (SECURE Act 10-year drain for children).
         <details><summary>Assumptions &amp; limitations</summary>
         <p>Federal brackets, standard deduction, LTCG thresholds, SS thresholds, IRMAA tiers, and the QCD limit are 2026 figures held flat (not indexed forward). State tax uses each state's structure — no-tax (9 states), full retirement-income exemption (IL, MS, PA, IA), flat-rate, or graduated brackets — with simplified retirement-income treatment; graduated thresholds approximate single-filer schedules doubled for joint. Dividends are assumed qualified at a 2% yield; gains realized mid-year are taxed at that year's marginal stacked LTCG rate (bracket-boundary effects approximated). QCD eligibility (70&frac12;) applies from the year a spouse turns 71. Monte Carlo draws normally distributed annual returns (no fat tails or autocorrelation) and runs the identical market path through both plans. Roth five-year clocks are not enforced. RMD withdrawals are drawn pro-rata across spouses. This is a directional planning illustration, not tax preparation — confirm against the client's 1040, state return, and Form 8606 with a qualified professional.</p></details>
       </p>
@@ -498,54 +498,71 @@
       const base=yearStack(0), full=yearStack(conv);
       const convTax=Math.max(0,full.tot-base.tot);   // TRUE marginal tax on the conversion
       const torpedo=Math.max(0,full.ssT-base.ssT);   // SS dragged into taxation by the conversion
-      const ssTaxed=full.ssT;tSS+=ssTaxed;
-      const incomeTax=full.fed+full.stt+full.cg;
-      const niit=full.nii;tNiit+=niit;
-      const drag=full.cg+full.nii;tDrag+=drag;
-      magis.push(full.magi);
-      const lb=i>=2?magis[i-2]:full.magi;
-      const irmaa=(ageA>=65||(bothAlive&&ageB>=65))?irmaaCost(fil,lb):0;
-      const yrTax=incomeTax+niit+irmaa;
-      tIncome+=incomeTax;tIrmaa+=irmaa;tConv+=conv;
-      const effW=Math.min(0.6,(fedTopRate(fil,full.ti)+stateTopRate(S.state))*regMult);
+      // cgR: marginal rate on realized long-term gains (stacked LTCG rate + NIIT when active)
       const cgR=Math.min(0.5,(ltcgMarg(fil,full.ti+full.pref)+(full.nii>0?0.038:0))*regMult);
+      // Progressive, self-consistent taxation of EXTRA ordinary withdrawals (to pay conversion tax or
+      // fund spending). Each extra IRA dollar is stacked on the year's income through the full
+      // bracket / SS-provisional / NIIT machinery (yearStack) instead of a flat marginal rate; the
+      // gross-up solves the fixed point W - tax(W) = cash needed. Every such tax is booked to THIS
+      // year, so the year-by-year table reconciles exactly to the lifetime-tax totals.
+      let ordLayer=conv, realizedGains=0;
+      const grossTrad=function(R){ if(R<=0)return 0; let W=R;
+        for(let k=0;k<24;k++){const t=yearStack(ordLayer+W).tot-yearStack(ordLayer).tot,nW=R+t;
+          if(Math.abs(nW-W)<0.05){W=nW;break;}W=nW;} return W;};
+      const pullTrad=function(gross){const avail=tradA+tradB,used=Math.min(gross,Math.max(0,avail));
+        if(avail>0){tradA-=used*tradA/avail;tradB-=used*tradB/avail;}ordLayer+=used;return used;};
       txbl=txbl*(1+gr);basis+=div;
       if(conv>0){const tt=tradA+tradB||1;tradA-=conv*tradA/tt;tradB-=conv*tradB/tt;roth+=conv;}
       if(conv>0&&convTax>0){
+        let cashNeed=convTax;
         if(S.paySrc==="outside"){
           const gainFrac=txbl>0?Math.max(0,(txbl-basis)/txbl):0;
-          const grossNeeded=convTax/(1-gainFrac*cgR);
+          const grossNeeded=cashNeed/Math.max(1e-9,(1-gainFrac*cgR));
           const pull=Math.min(txbl,grossNeeded);
-          const realizedGain=pull*gainFrac;basis-=pull*(1-gainFrac);
-          txbl-=pull;tIncome+=realizedGain*cgR;
-          if(grossNeeded>pull+0.01){const short=grossNeeded-pull,tt2=tradA+tradB||1;
-            tradA-=short*tradA/tt2;tradB-=short*tradB/tt2;tIncome+=short*effW;}
-        }else{
-          const tt=tradA+tradB||1,extra=convTax/(1-effW);
-          tradA-=extra*tradA/tt;tradB-=extra*tradB/tt;tIncome+=extra*effW;
-        }
+          realizedGains+=pull*gainFrac;basis-=pull*(1-gainFrac);txbl-=pull;
+          cashNeed-=pull*(1-gainFrac*cgR);
+          if(cashNeed>0.01)pullTrad(grossTrad(cashNeed));   // outside cash short -> pull from IRA, grossed up
+        }else{pullTrad(grossTrad(cashNeed));}               // pay the conversion tax from the IRA
       }
       if(iraOut>0){const tt=tradA+tradB||1;tradA-=iraOut*tradA/tt;tradB-=iraOut*tradB/tt;}
-      // spending: the conversion's tax was paid above; base-year tax flows through here (no double charge)
+      // IRMAA: 2-yr MAGI lookback, prorated to the number of spouses actually enrolled in Medicare (65+)
+      const on65=(ageA>=65?1:0)+((bothAlive&&ageB>=65)?1:0);
+      const lbMagi=i>=2?magis[i-2]:full.magi;
+      let irmaa=0;
+      if(on65>0){const fl=IRMAA[fil];let tier=0;for(let z=0;z<fl.length;z++){if(lbMagi>=fl[z])tier=z+1;}
+        irmaa=on65*IRMAA_COST.single[tier];}
+      // spending: the conversion's tax was funded above; base-year tax flows through here (no double charge)
       const spendTax=base.tot+irmaa;
       let net=(need+spendTax)-(ssNow+ordNow+incomeRMD);
       if(net<=0){
         if(S.reinvest){const surplus=-net;txbl+=surplus;basis+=surplus;}
       }else{
         let rem=net;
-        const fromTx=Math.min(txbl,rem);
-        if(fromTx>0){const gf=txbl>0?Math.max(0,(txbl-basis)/txbl):0;tIncome+=fromTx*gf*cgR;basis-=fromTx*(1-gf);txbl-=fromTx;rem-=fromTx;}
-        if(rem>0){const g=rem/(1-effW),tt=tradA+tradB,av=Math.min(tt,g);if(tt>0){tradA-=av*tradA/tt;tradB-=av*tradB/tt;tIncome+=av*effW;}rem-=av*(1-effW);}
+        const gf=txbl>0?Math.max(0,(txbl-basis)/txbl):0;
+        const grossTx=Math.min(txbl,rem/Math.max(1e-9,(1-gf*cgR)));   // sell taxable, grossed up for its gains tax
+        if(grossTx>0){realizedGains+=grossTx*gf;basis-=grossTx*(1-gf);txbl-=grossTx;rem-=grossTx*(1-gf*cgR);}
+        if(rem>0){const pre=ordLayer,used=pullTrad(grossTrad(rem));    // draw IRA with progressive gross-up
+          const tax=yearStack(ordLayer).tot-yearStack(pre).tot;rem-=(used-tax);}
         if(rem>0){const fr=Math.min(roth,rem);roth-=fr;rem-=fr;}
         if(rem>0.5&&dep===null)dep=ageA;
       }
+      // final, fully-integrated tax picture for the year (base income + conversion + every extra withdrawal)
+      const fin=yearStack(ordLayer);
+      magis.push(fin.magi+realizedGains);            // MAGI now reflects realized gains + extra IRA withdrawals
+      const ssTaxed=fin.ssT;tSS+=ssTaxed;
+      const gainsTax=realizedGains*cgR;
+      const incomeTax=fin.fed+fin.stt+fin.cg+gainsTax;
+      const niit=fin.nii;tNiit+=niit;
+      const drag=fin.cg+fin.nii+gainsTax;tDrag+=drag;
+      const yrTax=incomeTax+niit+irmaa;
+      tIncome+=incomeTax;tIrmaa+=irmaa;tConv+=conv;
       tradA=Math.max(0,tradA);tradB=Math.max(0,tradB);txbl=Math.max(0,txbl);basis=Math.max(0,Math.min(basis,txbl));
       const tradTot=tradA+tradB;
       const depleted=(tradTot+roth+txbl)<=1;if(depleted&&dep===null)dep=ageA;
       const txblNet=txbl-Math.max(0,txbl-basis)*Math.max(0.15,cgR);
       rows.push({ageA:ageA,ageB:S.married?ageB:null,fil:fil,single:fil==="single"&&S.married,rmd:rmd,qcd:qcd,conv:conv,convTax:convTax,
-        torpedo:torpedo,effMarg:conv>0?convTax/conv:0,ssTaxed:ssTaxed,ssNow:ssNow,need:need,ti:full.ti,fed:full.fed,stt:full.stt,
-        cg:full.cg,niit:niit,drag:drag,incomeTax:incomeTax,irmaa:irmaa,yearTax:yrTax,bracket:fedTopRate(fil,full.ti),
+        torpedo:torpedo,effMarg:conv>0?convTax/conv:0,ssTaxed:ssTaxed,ssNow:ssNow,need:need,ti:fin.ti,fed:fin.fed,stt:fin.stt,
+        cg:fin.cg+gainsTax,niit:niit,drag:drag,incomeTax:incomeTax,irmaa:irmaa,yearTax:yrTax,bracket:fedTopRate(fil,fin.ti),
         trad:tradTot,roth:Math.max(0,roth),cash:txbl,cashNet:txblNet,
         total:tradTot+Math.max(0,roth)+txbl,depleted:depleted});
       tradA*=(1+gr);tradB*=(1+gr);roth=Math.max(0,roth)*(1+gr);
