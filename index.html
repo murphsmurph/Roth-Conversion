@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roth Conversion Projector</title>
+<style>
+  :root{
+    --ink:#10241b; --paper:#f4f1ea; --card:#fff; --line:#e0dacb; --line2:#d2cab8;
+    --moss:#2f6b4f; --moss-d:#235740; --moss-soft:#e7f0ea; --gold:#b8841f; --gold-soft:#f6edd6;
+    --rust:#b5462f; --rust-soft:#f8e5df; --slate:#5d6b63; --slate-l:#8a9189;
+    --shadow:0 1px 2px rgba(16,36,27,.05),0 6px 20px rgba(16,36,27,.06);
+    --shadow-lg:0 4px 30px rgba(16,36,27,.10);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;font-size:15px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1280px;margin:0 auto;padding:24px 18px 90px}
+  header.mast{border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:22px}
+  .eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--moss);margin:0 0 6px}
+  h1{font-family:Georgia,"Times New Roman",serif;font-weight:600;font-size:clamp(26px,4.5vw,40px);
+    line-height:1.05;margin:0;letter-spacing:-.01em}
+  .sub{color:var(--slate);margin:9px 0 0;max-width:70ch;font-size:14px}
+  .disclaim{background:var(--gold-soft);border:1px solid #e8d7ad;border-radius:9px;padding:10px 14px;
+    margin:14px 0 0;font-size:12.5px;color:#6b5418}
+  .disclaim b{color:#4d3d10}
+  .layout{display:grid;grid-template-columns:354px minmax(0,1fr);gap:22px}
+  @media(max-width:940px){.layout{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden;align-self:start}
+  .panel-h{padding:15px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fbfaf6,#fff)}
+  .panel-h h2{font-family:Georgia,serif;font-size:16px;margin:0;font-weight:600}
+  .panel-h p{margin:2px 0 0;color:var(--slate);font-size:12px}
+  .panel-body{padding:6px 18px 18px}
+  .acc{border-bottom:1px solid var(--line)}
+  .acc:last-child{border-bottom:0}
+  .acc-h{display:flex;justify-content:space-between;align-items:center;cursor:pointer;
+    padding:13px 0 11px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+    letter-spacing:.13em;text-transform:uppercase;color:var(--slate);user-select:none}
+  .acc-h:hover{color:var(--moss)}
+  .acc-h .chev{transition:transform .2s;font-size:13px;color:var(--slate-l)}
+  .acc.collapsed .chev{transform:rotate(-90deg)}
+  .acc.collapsed .acc-c{display:none}
+  .acc-c{padding-bottom:8px}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:11px}
+  .row:last-child{margin-bottom:4px}
+  .row label{font-size:13.5px;font-weight:600;flex:1;line-height:1.25}
+  .row .sm{font-weight:400;color:var(--slate-l);font-size:11px;display:block;margin-top:1px}
+  .infield{position:relative;width:142px;flex-shrink:0}
+  .infield .pre{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--slate-l);
+    font-size:13px;font-family:ui-monospace,Menlo,monospace;pointer-events:none}
+  input.num{width:142px;padding:9px 11px;border:1px solid var(--line2);border-radius:8px;
+    font-size:14px;font-family:ui-monospace,Menlo,monospace;text-align:right;background:var(--card);color:var(--ink)}
+  input.num.money{padding-left:21px}
+  input.num:focus,select.num:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
+  select.num{width:142px;padding:9px 8px;border:1px solid var(--line2);border-radius:8px;font-size:13px;background:var(--card);color:var(--ink)}
+  .seg{display:flex;gap:5px;width:142px;flex-shrink:0}
+  .seg.full{width:100%}
+  .seg button{flex:1;padding:9px 6px;border:1px solid var(--line2);background:var(--card);
+    border-radius:8px;font-size:12.5px;font-weight:600;color:var(--slate);cursor:pointer;transition:.12s}
+  .seg button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .seg button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+  .reset{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line2);background:var(--card);
+    border-radius:8px;font-size:12.5px;font-weight:600;color:var(--slate);cursor:pointer}
+  .reset:hover{background:var(--paper)}
+  .autobox{background:var(--moss-soft);border:1px solid #cfe3d7;border-radius:9px;padding:11px 13px;
+    margin:8px 0 2px;font-size:12.5px;line-height:1.45}
+  .autobox b{font-family:ui-monospace,Menlo,monospace;color:var(--moss-d)}
+  .spouseB-hidden .spouseB{display:none}
+
+  /* results */
+  .banner{border-radius:12px;padding:14px 17px;margin-bottom:16px;font-size:14px;font-weight:600;
+    display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line)}
+  .banner .ic{font-family:ui-monospace,Menlo,monospace;font-size:17px;line-height:1.3;flex-shrink:0}
+  .banner.ok{background:var(--moss-soft);border-color:#cfe3d7;color:var(--moss-d)}
+  .banner.bad{background:var(--rust-soft);border-color:#edcabf;color:var(--rust)}
+  .banner.info{background:var(--gold-soft);border-color:#e8d7ad;color:#6b5418}
+
+  .verdict{border-radius:14px;padding:18px 20px;margin-bottom:16px;border:1px solid var(--line);
+    box-shadow:var(--shadow);border-left:5px solid var(--moss);background:var(--card)}
+  .verdict .t{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--moss);margin:0 0 5px}
+  .verdict .b{font-family:Georgia,serif;font-size:23px;font-weight:600;margin:0;line-height:1.12}
+  .verdict p.d{margin:8px 0 0;font-size:13px;color:var(--slate);line-height:1.5}
+
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+  @media(max-width:620px){.cards2{grid-template-columns:1fr}}
+  .bigcard{border-radius:13px;padding:17px;border:1px solid var(--line);background:var(--card)}
+  .bigcard.win{background:linear-gradient(180deg,var(--moss-soft),#fff);border-color:#cfe3d7}
+  .bigcard .nm{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--slate);margin:0 0 7px}
+  .bigcard .hl{font-family:Georgia,serif;font-size:29px;font-weight:600;margin:0;line-height:1}
+  .bigcard .hl.good{color:var(--moss-d)} .bigcard .hl.warn{color:var(--rust)}
+  .bigcard .sub2{font-size:12px;color:var(--slate);margin:7px 0 0;line-height:1.4}
+
+  .sectlabel{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--slate);margin:22px 0 11px;display:flex;align-items:center;gap:10px}
+  .sectlabel::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px}
+  @media(max-width:620px){.kpis{grid-template-columns:1fr 1fr}}
+  .kpi{background:var(--card);padding:13px 14px}
+  .kpi .k{font-size:10.5px;color:var(--slate);margin:0 0 5px;text-transform:uppercase;letter-spacing:.03em;line-height:1.25}
+  .kpi .v{font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:600;margin:0}
+  .kpi .v.good{color:var(--moss-d)} .kpi .v.warn{color:var(--rust)}
+
+  .chartcard{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:17px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .chart-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+  .chart-h h3{font-family:Georgia,serif;font-size:15px;margin:0;font-weight:600}
+  .clegend{display:flex;gap:13px;font-size:11px;color:var(--slate);flex-wrap:wrap}
+  .clegend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-note{font-size:11.5px;color:var(--slate-l);margin:10px 0 0}
+
+  .tabs{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
+  .tabs button{padding:8px 13px;border:1px solid var(--line2);background:var(--card);border-radius:8px;font-size:12.5px;font-weight:600;color:var(--slate);cursor:pointer}
+  .tabs button[aria-pressed=true]{background:var(--moss);color:#fff;border-color:var(--moss)}
+  .tbl{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums}
+  .tbl th,.tbl td{padding:6px 7px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  .tbl th{font-size:9.5px;text-transform:uppercase;letter-spacing:.02em;color:var(--slate);font-weight:700;position:sticky;top:0;background:var(--card);z-index:1}
+  .tbl td:first-child,.tbl th:first-child{text-align:left;font-family:ui-monospace,Menlo,monospace}
+  .tbl tr.rmd td{background:var(--gold-soft)}
+  .tbl tr.surv td{box-shadow:inset 3px 0 0 var(--rust)}
+  .tbl tr.depleted td{background:var(--rust-soft);color:var(--rust)}
+  .tbl tr.conv td:nth-child(6){color:var(--moss-d);font-weight:600}
+  .tblscroll{max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:11px}
+  .pill{display:inline-block;font-size:10px;padding:1px 7px;border-radius:20px;font-family:ui-monospace,Menlo,monospace;background:var(--gold-soft);color:#6b5418;border:1px solid #e8d7ad}
+  .pill.red{background:var(--rust-soft);color:var(--rust);border-color:#edcabf}
+  .foot{margin-top:24px;font-size:11.5px;color:var(--slate);line-height:1.65;border-top:1px solid var(--line);padding-top:15px}
+  .foot b{color:var(--ink)}
+  details{margin-top:9px} summary{cursor:pointer;font-weight:600;color:var(--moss)}
+  details p{margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <p class="eyebrow">Murphy Financial Planning &middot; Edward Jones</p>
+    <h1>Roth Conversion Projector</h1>
+    <p class="sub">A year-by-year retirement projection for one or two spouses. Models true progressive federal &amp; state tax, RMDs, Social Security taxation, IRMAA surcharges, inflation-adjusted spending, the survivor transition to Single brackets, and the after-tax legacy to a surviving spouse vs. children.</p>
+    <div class="disclaim"><b>Planning illustration only — not tax advice.</b> Results are directional estimates using 2026 brackets held flat. State models cover all 50 states + DC but use simplified retirement-income treatment. Verify against the client's tax return and a CPA before acting.</div>
+  </header>
+
+  <div class="layout">
+    <!-- INPUT PANEL -->
+    <aside class="panel" id="inputPanel">
+      <div class="panel-h"><h2>Client inputs</h2><p>Tap a section to expand. $ in today's dollars.</p></div>
+      <div class="panel-body">
+
+        <div class="acc" data-acc>
+          <div class="acc-h">Household &amp; horizon <span class="chev">&#9662;</span></div>
+          <div class="acc-c">
+            <div class="row"><label>Status</label>
+              <div class="seg" id="filing"><button data-f="single">Single</button><button data-f="mfj" aria-pressed="true">Married</button></div></div>
+            <div class="row"><label>State of residence</label><select class="num" id="state"></select></div>
+            <div class="row"><label>Project through age <span class="sm">of Spouse A</span></label><input class="num" id="endAge" type="number" value="95"></div>
+            <div class="row"><label>RMDs begin at age <span class="sm">73 current law</span></label><input class="num" id="rmdAge" type="number" value="73"></div>
+          </div>
+        </div>
+
+        <div class="acc" data-acc>
+          <div class="acc-h">Spouse A <span class="chev">&#9662;</span></div>
+          <div class="acc-c">
+            <div class="row"><label>Current age</label><input class="num" id="ageA" type="number" value="63"></div>
+            <div class="row"><label>Traditional / pre-tax</label><div class="infield"><span class="pre">$</span><input class="num money" id="tradA" type="text" value="700,000"></div></div>
+            <div class="row"><label>Social Security / yr <span class="sm">+COLA</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="ssA" type="text" value="30,000"></div></div>
+            <div class="row"><label>SS starts at age</label><input class="num" id="ssAgeA" type="number" value="70"></div>
+          </div>
+        </div>
+
+        <div class="acc spouseB" data-acc>
+          <div class="acc-h">Spouse B <span class="chev">&#9662;</span></div>
+          <div class="acc-c">
+            <div class="row"><label>Current age</label><input class="num" id="ageB" type="number" value="61"></div>
+            <div class="row"><label>Traditional / pre-tax</label><div class="infield"><span class="pre">$</span><input class="num money" id="tradB" type="text" value="200,000"></div></div>
+            <div class="row"><label>Social Security / yr <span class="sm">+COLA</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="ssB" type="text" value="18,000"></div></div>
+            <div class="row"><label>SS starts at age</label><input class="num" id="ssAgeB" type="number" value="67"></div>
+          </div>
+        </div>
+
+        <div class="acc spouseB" data-acc>
+          <div class="acc-h">Survivor transition <span class="chev">&#9662;</span></div>
+          <div class="acc-c">
+            <div class="row"><label>First death at Spouse A's age <span class="sm">0 or blank = both live</span></label><input class="num" id="deathAgeA" type="number" value="84"></div>
+            <div class="row"><label>Who passes first</label>
+              <div class="seg" id="firstGone"><button data-g="B" aria-pressed="true">Spouse B</button><button data-g="A">Spouse A</button></div></div>
+          </div>
+        </div>
+
+        <div class="acc" data-acc>
+          <div class="acc-h">Shared accounts &amp; income <span class="chev">&#9662;</span></div>
+          <div class="acc-c">
+            <div class="row"><label>Existing Roth <span class="sm">household</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="roth" type="text" value="100,000"></div></div>
+            <div class="row"><label>Taxable / cash <span class="sm">funds tax + spending</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="cash" type="text" value="250,000"></div></div>
+            <div class="row"><label>Other ordinary income <span class="sm">pension, wages</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="ord" type="text" value="20,000"></div></div>
+            <div class="row"><label>Living expenses / yr <span class="sm">today's $, +inflation</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="spend" type="text" value="85,000"></div></div>
+            <div class="row"><label>Annual QCD to charity <span class="sm">70&frac12;+ &middot; 2026 limit $111k/person</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="qcdAmt" type="text" value="0"></div></div>
+            <div class="row"><label>QCDs start at age <span class="sm">eligible from 70&frac12;; many start at RMD age</span></label><input class="num" id="qcdStart" type="number" value="71"></div>
+          </div>
+        </div>
+
+        <div class="acc" data-acc>
+          <div class="acc-h">Conversion strategy <span class="chev">&#9662;</span></div>
+          <div class="acc-c">
+            <div class="row"><label>Driver</label>
+              <div class="seg" id="mode"><button data-m="optimal" aria-pressed="true">Optimal</button><button data-m="fixed">Fixed $</button></div></div>
+            <div class="row"><label>Fill to top of bracket %</label><input class="num" id="fillBkt" type="number" value="22"></div>
+            <div class="row"><label>Fixed annual amount</label><div class="infield"><span class="pre">$</span><input class="num money" id="fixedAmt" type="text" value="60,000"></div></div>
+            <div class="row"><label>Stop converting at age</label><input class="num" id="stopAge" type="number" value="73"></div>
+            <div class="row"><label>Pay conversion tax from</label>
+              <div class="seg" id="paySrc"><button data-p="outside" aria-pressed="true">Outside cash</button><button data-p="ira">The IRA</button></div></div>
+            <div class="row"><label>Cost basis of taxable acct % <span class="sm">100 = no gains to realize</span></label><input class="num" id="basisPct" type="number" value="100"></div>
+            <div class="row"><label>Reinvest after-tax RMDs <span class="sm">do-nothing side (McQuarrie)</span></label>
+              <div class="seg" id="reinvest"><button data-r="yes" aria-pressed="true">Reinvest</button><button data-r="no">Consume</button></div></div>
+          </div>
+        </div>
+
+        <div class="acc" data-acc>
+          <div class="acc-h">Assumptions <span class="chev">&#9662;</span></div>
+          <div class="acc-c">
+            <div class="row"><label>Growth rate %/yr</label><input class="num" id="growth" type="number" value="6"></div>
+            <div class="row"><label>Inflation %/yr</label><input class="num" id="infl" type="number" value="2.5"></div>
+            <div class="row"><label>Volatility %/yr <span class="sm">std dev, for Monte Carlo</span></label><input class="num" id="vol" type="number" value="12"></div>
+            <div class="row"><label>Monte Carlo <span class="sm">400 market paths</span></label>
+              <div class="seg" id="mcOn" style="width:142px"><button data-mc="off" aria-pressed="true">Off</button><button data-mc="on">On</button></div></div>
+            <div class="row"><label>Show dollars as</label>
+              <div class="seg" id="disp" style="width:142px"><button data-d="nom" aria-pressed="true">Nominal</button><button data-d="real">Today's $</button></div></div>
+            <div class="row"><label>Children's tax % <span class="sm">fed+state, 10-yr drain</span></label><input class="num" id="heirRate" type="number" value="27"></div>
+            <div class="row"><label>Survivor's tax % <span class="sm">if survivor inherits</span></label><input class="num" id="survRate" type="number" value="22"></div>
+            <div class="row"><label>Future tax regime <span class="sm">applies at first RMD age</span></label>
+              <div class="seg" id="regime" style="width:142px"><button data-x="same" aria-pressed="true">Same</button><button data-x="up">+Hike</button><button data-x="down">Cut</button></div></div>
+            <div class="row"><label>Rate change % <span class="sm">+/- to all rates, e.g. 30</span></label><input class="num" id="regimePct" type="number" value="30"></div>
+            <div class="autobox" id="autoRate">Effective tax rate: <b>&mdash;</b></div>
+          </div>
+        </div>
+
+        <div class="acc collapsed" data-acc>
+          <div class="acc-h">Estate tax (optional) <span class="chev">&#9662;</span></div>
+          <div class="acc-c">
+            <div class="row"><label>Model estate tax? <span class="sm">only if estate near threshold</span></label>
+              <div class="seg" id="estateOn" style="width:142px"><button data-e="no" aria-pressed="true">No</button><button data-e="yes">Yes</button></div></div>
+            <div class="row"><label>Federal estate exemption</label><div class="infield"><span class="pre">$</span><input class="num money" id="fedExempt" type="text" value="15,000,000"></div></div>
+            <div class="row"><label>Federal estate rate %</label><input class="num" id="fedEstRate" type="number" value="40"></div>
+            <div class="row"><label>State estate exemption <span class="sm">0 if none</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="stExempt" type="text" value="0"></div></div>
+            <div class="row"><label>State estate rate %</label><input class="num" id="stEstRate" type="number" value="0"></div>
+            <div class="row"><label>Other estate assets <span class="sm">outside retirement</span></label><div class="infield"><span class="pre">$</span><input class="num money" id="otherEstate" type="text" value="0"></div></div>
+          </div>
+        </div>
+
+        <button class="reset" id="resetBtn">Reset to defaults</button>
+      </div>
+    </aside>
+
+    <!-- RESULTS -->
+    <main>
+      <div class="banner bad" id="valBanner" style="display:none"><span class="ic">&#9888;</span><span>&mdash;</span></div>
+      <div class="banner" id="lastBanner"><span class="ic">&mdash;</span><span>&mdash;</span></div>
+      <div class="verdict" id="verdict"><p class="t">Bottom line</p><p class="b">&mdash;</p><p class="d"></p></div>
+
+      <div class="sectlabel">After-tax legacy</div>
+      <div class="cards2">
+        <div class="bigcard win"><p class="nm">Convert plan</p><p class="hl good" id="scnConv">&mdash;</p><p class="sub2" id="scnConvSub">Roth passes tax-free; little traditional left to tax</p></div>
+        <div class="bigcard"><p class="nm">Do nothing</p><p class="hl" id="scnNo">&mdash;</p><p class="sub2" id="scnNoSub">Heirs drain remaining traditional within 10 years</p></div>
+      </div>
+
+      <div class="sectlabel">Survivor vs. children — who inherits the traditional balance</div>
+      <div class="cards2">
+        <div class="bigcard"><p class="nm">Do-nothing legacy if survivor inherits</p><p class="hl" id="survNoth">&mdash;</p><p class="sub2">Remaining traditional taxed at survivor's rate</p></div>
+        <div class="bigcard"><p class="nm">Do-nothing legacy if children inherit</p><p class="hl warn" id="childNoth">&mdash;</p><p class="sub2" id="widowGap">The gap is the cost of leaving traditional unconverted</p></div>
+      </div>
+
+      <div class="sectlabel" id="estateLabel" style="display:none">Estate tax &amp; IRD <span style="text-transform:none;letter-spacing:0;font-family:Georgia,serif;color:var(--slate-l)">— Keebler &amp; Bigge, 691(c) interaction</span></div>
+      <div class="cards2" id="estateCards" style="display:none">
+        <div class="bigcard win"><p class="nm">Net to heirs after estate + income tax — convert</p><p class="hl good" id="estConv">&mdash;</p><p class="sub2" id="estConvSub">&mdash;</p></div>
+        <div class="bigcard"><p class="nm">Net to heirs after estate + income tax — do nothing</p><p class="hl warn" id="estNo">&mdash;</p><p class="sub2" id="estNoSub">&mdash;</p></div>
+      </div>
+      <div class="banner info" id="estateBanner" style="display:none"><span class="ic">&#8224;</span><span>&mdash;</span></div>
+
+      <div class="sectlabel">Lifetime tax</div>
+      <div class="cards2">
+        <div class="bigcard win"><p class="nm">Lifetime tax — convert</p><p class="hl" id="taxConv" style="color:var(--ink)">&mdash;</p><p class="sub2" id="taxConvBreak">&mdash;</p></div>
+        <div class="bigcard"><p class="nm">Lifetime tax — do nothing</p><p class="hl warn" id="taxNo">&mdash;</p><p class="sub2" id="taxNoBreak">&mdash;</p></div>
+      </div>
+      <div class="banner info" id="taxBanner"><span class="ic">&Sigma;</span><span>&mdash;</span></div>
+      <div class="banner" id="torpBanner" style="display:none"><span class="ic">&#9678;</span><span>&mdash;</span></div>
+      <div class="banner" id="qcdBanner" style="display:none"><span class="ic">&#9829;</span><span>&mdash;</span></div>
+
+      <div class="sectlabel">Breakeven &amp; tax drag <span style="text-transform:none;letter-spacing:0;font-family:Georgia,serif;color:var(--slate-l)">— McQuarrie &amp; DiLellio (2023)</span></div>
+      <div class="cards2">
+        <div class="bigcard"><p class="nm">Conversion breaks even at age</p><p class="hl" id="beAge" style="color:var(--ink)">&mdash;</p><p class="sub2" id="beSub">The age the convert plan overtakes doing nothing</p></div>
+        <div class="bigcard"><p class="nm">Lifetime tax drag avoided</p><p class="hl good" id="tDrag">&mdash;</p><p class="sub2">Tax on the taxable account's dividends/gains that the Roth never pays — the hidden engine of conversion payoff</p></div>
+      </div>
+      <div class="banner" id="robustBanner"><span class="ic">&#9888;</span><span>&mdash;</span></div>
+
+      <div class="sectlabel" id="mcLabel" style="display:none">Monte Carlo &mdash; 400 market paths</div>
+      <div class="cards2" id="mcCards" style="display:none">
+        <div class="bigcard win"><p class="nm">Convert plan &mdash; funds spending to the end</p><p class="hl" id="mcC" style="color:var(--ink)">&mdash;</p><p class="sub2" id="mcCSub">&mdash;</p></div>
+        <div class="bigcard"><p class="nm">Do nothing &mdash; funds spending to the end</p><p class="hl" id="mcN" style="color:var(--ink)">&mdash;</p><p class="sub2" id="mcNSub">&mdash;</p></div>
+      </div>
+      <div class="banner info" id="mcBanner" style="display:none"><span class="ic">&#8776;</span><span>&mdash;</span></div>
+
+      <div class="kpis">
+        <div class="kpi"><p class="k">Lifetime tax saved by converting</p><p class="v" id="kTaxSaved">&mdash;</p></div>
+        <div class="kpi"><p class="k">Lifetime IRMAA — convert</p><p class="v" id="kIrmaaC">&mdash;</p></div>
+        <div class="kpi"><p class="k">Lifetime IRMAA — do nothing</p><p class="v" id="kIrmaaN">&mdash;</p></div>
+        <div class="kpi"><p class="k">Total converted to Roth</p><p class="v" id="kConv">&mdash;</p></div>
+      </div>
+
+      <div class="chartcard">
+        <div class="chart-h"><h3>Account balances over time — convert plan</h3>
+          <div class="clegend"><span><i style="background:#9a6a1f"></i>Traditional</span><span><i style="background:#2f6b4f"></i>Roth</span><span><i style="background:#c8c0ad"></i>Taxable</span></div></div>
+        <svg id="balChart" viewBox="0 0 720 300"></svg>
+        <p class="chart-note" id="balNote"></p>
+      </div>
+
+      <div class="chartcard">
+        <div class="chart-h"><h3>After-tax legacy — convert vs do nothing</h3>
+          <div class="clegend"><span><i style="background:#2f6b4f"></i>Convert</span><span><i style="background:#b5462f"></i>Do nothing</span></div></div>
+        <svg id="legChart" viewBox="0 0 720 260"></svg>
+        <p class="chart-note">Dashed line marks where the convert plan pulls permanently ahead. Vertical gold line marks the survivor transition.</p>
+      </div>
+
+      <div class="chartcard">
+        <div class="chart-h"><h3>Annual tax — convert vs do nothing</h3>
+          <div class="clegend"><span><i style="background:#2f6b4f"></i>Convert</span><span><i style="background:#b5462f"></i>Do nothing</span></div></div>
+        <svg id="taxChart" viewBox="0 0 720 240"></svg>
+        <p class="chart-note">Convert pays more tax early (filling brackets) and far less later when RMDs would have spiked.</p>
+      </div>
+
+      <div class="chartcard">
+        <div class="tabs" id="tabs"><button data-t="convert" aria-pressed="true">Convert — year by year</button><button data-t="nothing">Do nothing — year by year</button></div>
+        <div class="tblscroll"><table class="tbl" id="tbl"><thead></thead><tbody></tbody></table></div>
+        <p class="chart-note"><span class="pill">shaded</span> RMD year &nbsp; <span class="pill">red bar</span> survivor (Single brackets) &nbsp; <span class="pill red">red row</span> depleted</p>
+      </div>
+
+      <p class="foot">
+        <b>How it works:</b> Each year, inflation-adjusted living expenses are funded from Social Security and other income, then RMDs, then by drawing accounts <b>taxable &rarr; traditional &rarr; Roth</b>. Federal and state tax are computed with <b>true progressive brackets</b> on each year's taxable income (not a flat rate); qualified dividends and long-term gains <b>stack on top of ordinary income</b> at 0/15/20% rates, and the <b>3.8% NIIT</b> applies above the statutory MAGI thresholds ($200k single / $250k MFJ, unindexed). <b>QCDs</b> (70&frac12;+, 2026 limit $111,000/person) go straight from IRA to charity — excluded from income and MAGI, satisfying the RMD first. The conversion's tax cost is the <b>exact marginal difference</b> between the year's tax with and without the conversion — so torpedo, bracket-shift, and NIIT effects are all captured in it. RMDs use IRS Uniform Lifetime divisors per spouse. Social Security taxation uses the provisional-income formula (50%/85% tiers). At first death the household switches to <b>Single</b> brackets and the survivor keeps the larger benefit (the "widow's penalty"). IRMAA applies the 2026 surcharge with a 2-year MAGI lookback. Legacy is valued after-tax: Roth tax-free; remaining traditional reduced by the inheriting party's rate (SECURE Act 10-year drain for children).
+        <details><summary>Assumptions &amp; limitations</summary>
+        <p>Federal brackets, standard deduction, LTCG thresholds, SS thresholds, IRMAA tiers, and the QCD limit are 2026 figures held flat (not indexed forward). State tax uses each state's structure — no-tax (9 states), full retirement-income exemption (IL, MS, PA, IA), flat-rate, or graduated brackets — with simplified retirement-income treatment; graduated thresholds approximate single-filer schedules doubled for joint. Dividends are assumed qualified at a 2% yield; gains realized mid-year are taxed at that year's marginal stacked LTCG rate (bracket-boundary effects approximated). QCD eligibility (70&frac12;) applies from the year a spouse turns 71. Monte Carlo draws normally distributed annual returns (no fat tails or autocorrelation) and runs the identical market path through both plans. Roth five-year clocks are not enforced. RMD withdrawals are drawn pro-rata across spouses. This is a directional planning illustration, not tax preparation — confirm against the client's 1040, state return, and Form 8606 with a qualified professional.</p></details>
+      </p>
+
+      <p class="foot" style="border-top:1px solid #e3dcc8;padding-top:12px">
+        <b>Important disclosures.</b> This tool is a hypothetical illustration for educational discussion between an advisor and client. It is not tax, legal, or investment advice; it does not recommend any security or strategy; and its projections are not guarantees of future results. All figures are estimates based on the stated assumptions and 2026 law, which will change. Monte Carlo results are hypothetical simulations, not predictions, and do not reflect any actual investment. Roth conversions are irrevocable and may affect Medicare premiums, taxation of Social Security benefits, financial aid eligibility, and other income-tested items. Consult a qualified tax professional (CPA or EA) — and, where an estate may be taxable, an estate attorney — before acting. Use of this tool in client communications is subject to Edward Jones compliance review and approval.
+      </p>
+    </main>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  const $=id=>document.getElementById(id);
+  const fmt=n=>(n<0?"-$":"$")+Math.abs(Math.round(n)).toLocaleString();
+  const fmtK=n=>{const a=Math.abs(n);return (n<0?"-":"")+(a>=1e6?"$"+(a/1e6).toFixed(2)+"M":"$"+Math.round(a/1000).toLocaleString()+"k");};
+
+  // ===ENGINE-START===
+  // ===== 2026 federal data =====
+  const STD={mfj:32200,single:16100};
+  const STD65={mfj:1650,single:2050}; // additional per qualifying 65+ person
+  const BR={mfj:[[0,.10],[24800,.12],[100800,.22],[211400,.24],[403550,.32],[512450,.35],[768700,.37]],
+            single:[[0,.10],[12400,.12],[50400,.22],[105700,.24],[201775,.32],[256225,.35],[640600,.37]]};
+  const SS_T={mfj:[32000,44000],single:[25000,34000]};
+  const IRMAA={mfj:[218001,274001,342001,410001,750000],single:[109001,137001,171001,205001,500000]};
+  const IRMAA_COST={mfj:[0,2297,5772,9240,12710,13872],single:[0,1148,2886,4620,6355,6936]};
+  const LT={mfj:[98900,613700],single:[49450,545500]};   // 2026 LTCG 0/15/20 taxable-income thresholds
+  const NIIT_THR={mfj:250000,single:200000};             // statutory, unindexed
+  const QCD_LIMIT=111000;                                // 2026, per person 70.5+
+  const ULT={73:26.5,74:25.5,75:24.6,76:23.7,77:22.9,78:22.0,79:21.1,80:20.2,81:19.4,82:18.5,83:17.7,84:16.8,85:16.0,86:15.2,87:14.4,88:13.7,89:12.9,90:12.2,91:11.5,92:10.8,93:10.1,94:9.5,95:8.9,96:8.4,97:7.8,98:7.3,99:6.8,100:6.4};
+
+  // ===== state models (2026, simplified retirement treatment) =====
+  // type: none | exempt | flat | grad. grad thresholds = single; doubled for mfj.
+  const ST={
+    AL:{n:"Alabama",t:"flat",r:.05}, AK:{n:"Alaska",t:"none"}, AZ:{n:"Arizona",t:"flat",r:.025},
+    AR:{n:"Arkansas",t:"grad",b:[[0,.02],[4500,.039]]}, CA:{n:"California",t:"grad",b:[[0,.01],[10800,.02],[25600,.04],[40400,.06],[56100,.08],[70900,.093],[362000,.103],[434000,.113],[724000,.123]]},
+    CO:{n:"Colorado",t:"flat",r:.044,ssDed65:true}, CT:{n:"Connecticut",t:"grad",b:[[0,.02],[10000,.045],[50000,.055],[100000,.06],[200000,.065],[250000,.069],[500000,.0699]]},
+    DE:{n:"Delaware",t:"grad",b:[[0,0],[2000,.022],[5000,.039],[10000,.048],[20000,.052],[25000,.0555],[60000,.066]]},
+    DC:{n:"Washington DC",t:"grad",b:[[0,.04],[10000,.06],[40000,.065],[60000,.085],[250000,.0925],[500000,.0975],[1000000,.1075]]},
+    FL:{n:"Florida",t:"none"}, GA:{n:"Georgia",t:"flat",r:.0539,retExcl:65000},
+    HI:{n:"Hawaii",t:"grad",b:[[0,.014],[2400,.032],[4800,.055],[9600,.064],[14400,.068],[19200,.072],[24000,.076],[36000,.079],[48000,.0825],[150000,.09],[175000,.10],[200000,.11]]},
+    ID:{n:"Idaho",t:"flat",r:.053}, IL:{n:"Illinois",t:"exempt"}, IN:{n:"Indiana",t:"flat",r:.03},
+    IA:{n:"Iowa",t:"exempt"}, KS:{n:"Kansas",t:"grad",b:[[0,.052],[23000,.0558]]},
+    KY:{n:"Kentucky",t:"flat",r:.04}, LA:{n:"Louisiana",t:"flat",r:.03},
+    ME:{n:"Maine",t:"grad",b:[[0,.058],[26050,.0675],[61600,.0715]]}, MD:{n:"Maryland",t:"grad",b:[[0,.02],[1000,.03],[2000,.04],[3000,.0475],[100000,.05],[125000,.0525],[150000,.055],[250000,.0575]]},
+    MA:{n:"Massachusetts",t:"flat",r:.05}, MI:{n:"Michigan",t:"flat",r:.0425,retExcl:60000},
+    MN:{n:"Minnesota",t:"grad",b:[[0,.0535],[31690,.068],[103780,.0785],[193240,.0985]],ssTax:true},
+    MS:{n:"Mississippi",t:"exempt"}, MO:{n:"Missouri",t:"grad",b:[[0,0],[1300,.02],[2700,.025],[4000,.03],[5400,.035],[6800,.0395]]},
+    MT:{n:"Montana",t:"grad",b:[[0,.047],[20500,.059]]}, NE:{n:"Nebraska",t:"grad",b:[[0,.0246],[3900,.0351],[23400,.0501],[37700,.052]]},
+    NV:{n:"Nevada",t:"none"}, NH:{n:"New Hampshire",t:"none"}, NJ:{n:"New Jersey",t:"grad",b:[[0,.014],[20000,.0175],[35000,.035],[40000,.05525],[75000,.0637],[500000,.0897],[1000000,.1075]],retExcl:100000},
+    NM:{n:"New Mexico",t:"grad",b:[[0,.017],[5500,.032],[11000,.047],[16000,.049],[210000,.059]]}, NY:{n:"New York",t:"grad",b:[[0,.04],[8500,.045],[11700,.0525],[80650,.055],[215400,.06],[1077550,.0685]],retExcl:20000},
+    NC:{n:"North Carolina",t:"flat",r:.0399}, ND:{n:"North Dakota",t:"grad",b:[[0,0],[47150,.0195],[238200,.025]]},
+    OH:{n:"Ohio",t:"grad",b:[[0,0],[26050,.0275],[100000,.035]]}, OK:{n:"Oklahoma",t:"grad",b:[[0,.0025],[1000,.0075],[2500,.0175],[3750,.0275],[4900,.0375],[7200,.0475]]},
+    OR:{n:"Oregon",t:"grad",b:[[0,.0475],[4300,.0675],[10750,.0875],[125000,.099]]}, PA:{n:"Pennsylvania",t:"exempt"},
+    RI:{n:"Rhode Island",t:"grad",b:[[0,.0375],[77450,.0475],[176050,.0599]]}, SC:{n:"South Carolina",t:"grad",b:[[0,0],[3460,.03],[17330,.062]],retExcl:15000},
+    SD:{n:"South Dakota",t:"none"}, TN:{n:"Tennessee",t:"none"}, TX:{n:"Texas",t:"none"},
+    UT:{n:"Utah",t:"flat",r:.0455}, VT:{n:"Vermont",t:"grad",b:[[0,.0335],[45400,.066],[110050,.076],[229550,.0875]],ssTax:true},
+    VA:{n:"Virginia",t:"grad",b:[[0,.02],[3000,.03],[5000,.05],[17000,.0575]]}, WA:{n:"Washington",t:"none"},
+    WV:{n:"West Virginia",t:"grad",b:[[0,.0222],[10000,.0296],[25000,.0333],[40000,.0444],[60000,.0482]]},
+    WI:{n:"Wisconsin",t:"grad",b:[[0,.035],[14680,.044],[29370,.053],[323290,.0765]]}, WY:{n:"Wyoming",t:"none"}
+  };
+  function stateTax(code,ti,fil){const s=ST[code];if(!s||s.t==="none"||s.t==="exempt")return 0;
+    let inc=Math.max(0,ti-(s.retExcl||0));
+    if(s.t==="flat")return inc*s.r;
+    const b=s.b,m=fil==="mfj"?2:1;let t=0;
+    for(let i=0;i<b.length;i++){const lo=b[i][0]*m,hi=i+1<b.length?b[i+1][0]*m:Infinity,r=b[i][1];
+      if(inc>lo)t+=(Math.min(inc,hi)-lo)*r;else break;}return t;}
+  function stateTopRate(code){const s=ST[code];if(!s||s.t==="none"||s.t==="exempt")return 0;
+    if(s.t==="flat")return s.r;return s.b[s.b.length-1][1];}
+
+  function ordTax(fil,ti){if(ti<=0)return 0;const b=BR[fil];let t=0;
+    for(let i=0;i<b.length;i++){const lo=b[i][0],hi=i+1<b.length?b[i+1][0]:Infinity,r=b[i][1];
+      if(ti>lo)t+=(Math.min(ti,hi)-lo)*r;else break;}return t;}
+  function taxableSS(fil,ord,ss){if(ss<=0)return 0;const p=ord+0.5*ss,t=SS_T[fil],t1=t[0],t2=t[1];
+    if(p<=t1)return 0;if(p<=t2)return Math.min(0.5*(p-t1),0.5*ss);
+    const l=Math.min(0.5*(t2-t1),0.5*ss);return Math.min(0.85*(p-t2)+l,0.85*ss);}
+  function fedTopRate(fil,ti){const b=BR[fil];let r=b[0][1];for(const x of b)if(ti>x[0])r=x[1];return r;}
+  function bracketTop(fil,p){const b=BR[fil];for(let i=0;i<b.length;i++){if(Math.round(b[i][1]*100)===p)return i+1<b.length?b[i+1][0]:Infinity;}return b[2][0];}
+  function nextIrmaa(fil,m){for(const f of IRMAA[fil])if(f>m)return f;return Infinity;}
+  function irmaaCost(fil,m){const fl=IRMAA[fil];let tier=0;for(let i=0;i<fl.length;i++){if(m>=fl[i])tier=i+1;}return IRMAA_COST[fil][tier];}
+  function rmdDiv(a){return ULT[a]||Math.max(3,6.4-(a-100)*0.4);}
+
+  function effRateNow(){ // for display + traditional-withdrawal grossup
+    const fil=S.married?"mfj":"single";
+    const ssA=S.ssAgeA<=S.ageA?S.ssA:0, ssB=(S.married&&S.ssAgeB<=S.ageB)?S.ssB:0;
+    const ssTax=taxableSS(fil,S.ord,ssA+ssB);
+    const ti=Math.max(0,S.ord+ssTax-STD[fil]);
+    return fedTopRate(fil,ti)+stateTopRate(S.state);
+  }
+
+  function ltcgTax(fil,ordTI,pref){if(pref<=0)return 0;const th=LT[fil],a2=th[0],b2=th[1],top=ordTI+pref;
+    const p15=Math.max(0,Math.min(top,b2)-Math.max(ordTI,a2));
+    const p20=Math.max(0,top-Math.max(ordTI,b2));
+    return p15*.15+p20*.20;}
+  function ltcgMarg(fil,stackTop){const th=LT[fil];return stackTop<th[0]?0:(stackTop<th[1]?0.15:0.20);}
+  function niitTax(fil,magi,nii){return 0.038*Math.max(0,Math.min(nii,magi-NIIT_THR[fil]));}
+  function run(doConvert,rets){
+    // Per-year tax stack: ordinary brackets, SS provisional income, LTCG stacking (0/15/20),
+    // 3.8% NIIT, IRMAA 2-yr lookback, QCDs (excluded from income & MAGI), Kotlikoff regime shift.
+    // McQuarrie tax-drag engine: the taxable side-account's dividend/gain taxes flow through spending.
+    // Conversion tax = yearStack(conv) - yearStack(0): the TRUE marginal cost, torpedo and all.
+    let tradA=S.tradA,tradB=S.married?S.tradB:0,roth=S.roth;
+    let txbl=S.cash, basis=S.cash*(S.basisPct/100);
+    const rows=[];let tConv=0,tIncome=0,tIrmaa=0,tSS=0,tDrag=0,tNiit=0,tQcd=0,dep=null,survAge=null;
+    let bothAlive=S.married;const magis=[];
+    const DIVY=0.02; // qualified dividend yield on the taxable account
+    for(let i=0,ageA=S.ageA;ageA<=S.endAge;ageA++,i++){
+      const gr=rets?rets[i]:S.g;
+      const ageB=S.ageB+i;
+      if(S.married&&S.deathAgeA>0&&ageA>=S.deathAgeA&&bothAlive){bothAlive=false;survAge=ageA;
+        if(S.firstGone==="B"){tradA+=tradB;tradB=0;}else{tradB+=tradA;tradA=0;}}
+      const fil=bothAlive?"mfj":"single";
+      const infl=Math.pow(1+S.inf,i);
+      const ssA=ageA>=S.ssAgeA?S.ssA*infl:0;
+      const ssB=(S.married&&ageB>=S.ssAgeB)?S.ssB*infl:0;
+      const ssNow=bothAlive?(ssA+ssB):(S.married?Math.max(ssA,ssB):ssA);
+      const ordNow=S.ord*infl, need=S.spend*infl;
+      let rmd=0;
+      if(ageA>=S.rmdAge&&tradA>0)rmd+=tradA/rmdDiv(ageA);
+      if(bothAlive&&ageB>=S.rmdAge&&tradB>0)rmd+=tradB/rmdDiv(ageB);
+      if(!bothAlive&&S.firstGone==="A"&&tradB>0&&ageB>=S.rmdAge)rmd+=tradB/rmdDiv(ageB);
+      const trad=tradA+tradB;
+      // QCD: IRA->charity direct; excluded from income & MAGI; satisfies the RMD first (70.5+ ~ age 71 in whole years)
+      const eligQ=(ageA>=71?1:0)+(((bothAlive&&ageB>=71)||(!bothAlive&&S.firstGone==="A"&&ageB>=71))?1:0);
+      const qcdWant=(ageA>=(S.qcdStart||0))?S.qcd:0;
+      const qcd=Math.max(0,Math.min(qcdWant,QCD_LIMIT*eligQ,trad));
+      const incomeRMD=Math.max(0,rmd-qcd);
+      const iraOut=Math.max(rmd,qcd);
+      tQcd+=qcd;
+      const std=STD[fil]+(ageA>=65?STD65[fil]:0)+(bothAlive&&ageB>=65?STD65.mfj:0);
+      let regMult=1;
+      if(S.regime==="up"&&ageA>=S.rmdAge)regMult=1+S.regimePct/100;
+      else if(S.regime==="down"&&ageA>=S.rmdAge)regMult=1-S.regimePct/100;
+      const div=txbl*DIVY;
+      const yearStack=function(c){
+        const ssT=taxableSS(fil,ordNow+incomeRMD+c,ssNow);
+        const ordInc=ordNow+incomeRMD+c+ssT;
+        const ti=Math.max(0,ordInc-std);
+        const shelter=Math.max(0,std-ordInc);       // leftover deduction shelters preferential income
+        const pref=Math.max(0,div-shelter);
+        const fed=ordTax(fil,ti)*regMult;
+        const stt=stateTax(S.state,ti+pref,fil)*regMult;  // states tax gains/divs as ordinary income
+        const cg=ltcgTax(fil,ti,pref)*regMult;
+        const magi=ordNow+incomeRMD+c+ssT+div;
+        const nii=niitTax(fil,magi,div);
+        return {ssT:ssT,ti:ti,pref:pref,fed:fed,stt:stt,cg:cg,nii:nii,magi:magi,tot:fed+stt+cg+nii};
+      };
+      let conv=0;
+      if(doConvert&&ageA<S.stopAge&&trad-iraOut>0){
+        if(S.mode==="fixed"){conv=S.fixedAmt;}
+        else{const b0=yearStack(0);
+          conv=Math.max(0,bracketTop(fil,S.fillBkt)-b0.ti);
+          const ir=Math.max(0,nextIrmaa(fil,b0.magi)-b0.magi);
+          if(ir>0)conv=Math.min(conv,ir);}
+        conv=Math.max(0,Math.min(conv,trad-iraOut));
+      }
+      const base=yearStack(0), full=yearStack(conv);
+      const convTax=Math.max(0,full.tot-base.tot);   // TRUE marginal tax on the conversion
+      const torpedo=Math.max(0,full.ssT-base.ssT);   // SS dragged into taxation by the conversion
+      const ssTaxed=full.ssT;tSS+=ssTaxed;
+      const incomeTax=full.fed+full.stt+full.cg;
+      const niit=full.nii;tNiit+=niit;
+      const drag=full.cg+full.nii;tDrag+=drag;
+      magis.push(full.magi);
+      const lb=i>=2?magis[i-2]:full.magi;
+      const irmaa=(ageA>=65||(bothAlive&&ageB>=65))?irmaaCost(fil,lb):0;
+      const yrTax=incomeTax+niit+irmaa;
+      tIncome+=incomeTax;tIrmaa+=irmaa;tConv+=conv;
+      const effW=Math.min(0.6,(fedTopRate(fil,full.ti)+stateTopRate(S.state))*regMult);
+      const cgR=Math.min(0.5,(ltcgMarg(fil,full.ti+full.pref)+(full.nii>0?0.038:0))*regMult);
+      txbl=txbl*(1+gr);basis+=div;
+      if(conv>0){const tt=tradA+tradB||1;tradA-=conv*tradA/tt;tradB-=conv*tradB/tt;roth+=conv;}
+      if(conv>0&&convTax>0){
+        if(S.paySrc==="outside"){
+          const gainFrac=txbl>0?Math.max(0,(txbl-basis)/txbl):0;
+          const grossNeeded=convTax/(1-gainFrac*cgR);
+          const pull=Math.min(txbl,grossNeeded);
+          const realizedGain=pull*gainFrac;basis-=pull*(1-gainFrac);
+          txbl-=pull;tIncome+=realizedGain*cgR;
+          if(grossNeeded>pull+0.01){const short=grossNeeded-pull,tt2=tradA+tradB||1;
+            tradA-=short*tradA/tt2;tradB-=short*tradB/tt2;tIncome+=short*effW;}
+        }else{
+          const tt=tradA+tradB||1,extra=convTax/(1-effW);
+          tradA-=extra*tradA/tt;tradB-=extra*tradB/tt;tIncome+=extra*effW;
+        }
+      }
+      if(iraOut>0){const tt=tradA+tradB||1;tradA-=iraOut*tradA/tt;tradB-=iraOut*tradB/tt;}
+      // spending: the conversion's tax was paid above; base-year tax flows through here (no double charge)
+      const spendTax=base.tot+irmaa;
+      let net=(need+spendTax)-(ssNow+ordNow+incomeRMD);
+      if(net<=0){
+        if(S.reinvest){const surplus=-net;txbl+=surplus;basis+=surplus;}
+      }else{
+        let rem=net;
+        const fromTx=Math.min(txbl,rem);
+        if(fromTx>0){const gf=txbl>0?Math.max(0,(txbl-basis)/txbl):0;tIncome+=fromTx*gf*cgR;basis-=fromTx*(1-gf);txbl-=fromTx;rem-=fromTx;}
+        if(rem>0){const g=rem/(1-effW),tt=tradA+tradB,av=Math.min(tt,g);if(tt>0){tradA-=av*tradA/tt;tradB-=av*tradB/tt;tIncome+=av*effW;}rem-=av*(1-effW);}
+        if(rem>0){const fr=Math.min(roth,rem);roth-=fr;rem-=fr;}
+        if(rem>0.5&&dep===null)dep=ageA;
+      }
+      tradA=Math.max(0,tradA);tradB=Math.max(0,tradB);txbl=Math.max(0,txbl);basis=Math.max(0,Math.min(basis,txbl));
+      const tradTot=tradA+tradB;
+      const depleted=(tradTot+roth+txbl)<=1;if(depleted&&dep===null)dep=ageA;
+      const txblNet=txbl-Math.max(0,txbl-basis)*Math.max(0.15,cgR);
+      rows.push({ageA:ageA,ageB:S.married?ageB:null,fil:fil,single:fil==="single"&&S.married,rmd:rmd,qcd:qcd,conv:conv,convTax:convTax,
+        torpedo:torpedo,effMarg:conv>0?convTax/conv:0,ssTaxed:ssTaxed,ssNow:ssNow,need:need,ti:full.ti,fed:full.fed,stt:full.stt,
+        cg:full.cg,niit:niit,drag:drag,incomeTax:incomeTax,irmaa:irmaa,yearTax:yrTax,bracket:fedTopRate(fil,full.ti),
+        trad:tradTot,roth:Math.max(0,roth),cash:txbl,cashNet:txblNet,
+        total:tradTot+Math.max(0,roth)+txbl,depleted:depleted});
+      tradA*=(1+gr);tradB*=(1+gr);roth=Math.max(0,roth)*(1+gr);
+    }
+    const last=rows[rows.length-1];
+    return {rows:rows,tConv:tConv,tIncome:tIncome,tIrmaa:tIrmaa,tSS:tSS,tDrag:tDrag,tNiit:tNiit,tQcd:tQcd,
+      lifeTax:tIncome+tNiit+tIrmaa,dep:dep,survAge:survAge,tradEnd:last.trad,
+      legChildren:last.roth+last.trad*(1-S.heir)+last.cashNet,
+      legSurvivor:last.roth+last.trad*(1-S.surv)+last.cashNet};
+  }
+  function legacyPath(res,rate){return res.rows.map(r=>r.roth+r.trad*(1-rate)+r.cashNet);}
+  // Estate-tax + IRD/691(c) legacy (Keebler). Values the final estate after estate tax AND income tax,
+  // capturing that the 691(c) deduction offsets only FEDERAL estate tax, not state estate tax.
+  function estateLegacy(res,doConvert){
+    const last=res.rows[res.length-1]||res.rows[res.rows.length-1];
+    const roth=last.roth, trad=last.trad, taxable=last.cashNet, other=S.otherEstate;
+    const heir=S.heir, fE=S.fedEstRate/100, sE=S.stEstRate/100;
+    // gross estate
+    const grossEstate=roth+trad+taxable+other;
+    // state estate tax (no 691c relief) and federal estate tax (above exemptions)
+    const stEstTax=Math.max(0,grossEstate-S.stExempt)*sE;
+    const fedEstTax=Math.max(0,grossEstate-stEstTax-S.fedExempt)*fE;
+    // income tax (IRD) only on the traditional balance; 691(c) deducts the FEDERAL estate tax attributable to the IRA
+    const iraFracOfEstate = grossEstate>0 ? trad/grossEstate : 0;
+    const fedEstTaxOnIRA = fedEstTax*iraFracOfEstate;
+    const iraSubjToInc = Math.max(0, trad - fedEstTaxOnIRA); // 691(c): deduct fed estate tax on IRD
+    const incTaxOnIRA = iraSubjToInc*heir; // heir pays income tax on inherited traditional
+    const net = grossEstate - stEstTax - fedEstTax - incTaxOnIRA;
+    return {grossEstate,stEstTax,fedEstTax,incTaxOnIRA,net};
+  }
+  // breakeven: first age where convert legacy >= do-nothing legacy, year by year
+  function breakevenAge(conv,noth,rate){
+    const c=legacyPath(conv,rate),n=legacyPath(noth,rate);
+    for(let i=0;i<c.length;i++){if(c[i]>=n[i])return conv.rows[i].ageA;}
+    return null;
+  }
+
+  function validate(){const e=[];
+    if(S.endAge<=S.ageA)e.push("Projection end age must exceed Spouse A\u2019s age \u2014 clamped to "+(S.ageA+1)+".");
+    if(S.ageA<40||S.ageA>100)e.push("Spouse A age of "+S.ageA+" looks off.");
+    if(S.married&&(S.ageB<40||S.ageB>100))e.push("Spouse B age of "+S.ageB+" looks off.");
+    if(S.ssA>0&&(S.ssAgeA<62||S.ssAgeA>70))e.push("Spouse A\u2019s SS claiming age must be 62\u201370.");
+    if(S.married&&S.ssB>0&&(S.ssAgeB<62||S.ssAgeB>70))e.push("Spouse B\u2019s SS claiming age must be 62\u201370.");
+    if(S.stopAge<=S.ageA)e.push("Stop-converting age is not after the current age \u2014 the convert plan converts nothing.");
+    if(S.married&&S.deathAgeA>0&&(S.deathAgeA<S.ageA||S.deathAgeA>S.endAge))e.push("Survivor-transition age falls outside the projection window.");
+    if(S.growth<-5||S.growth>15)e.push("Growth of "+S.growth+"%/yr is outside a plausible planning range (\u22125 to 15).");
+    if(S.vol<0||S.vol>40)e.push("Volatility should be between 0 and 40%.");
+    if(S.spend<=0)e.push("Living expenses are zero \u2014 the spending plan is empty.");
+    if([10,12,22,24,32,35,37].indexOf(S.fillBkt)<0)e.push("Fill-to bracket must be one of 10, 12, 22, 24, 32, 35, 37 \u2014 using 22.");
+    if(S.qcd>QCD_LIMIT*(S.married?2:1))e.push("QCD capped at the 2026 limit of $111,000 per person 70\u00bd+.");
+    if(S.qcd>0&&S.qcdStart>0&&S.qcdStart<71)e.push("QCD eligibility begins at 70\u00bd \u2014 amounts before age 71 are not applied.");
+    return e;}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296;};}
+  function monteCarlo(){
+    const N=400,yrs=S.endAge-S.ageA+1,rnd=mulberry32(0x5F3B21),vol=S.vol/100;
+    const legC=[],legN=[];let okC=0,okN=0,wins=0;
+    for(let s=0;s<N;s++){
+      const rets=[];
+      for(let y=0;y<yrs;y+=2){const u1=Math.max(1e-9,rnd()),u2=rnd(),m=Math.sqrt(-2*Math.log(u1));
+        rets.push(Math.max(-0.95,S.g+vol*m*Math.cos(2*Math.PI*u2)));
+        if(y+1<yrs)rets.push(Math.max(-0.95,S.g+vol*m*Math.sin(2*Math.PI*u2)));}
+      const c=run(true,rets),n=run(false,rets);   // same market path for both plans
+      if(c.dep===null)okC++;if(n.dep===null)okN++;
+      legC.push(c.legChildren);legN.push(n.legChildren);
+      if(c.legChildren>=n.legChildren)wins++;
+    }
+    const pct=function(arr,p){const a2=arr.slice().sort(function(x,y){return x-y;});return a2[Math.min(a2.length-1,Math.floor(p*a2.length))];};
+    return {sC:100*okC/N,sN:100*okN/N,winPct:100*wins/N,
+      medC:pct(legC,0.5),loC:pct(legC,0.1),hiC:pct(legC,0.9),
+      medN:pct(legN,0.5),loN:pct(legN,0.1),hiN:pct(legN,0.9)};
+  }
+  function deflateRes(res){
+    const F=["rmd","qcd","conv","convTax","torpedo","ssTaxed","ssNow","need","ti","fed","stt","cg","niit","incomeTax","irmaa","yearTax","trad","roth","cash","cashNet","total","drag"];
+    const rows=res.rows.map(function(r,i){const d=Math.pow(1+S.inf,i),o=Object.assign({},r);F.forEach(function(f){o[f]=r[f]/d;});return o;});
+    const sum=function(f){return rows.reduce(function(a2,r){return a2+r[f];},0);};
+    const last=rows[rows.length-1];
+    return Object.assign({},res,{rows:rows,tConv:sum("conv"),tIncome:sum("incomeTax"),tIrmaa:sum("irmaa"),tNiit:sum("niit"),tSS:sum("ssTaxed"),tDrag:sum("drag"),tQcd:sum("qcd"),
+      lifeTax:sum("incomeTax")+sum("niit")+sum("irmaa"),
+      legChildren:last.roth+last.trad*(1-S.heir)+last.cashNet,
+      legSurvivor:last.roth+last.trad*(1-S.surv)+last.cashNet});
+  }
+  // ===ENGINE-END===
+
+  (function fill(){const sel=$("state");Object.keys(ST).sort((a,b)=>ST[a].n.localeCompare(ST[b].n))
+    .forEach(k=>{const o=document.createElement("option");const s=ST[k];
+      const tag=s.t==="none"?" (no tax)":s.t==="exempt"?" (retire-exempt)":"";
+      o.value=k;o.textContent=s.n+tag;sel.appendChild(o);});sel.value="AL";})();
+
+  // money inputs
+  function parseMoney(el){return parseFloat($(el).value.replace(/[^0-9.]/g,""))||0;}
+  document.querySelectorAll("input.money").forEach(el=>{el.addEventListener("input",()=>{
+    const atEnd=el.selectionStart===el.value.length;let v=el.value.replace(/[^0-9]/g,"");
+    el.value=v?(+v).toLocaleString():"";if(atEnd)el.setSelectionRange(el.value.length,el.value.length);update();});});
+
+  // accordions
+  document.querySelectorAll("[data-acc]").forEach(a=>a.querySelector(".acc-h").addEventListener("click",()=>a.classList.toggle("collapsed")));
+
+  const S={};
+  function read(){
+    S.married=$("filing").querySelector("[aria-pressed=true]").dataset.f==="mfj";
+    S.mode=$("mode").querySelector("[aria-pressed=true]").dataset.m;
+    S.firstGone=$("firstGone").querySelector("[aria-pressed=true]").dataset.g;
+    S.paySrc=$("paySrc").querySelector("[aria-pressed=true]").dataset.p;
+    S.reinvest=$("reinvest").querySelector("[aria-pressed=true]").dataset.r==="yes";
+    S.regime=$("regime").querySelector("[aria-pressed=true]").dataset.x;
+    S.estateOn=$("estateOn").querySelector("[aria-pressed=true]").dataset.e==="yes";
+    S.mc=$("mcOn").querySelector("[aria-pressed=true]").dataset.mc==="on";
+    S.disp=$("disp").querySelector("[aria-pressed=true]").dataset.d;
+    S.state=$("state").value;
+    ["endAge","rmdAge","fillBkt","stopAge","growth","infl","heirRate","survRate","ageA","ssAgeA","ageB","ssAgeB","deathAgeA","basisPct","regimePct","fedEstRate","stEstRate","vol","qcdStart"].forEach(k=>S[k]=parseFloat($(k).value)||0);
+    ["roth","cash","ord","spend","fixedAmt","ssA","tradA","ssB","tradB","fedExempt","stExempt","otherEstate","qcdAmt"].forEach(k=>S[k]=parseMoney(k));
+    S.qcd=S.qcdAmt||0;
+    S.g=S.growth/100;S.inf=S.infl/100;S.heir=S.heirRate/100;S.surv=S.survRate/100;
+    if(!S.married){S.ssB=0;S.tradB=0;S.deathAgeA=0;}
+    document.getElementById("inputPanel").classList.toggle("spouseB-hidden",!S.married);
+  }
+  function lineChart(svgId,series,opts){
+    const svg=$(svgId);const W=720,H=opts.h||300,pad={l:60,r:14,t:14,b:28};
+    const xs=series[0].data.length;const allMax=Math.max(...series.flatMap(s=>s.data),1);
+    const x=i=>pad.l+(i/Math.max(1,xs-1))*(W-pad.l-pad.r);
+    const y=v=>H-pad.b-(v/allMax)*(H-pad.t-pad.b);
+    let g="";
+    for(let k=0;k<=4;k++){const gy=pad.t+(k/4)*(H-pad.t-pad.b),val=allMax*(1-k/4);
+      g+='<line x1="'+pad.l+'" y1="'+gy+'" x2="'+(W-pad.r)+'" y2="'+gy+'" stroke="#ece6d8"/>';
+      g+='<text x="'+(pad.l-8)+'" y="'+(gy+4)+'" text-anchor="end" font-size="10" fill="#9aa097" font-family="ui-monospace,monospace">'+fmtK(val)+'</text>';}
+    const ages=opts.ages;[0,Math.floor(xs/2),xs-1].forEach(i=>{
+      g+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" fill="#9aa097" font-family="ui-monospace,monospace">age '+ages[i]+'</text>';});
+    if(opts.survIdx!=null&&opts.survIdx>=0){g+='<line x1="'+x(opts.survIdx)+'" y1="'+pad.t+'" x2="'+x(opts.survIdx)+'" y2="'+(H-pad.b)+'" stroke="#b8841f" stroke-dasharray="2 3" stroke-width="1.2"/>';}
+    series.forEach(s=>{if(s.fill){let d="M "+x(0)+" "+y(s.data[0]);s.data.forEach((v,i)=>d+=" L "+x(i)+" "+y(v));
+      d+=" L "+x(xs-1)+" "+(H-pad.b)+" L "+x(0)+" "+(H-pad.b)+" Z";g+='<path d="'+d+'" fill="'+s.color+'" opacity="0.15"/>';}
+      let d="M "+x(0)+" "+y(s.data[0]);s.data.forEach((v,i)=>d+=" L "+x(i)+" "+y(v));
+      g+='<path d="'+d+'" fill="none" stroke="'+s.color+'" stroke-width="'+(s.w||2.4)+'" stroke-linejoin="round"/>';});
+    if(opts.crossIdx!=null&&opts.crossIdx>=0){g+='<line x1="'+x(opts.crossIdx)+'" y1="'+pad.t+'" x2="'+x(opts.crossIdx)+'" y2="'+(H-pad.b)+'" stroke="#2f6b4f" stroke-dasharray="4 3" stroke-width="1.4"/>';
+      g+='<text x="'+x(opts.crossIdx)+'" y="'+(pad.t+11)+'" text-anchor="middle" font-size="10" fill="#2f6b4f" font-family="ui-monospace,monospace">ahead @ '+ages[opts.crossIdx]+'</text>';}
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);svg.innerHTML=g;
+  }
+  function barChart(svgId,a,b,ages){
+    const svg=$(svgId);const W=720,H=240,pad={l:60,r:14,t:14,b:28};
+    const n=a.length,mx=Math.max(...a,...b,1);
+    const bw=(W-pad.l-pad.r)/n;
+    const y=v=>H-pad.b-(v/mx)*(H-pad.t-pad.b);
+    let g="";
+    for(let k=0;k<=4;k++){const gy=pad.t+(k/4)*(H-pad.t-pad.b),val=mx*(1-k/4);
+      g+='<line x1="'+pad.l+'" y1="'+gy+'" x2="'+(W-pad.r)+'" y2="'+gy+'" stroke="#ece6d8"/>';
+      g+='<text x="'+(pad.l-8)+'" y="'+(gy+4)+'" text-anchor="end" font-size="10" fill="#9aa097" font-family="ui-monospace,monospace">'+fmtK(val)+'</text>';}
+    for(let i=0;i<n;i++){const x0=pad.l+i*bw;
+      g+='<rect x="'+(x0+bw*0.12)+'" y="'+y(b[i])+'" width="'+(bw*0.38)+'" height="'+(H-pad.b-y(b[i]))+'" fill="#b5462f" opacity="0.85"/>';
+      g+='<rect x="'+(x0+bw*0.5)+'" y="'+y(a[i])+'" width="'+(bw*0.38)+'" height="'+(H-pad.b-y(a[i]))+'" fill="#2f6b4f"/>';}
+    [0,Math.floor(n/2),n-1].forEach(i=>{g+='<text x="'+(pad.l+i*bw+bw/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" fill="#9aa097" font-family="ui-monospace,monospace">age '+ages[i]+'</text>';});
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);svg.innerHTML=g;
+  }
+
+  let activeTab="convert";
+  function renderTable(conv,noth){
+    const res=activeTab==="convert"?conv:noth;
+    $("tbl").querySelector("thead").innerHTML='<tr><th>Age</th><th>Filing</th><th>RMD</th><th>SS taxed</th><th>Spend</th><th>Conversion</th><th>Taxable inc</th><th>Fed tax</th><th>State tax</th><th>IRMAA</th><th>Total tax</th><th>Traditional</th><th>Roth</th><th>Taxable</th></tr>';
+    $("tbl").querySelector("tbody").innerHTML=res.rows.map(r=>{
+      const cls=(r.rmd>0?"rmd ":"")+(r.conv>0?"conv ":"")+(r.single?"surv ":"")+(r.depleted?"depleted":"");
+      return '<tr class="'+cls.trim()+'"><td>'+r.ageA+'</td><td>'+(r.fil==="mfj"?"MFJ":"Single")+'</td><td>'+(r.rmd>0?fmt(r.rmd):"\u2014")+(r.qcd>0?'<br><span style="font-size:10px;color:#7a8177">QCD '+fmt(r.qcd)+'</span>':'')+'</td>'+
+        '<td>'+(r.ssTaxed>0?fmt(r.ssTaxed):"\u2014")+'</td><td>'+fmt(r.need)+'</td><td>'+(r.conv>0?fmt(r.conv):"\u2014")+'</td>'+
+        '<td>'+fmt(r.ti)+'</td><td>'+fmt(r.fed)+'</td><td>'+(r.stt>0?fmt(r.stt):"\u2014")+'</td><td>'+(r.irmaa>0?fmt(r.irmaa):"\u2014")+'</td><td>'+fmt(r.yearTax)+'</td>'+
+        '<td>'+fmt(r.trad)+'</td><td>'+fmt(r.roth)+'</td><td>'+fmt(r.cash)+'</td></tr>';
+    }).join("");
+  }
+
+  function update(){
+    read();
+    if(S.endAge<=S.ageA)S.endAge=S.ageA+1;
+    const eff=effRateNow();
+    $("autoRate").innerHTML='Current effective tax rate: <b>'+(eff*100).toFixed(1)+'%</b><br><span style="color:var(--slate)">'+(S.married?"MFJ":"Single")+' &middot; fed marginal + '+ST[S.state].n+' state.'+(S.regime!=="same"?' Future rates '+(S.regime==="up"?"+":"\u2212")+S.regimePct+'% from age '+S.rmdAge+'.':' Full progressive brackets each year.')+'</span>';
+
+    const errs=validate(),vb=$("valBanner");
+    if(errs.length){vb.style.display="";vb.querySelector("span:last-child").innerHTML="<b>Check inputs:</b> "+errs.join(" ");}
+    else vb.style.display="none";
+    const convN=run(true),nothN=run(false);
+    const real=S.disp==="real",dEnd=Math.pow(1+S.inf,convN.rows.length-1);
+    const conv=real?deflateRes(convN):convN,noth=real?deflateRes(nothN):nothN;
+    const ages=conv.rows.map(r=>r.ageA);
+
+    $("scnConv").textContent=fmtK(conv.legChildren);
+    $("scnNo").textContent=fmtK(noth.legChildren);
+    $("survNoth").textContent=fmtK(noth.legSurvivor);
+    $("childNoth").textContent=fmtK(noth.legChildren);
+    const widow=noth.legSurvivor-noth.legChildren;
+    $("widowGap").textContent=widow>500?"Children inherit "+fmt(widow)+" less than a survivor would — the unconverted balance taxed at the higher heir rate.":"Little difference here — traditional balance is small or rates are close.";
+
+    $("taxConv").textContent=fmt(conv.lifeTax);
+    $("taxNo").textContent=fmt(noth.lifeTax);
+    $("taxConvBreak").textContent="Income tax "+fmt(conv.tIncome)+" + NIIT "+fmt(conv.tNiit)+" + IRMAA "+fmt(conv.tIrmaa)+(conv.tQcd>0?" \u00b7 QCDs excluded "+fmt(conv.tQcd):"");
+    $("taxNoBreak").textContent="Income tax "+fmt(noth.tIncome)+" + NIIT "+fmt(noth.tNiit)+" + IRMAA "+fmt(noth.tIrmaa);
+    const saved=noth.lifeTax-conv.lifeTax;
+    $("kTaxSaved").textContent=fmt(saved);$("kTaxSaved").className="v"+(saved>0?" good":(saved<0?" warn":""));
+    $("kIrmaaC").textContent=fmt(conv.tIrmaa);
+    $("kIrmaaN").textContent=fmt(noth.tIrmaa);$("kIrmaaN").className="v"+(noth.tIrmaa>conv.tIrmaa?" warn":"");
+    $("kConv").textContent=fmt(conv.tConv);
+
+    const tb=$("taxBanner").querySelector("span:last-child");
+    if(saved>0)tb.textContent="Converting lowers lifetime tax by "+fmt(saved)+" — paying more early to fill low brackets, avoiding bigger RMD-driven tax and "+fmt(noth.tIrmaa-conv.tIrmaa)+" of IRMAA later.";
+    else if(saved<0)tb.textContent="Converting raises lifetime tax by "+fmt(Math.abs(saved))+" at these inputs, but may still win on after-tax legacy through tax drag — check breakeven below.";
+    else tb.textContent="Lifetime tax is about equal under both plans here.";
+
+    // breakeven + tax drag (McQuarrie)
+    const be=breakevenAge(conv,noth,S.heir);
+    const yearsToBe=be!=null?be-S.ageA:null;
+    $("beAge").textContent=be!=null?be:"Beyond plan";
+    const jointLE=S.married?Math.max(S.endAge,90):S.endAge;
+    if(be!=null){$("beSub").textContent=yearsToBe+" years after today. "+(be<=88?"Within a typical joint life expectancy — a robust conversion.":"Late — the payoff arrives near or beyond life expectancy, so treat the gain as uncertain.");}
+    else $("beSub").textContent="The convert plan does not overtake doing nothing within the projection. Likely a low/again-lower future rate with minimal tax drag — see the warning below.";
+    $("tDrag").textContent=fmt(noth.tDrag-conv.tDrag>0?noth.tDrag-conv.tDrag:noth.tDrag);
+
+    // least-robust-conversion warnings (McQuarrie section)
+    const rb=$("robustBanner"),rbT=rb.querySelector("span:last-child");
+    const warns=[];
+    const fillR=S.fillBkt;
+    if(fillR<=22)warns.push("Converting in the 22% bracket or lower risks the classic trap: if future RMDs would fall into the 12% bracket (where qualified dividends are taxed at 0%), there's no tax drag and the conversion may never break even. Confirm future income stays above the 22% line.");
+    if(S.paySrc==="ira")warns.push("Paying tax from the IRA forgoes the tax-drag advantage of outside cash and, under 59½, triggers a 10% penalty.");
+    if(S.paySrc==="outside"&&S.basisPct<100)warns.push("Outside cash has unrealized gains ("+(100-S.basisPct)+"% of it), so paying the tax realizes capital gains and creates an initial loss that compounding must overcome — pushing breakeven later.");
+    if(be==null||be>95)warns.push("Long breakeven: this resembles McQuarrie's least-robust cases (high conversion rate with a likely lower future rate, or minimal tax drag from step-up assets). Reconsider unless future rates are firmly higher.");
+    if(warns.length){rb.className="banner bad";rb.querySelector(".ic").innerHTML="&#9888;";rbT.innerHTML="<b>Robustness check:</b> "+warns.join(" ");}
+    else{rb.className="banner ok";rb.querySelector(".ic").textContent="\u2713";rbT.innerHTML="<b>Robust conversion.</b> Pays tax from outside cash with full basis, fills a bracket unlikely to invert later, and breaks even within life expectancy — the profile McQuarrie identifies as a strong bet.";}
+
+    const lb=$("lastBanner");
+    if(conv.dep===null){lb.className="banner ok";lb.querySelector(".ic").textContent="\u2713";
+      lb.querySelector("span:last-child").textContent="The money lasts. At "+(eff*100).toFixed(1)+"% effective tax and "+S.infl+"% inflation, the convert plan funds spending through age "+S.endAge+" with "+fmtK(conv.legChildren)+" left for heirs.";}
+    else{lb.className="banner bad";lb.querySelector(".ic").textContent="!";
+      lb.querySelector("span:last-child").textContent="Shortfall: the convert plan runs the portfolio dry at age "+conv.dep+". Lower spending, delay or shrink conversions, or revisit growth.";}
+
+    const diff=conv.legChildren-noth.legChildren;const w=$("verdict");
+    if(diff>=0){w.style.borderLeftColor="var(--moss)";w.querySelector(".t").textContent="Converting wins";w.querySelector(".t").style.color="var(--moss)";
+      w.querySelector(".b").textContent="+"+fmt(diff)+" more to heirs, after tax";
+      w.querySelector("p.d").textContent="Over "+ages.length+" years the plan converts "+fmt(conv.tConv)+", pays "+fmt(conv.lifeTax)+" lifetime tax (vs "+fmt(noth.lifeTax)+" doing nothing), and leaves "+fmt(conv.tradEnd)+" in traditional vs "+fmt(noth.tradEnd)+" for heirs to drain.";}
+    else{w.style.borderLeftColor="var(--rust)";w.querySelector(".t").textContent="Doing nothing wins here";w.querySelector(".t").style.color="var(--rust)";
+      w.querySelector(".b").textContent=fmt(Math.abs(diff))+" better to not convert";
+      w.querySelector("p.d").textContent="Short horizon, low growth, or the client's rate isn't below the heirs'. Try extending the plan, raising growth, or converting earlier in the gap years.";}
+
+    const survIdx=conv.survAge!=null?ages.indexOf(conv.survAge):-1;
+    lineChart("balChart",[
+      {data:conv.rows.map(r=>r.trad),color:"#9a6a1f",fill:true},
+      {data:conv.rows.map(r=>r.roth),color:"#2f6b4f",fill:true},
+      {data:conv.rows.map(r=>r.cash),color:"#c8c0ad",w:2}],{ages,h:300,survIdx});
+    $("balNote").textContent=conv.survAge?("Gold line = survivor transition at age "+conv.survAge+" (switch to Single brackets)."):"";
+
+    const lp=legacyPath(conv,S.heir),np=legacyPath(noth,S.heir);let cross=-1;
+    for(let i=0;i<lp.length;i++){if(lp[i]>np[i]){cross=i;break;}}
+    lineChart("legChart",[{data:lp,color:"#2f6b4f",w:2.6},{data:np,color:"#b5462f",w:2.6}],{ages,h:260,crossIdx:cross,survIdx});
+
+    barChart("taxChart",conv.rows.map(r=>r.yearTax),noth.rows.map(r=>r.yearTax),ages);
+    renderTable(conv,noth);
+
+    // Social Security tax torpedo, surfaced from the exact marginal math
+    let torpRow=null;conv.rows.forEach(function(r){if(r.conv>0&&r.torpedo>1&&(torpRow===null||r.effMarg>torpRow.effMarg))torpRow=r;});
+    const tp=$("torpBanner");
+    if(torpRow){tp.style.display="";tp.className="banner "+(torpRow.effMarg>torpRow.bracket+0.05?"bad":"info");
+      tp.querySelector(".ic").innerHTML="&#9678;";
+      tp.querySelector("span:last-child").innerHTML="<b>Social Security tax torpedo:</b> at age "+torpRow.ageA+" the conversion drags "+fmt(torpRow.torpedo)+" of benefits into taxable income \u2014 an effective <b>"+(torpRow.effMarg*100).toFixed(1)+"%</b> on each converted dollar vs the "+(torpRow.bracket*100).toFixed(0)+"% nominal bracket. Converting before Social Security begins (or converting less) defuses this.";}
+    else if(conv.rows.some(function(r){return r.conv>0;})&&!conv.rows.some(function(r){return r.conv>0&&r.ssNow>0;})){
+      tp.style.display="";tp.className="banner ok";tp.querySelector(".ic").textContent="\u2713";
+      tp.querySelector("span:last-child").innerHTML="<b>Torpedo avoided:</b> all conversions happen before Social Security starts, so no benefit dollars are dragged into taxation by converting.";}
+    else tp.style.display="none";
+
+    // QCD plan impact: rerun the identical convert plan without QCDs and show the tax delta
+    const qb=$("qcdBanner");
+    if(S.qcd>0&&conv.tQcd>0){
+      const holdQ=S.qcd;S.qcd=0;const conv0N=run(true);S.qcd=holdQ;
+      const conv0=real?deflateRes(conv0N):conv0N;
+      const savedQ=conv0.lifeTax-conv.lifeTax;
+      qb.style.display="";
+      if(savedQ>0.5){qb.className="banner ok";
+        qb.querySelector("span:last-child").innerHTML="<b>QCD plan:</b> "+fmt(conv.tQcd)+" goes to charity from age "+Math.max(71,S.qcdStart||71)+", trimming lifetime tax + IRMAA by <b>"+fmt(savedQ)+"</b> vs the same plan without QCDs. QCDs satisfy the RMD first and never enter MAGI \u2014 easing IRMAA tiers and the Social Security torpedo while giving pre-tax dollars at full value.";}
+      else if(savedQ<-0.5){qb.className="banner info";
+        qb.querySelector("span:last-child").innerHTML="<b>QCD plan:</b> "+fmt(conv.tQcd)+" goes to charity, but at these inputs it <b>raises</b> lifetime tax by "+fmt(-savedQ)+" \u2014 the gifted RMD cash was needed for spending, forcing taxed withdrawals from other accounts. QCDs work best when RMD income is surplus (spending already covered by SS, pension, or other income).";}
+      else{qb.className="banner info";
+        qb.querySelector("span:last-child").innerHTML="<b>QCD plan:</b> "+fmt(conv.tQcd)+" goes to charity from age "+Math.max(71,S.qcdStart||71)+" with roughly neutral lifetime tax \u2014 the exclusion offsets the spending shortfall it creates. QCDs never enter MAGI, so IRMAA tiers and the SS torpedo still benefit.";}}
+    else qb.style.display="none";
+
+    // Monte Carlo
+    ["mcLabel","mcCards","mcBanner"].forEach(function(id){$(id).style.display=S.mc?"":"none";});
+    if(S.mc){const mc=monteCarlo(),D=real?dEnd:1;
+      $("mcC").textContent=mc.sC.toFixed(0)+"% success";
+      $("mcN").textContent=mc.sN.toFixed(0)+"% success";
+      $("mcCSub").textContent="After-tax legacy: median "+fmtK(mc.medC/D)+" (10th\u201390th pct "+fmtK(mc.loC/D)+" \u2013 "+fmtK(mc.hiC/D)+")";
+      $("mcNSub").textContent="After-tax legacy: median "+fmtK(mc.medN/D)+" (10th\u201390th pct "+fmtK(mc.loN/D)+" \u2013 "+fmtK(mc.hiN/D)+")";
+      $("mcBanner").querySelector("span:last-child").innerHTML="Across 400 simulated market paths ("+S.growth+"% mean return, "+S.vol+"% volatility, identical paths for both plans), converting produces the larger after-tax legacy in <b>"+mc.winPct.toFixed(0)+"%</b> of paths. \u201cSuccess\u201d = spending funded through age "+S.endAge+".";}
+
+    // estate-tax + IRD legacy (Keebler)
+    const showEstate=S.estateOn;
+    ["estateLabel","estateCards","estateBanner"].forEach(id=>$(id).style.display=showEstate?"":"none");
+    if(showEstate){
+      const ec=estateLegacy(convN,true), en=estateLegacy(nothN,false);
+      if(real){["grossEstate","stEstTax","fedEstTax","incTaxOnIRA","net"].forEach(function(k){ec[k]/=dEnd;en[k]/=dEnd;});}
+      $("estConv").textContent=fmtK(ec.net);
+      $("estNo").textContent=fmtK(en.net);
+      $("estConvSub").textContent="Gross estate "+fmt(ec.grossEstate)+" \u2212 estate tax "+fmt(ec.stEstTax+ec.fedEstTax)+" \u2212 income tax on IRD "+fmt(ec.incTaxOnIRA);
+      $("estNoSub").textContent="Gross estate "+fmt(en.grossEstate)+" \u2212 estate tax "+fmt(en.stEstTax+en.fedEstTax)+" \u2212 income tax on IRD "+fmt(en.incTaxOnIRA);
+      const eb=$("estateBanner").querySelector("span:last-child");
+      const eGain=ec.net-en.net;
+      if(S.stExempt<en.grossEstate && S.stEstRate>0)
+        eb.innerHTML="<b>Estate advantage of converting: "+fmt(eGain)+".</b> Because the 691(c) deduction offsets only <i>federal</i> estate tax \u2014 not your state's estate tax \u2014 leaving a traditional IRA in a state-taxable estate is taxed more heavily than converting first. Paying income tax before estate tax avoids that double layer.";
+      else if(en.fedEstTax>0)
+        eb.innerHTML="<b>Estate advantage of converting: "+fmt(eGain)+".</b> Converting removes the income-tax liability (IRD) that heirs would owe on the traditional balance on top of estate tax; the 691(c) deduction only partly offsets it.";
+      else
+        eb.innerHTML="At these inputs the gross estate is below the exemption, so estate tax is "+fmt(ec.fedEstTax+ec.stEstTax)+". The conversion's estate benefit here comes mainly from removing the heirs' income tax on the traditional balance.";
+    }
+  }
+
+  document.querySelectorAll("input.num:not(.money)").forEach(i=>i.addEventListener("input",update));
+  $("state").addEventListener("change",update);
+  function bindSeg(id){$(id).querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    $(id).querySelectorAll("button").forEach(x=>x.removeAttribute("aria-pressed"));b.setAttribute("aria-pressed","true");update();}));}
+  bindSeg("filing");bindSeg("mode");bindSeg("firstGone");bindSeg("paySrc");bindSeg("reinvest");bindSeg("regime");bindSeg("estateOn");bindSeg("mcOn");bindSeg("disp");
+  $("tabs").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    $("tabs").querySelectorAll("button").forEach(x=>x.removeAttribute("aria-pressed"));b.setAttribute("aria-pressed","true");activeTab=b.dataset.t;update();}));
+
+  const DEFAULTS={endAge:95,rmdAge:73,fillBkt:22,stopAge:73,growth:6,infl:2.5,heirRate:27,survRate:22,
+    ageA:63,ssAgeA:70,ageB:61,ssAgeB:67,deathAgeA:84,basisPct:100,regimePct:30,vol:12,qcdStart:71,
+    fedEstRate:40,stEstRate:0,
+    roth:"100,000",cash:"250,000",ord:"20,000",spend:"85,000",fixedAmt:"60,000",
+    ssA:"30,000",tradA:"700,000",ssB:"18,000",tradB:"200,000",
+    fedExempt:"15,000,000",stExempt:"0",otherEstate:"0",qcdAmt:"0"};
+  $("resetBtn").addEventListener("click",()=>{Object.keys(DEFAULTS).forEach(k=>{if($(k))$(k).value=DEFAULTS[k];});
+    $("state").value="AL";update();});
+
+  update();
+})();
+</script>
+</body>
+</html>
