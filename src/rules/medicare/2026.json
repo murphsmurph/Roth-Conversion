@@ -1,36 +1,34 @@
 {
-  "meta": {
-    "domain": "medicare",
-    "premiumYear": 2026,
-    "magiSourceTaxYear": 2024,
-    "rulesVersion": "medicare-2026.0.0",
-    "lawMode": "current_law",
-    "verifiedDate": "2026-08-19",
-    "note": "IRMAA is a 2-year-lag Medicare surcharge: 2026 premiums are set by 2024 MAGI_IRMAA. Applies PER enrollee, not per household. Tier boundary is inclusive of the standard tier — surcharge begins ABOVE the listed amount (MAGI <= top => that tier)."
+  "ruleSetId": "medicare-2026",
+  "premiumYear": 2026,
+  "magiSourceTaxYear": 2024,
+  "lookbackYears": 2,
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "CMS 2026 Medicare Parts A & B Premiums and Deductibles",
+  "sourceUrl": "https://www.cms.gov/newsroom/fact-sheets",
+  "status": "RE_VERIFY_AGAINST_CMS_FACT_SHEET_BEFORE_SHIPPING",
+  "magiDefinition": "adjusted_gross_income + tax_exempt_interest",
+  "standardPartBPremiumMonthly": 202.90,
+  "appliesPerEnrollee": true,
+  "tiers": {
+    "single": [
+      { "ruleId": "IRMAA_TIER_0", "magiMax": 109000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0.00 },
+      { "ruleId": "IRMAA_TIER_1", "magiMax": 137000, "partBMonthly": 284.10, "partDIrmaaMonthly": 14.50 },
+      { "ruleId": "IRMAA_TIER_2", "magiMax": 171000, "partBMonthly": 405.80, "partDIrmaaMonthly": 37.50 },
+      { "ruleId": "IRMAA_TIER_3", "magiMax": 205000, "partBMonthly": 527.50, "partDIrmaaMonthly": 60.40 },
+      { "ruleId": "IRMAA_TIER_4", "magiMax": 500000, "partBMonthly": 649.20, "partDIrmaaMonthly": 83.30 },
+      { "ruleId": "IRMAA_TIER_5", "magiMax": null,   "partBMonthly": 689.90, "partDIrmaaMonthly": 91.00 }
+    ],
+    "mfj": [
+      { "ruleId": "IRMAA_TIER_0", "magiMax": 218000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0.00 },
+      { "ruleId": "IRMAA_TIER_1", "magiMax": 274000, "partBMonthly": 284.10, "partDIrmaaMonthly": 14.50 },
+      { "ruleId": "IRMAA_TIER_2", "magiMax": 342000, "partBMonthly": 405.80, "partDIrmaaMonthly": 37.50 },
+      { "ruleId": "IRMAA_TIER_3", "magiMax": 410000, "partBMonthly": 527.50, "partDIrmaaMonthly": 60.40 },
+      { "ruleId": "IRMAA_TIER_4", "magiMax": 750000, "partBMonthly": 649.20, "partDIrmaaMonthly": 83.30 },
+      { "ruleId": "IRMAA_TIER_5", "magiMax": null,   "partBMonthly": 689.90, "partDIrmaaMonthly": 91.00 }
+    ]
   },
-  "irmaa": {
-    "ruleId": "IRMAA_2026_TIERS",
-    "sourceUrl": "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-and-deductibles",
-    "verifiedDate": "2026-08-19",
-    "standardPartBMonthly": 202.90,
-    "discontinuityRuleIds": ["IRMAA_TIER_1", "IRMAA_TIER_2", "IRMAA_TIER_3", "IRMAA_TIER_4", "IRMAA_TIER_5"],
-    "tiers": {
-      "single": [
-        { "magiUpTo": 109000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0, "tier": 0 },
-        { "magiUpTo": 137000, "partBMonthly": 284.10, "partDIrmaaMonthly": 14.50, "tier": 1, "discontinuityId": "IRMAA_TIER_1" },
-        { "magiUpTo": 171000, "partBMonthly": 405.80, "partDIrmaaMonthly": 37.50, "tier": 2, "discontinuityId": "IRMAA_TIER_2" },
-        { "magiUpTo": 205000, "partBMonthly": 527.50, "partDIrmaaMonthly": 60.40, "tier": 3, "discontinuityId": "IRMAA_TIER_3" },
-        { "magiUpTo": 500000, "partBMonthly": 649.20, "partDIrmaaMonthly": 83.30, "tier": 4, "discontinuityId": "IRMAA_TIER_4" },
-        { "magiUpTo": null, "partBMonthly": 689.90, "partDIrmaaMonthly": 91.00, "tier": 5, "discontinuityId": "IRMAA_TIER_5" }
-      ],
-      "mfj": [
-        { "magiUpTo": 218000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0, "tier": 0 },
-        { "magiUpTo": 274000, "partBMonthly": 284.10, "partDIrmaaMonthly": 14.50, "tier": 1, "discontinuityId": "IRMAA_TIER_1" },
-        { "magiUpTo": 342000, "partBMonthly": 405.80, "partDIrmaaMonthly": 37.50, "tier": 2, "discontinuityId": "IRMAA_TIER_2" },
-        { "magiUpTo": 410000, "partBMonthly": 527.50, "partDIrmaaMonthly": 60.40, "tier": 3, "discontinuityId": "IRMAA_TIER_3" },
-        { "magiUpTo": 750000, "partBMonthly": 649.20, "partDIrmaaMonthly": 83.30, "tier": 4, "discontinuityId": "IRMAA_TIER_4" },
-        { "magiUpTo": null, "partBMonthly": 689.90, "partDIrmaaMonthly": 91.00, "tier": 5, "discontinuityId": "IRMAA_TIER_5" }
-      ]
-    }
-  }
+  "boundaryConvention": "magiMax is INCLUSIVE. Income at exactly magiMax stays in the lower tier.",
+  "lifeChangingEventRelief": "SSA-44 may reduce a surcharge after a qualifying life-changing event. A Roth conversion is NOT a qualifying event."
 }

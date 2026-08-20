@@ -1,159 +1,103 @@
 {
-  "meta": {
-    "domain": "federal",
-    "taxYear": 2026,
-    "rulesVersion": "federal-2026.0.0",
-    "lawMode": "current_law",
-    "verifiedDate": "2026-08-19",
-    "primarySources": [
-      "Rev. Proc. 2025-32 (2026 inflation adjustments); IRS IR-2025-103",
-      "Internal Revenue Code (IRC) 1, 63, 86, 151, 1411",
-      "Form 1040 instructions — Social Security Benefits Worksheet & Qualified Dividends and Capital Gain Tax Worksheet"
-    ],
-    "note": "Values transcribed from authoritative sources. The independent oracle (tools/oracle.py) carries the same constants; the engine must never import the oracle — the fixtures are the cross-check."
-  },
-
-  "standardDeduction": {
-    "ruleId": "STD_DEDUCTION_2026",
-    "sourceUrl": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
-    "verifiedDate": "2026-08-19",
-    "values": { "single": 16100, "mfj": 32200, "hoh": 24150, "mfs": 16100 }
-  },
-
-  "additionalStandardDeduction65": {
-    "ruleId": "ADDL_STD_DEDUCTION_AGE_65",
-    "note": "IRC 63(f) age-65 add-on, PER qualifying person. Distinct from the OBBBA senior bonus deduction.",
-    "sourceUrl": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
-    "verifiedDate": "2026-08-19",
-    "values": { "single": 2050, "hoh": 2050, "mfj": 1650, "mfs": 1650 }
-  },
-
-  "ordinaryBrackets": {
-    "ruleId": "ORDINARY_BRACKETS_2026",
-    "note": "Each entry is the inclusive top of the band and its marginal rate; final band upTo=null is the top rate.",
-    "sourceUrl": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
-    "verifiedDate": "2026-08-19",
-    "values": {
-      "single": [
-        { "upTo": 12400, "rate": 0.10 }, { "upTo": 50400, "rate": 0.12 },
-        { "upTo": 105700, "rate": 0.22 }, { "upTo": 201775, "rate": 0.24 },
-        { "upTo": 256225, "rate": 0.32 }, { "upTo": 640600, "rate": 0.35 },
-        { "upTo": null, "rate": 0.37 }
-      ],
-      "mfj": [
-        { "upTo": 24800, "rate": 0.10 }, { "upTo": 100800, "rate": 0.12 },
-        { "upTo": 211400, "rate": 0.22 }, { "upTo": 403550, "rate": 0.24 },
-        { "upTo": 512450, "rate": 0.32 }, { "upTo": 768700, "rate": 0.35 },
-        { "upTo": null, "rate": 0.37 }
-      ],
-      "hoh": [
-        { "upTo": 17700, "rate": 0.10 }, { "upTo": 67450, "rate": 0.12 },
-        { "upTo": 105700, "rate": 0.22 }, { "upTo": 201750, "rate": 0.24 },
-        { "upTo": 256200, "rate": 0.32 }, { "upTo": 640600, "rate": 0.35 },
-        { "upTo": null, "rate": 0.37 }
-      ]
-    }
-  },
-
-  "preferentialRateThresholds": {
-    "ruleId": "LTCG_QD_THRESHOLDS_2026",
-    "note": "Taxable-income tops of the 0% and 15% long-term capital gain / qualified dividend bands.",
-    "sourceUrl": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
-    "verifiedDate": "2026-08-19",
-    "rate0Top": { "single": 49450, "mfj": 98900, "hoh": 66200 },
-    "rate15Top": { "single": 545500, "mfj": 613700, "hoh": 579600 }
-  },
-
-  "socialSecurityTaxability": {
-    "ruleId": "IRC_86_SS_TAXABILITY",
-    "note": "IRC 86 base amounts are UNINDEXED (fixed since 1983/1993). base2 threshold = base1 + base2Additional.",
-    "sourceUrl": "https://www.law.cornell.edu/uscode/text/26/86",
-    "verifiedDate": "2026-08-19",
-    "base1": { "single": 25000, "hoh": 25000, "mfj": 32000, "mfs": 0 },
-    "base2Additional": { "single": 9000, "hoh": 9000, "mfj": 12000, "mfs": 0 },
-    "maxTaxablePercent": 0.85
-  },
-
-  "niit": {
-    "ruleId": "IRC_1411_NIIT",
-    "note": "3.8% on the LESSER of net investment income or (MAGI_NIIT - threshold). Thresholds UNINDEXED. A Roth conversion is NOT net investment income.",
-    "sourceUrl": "https://www.irs.gov/instructions/i8960",
-    "verifiedDate": "2026-08-19",
-    "rate": 0.038,
-    "threshold": { "single": 200000, "hoh": 200000, "mfj": 250000, "mfs": 125000 }
-  },
-
-  "seniorBonusDeduction": {
-    "ruleId": "OBBBA_SENIOR_BONUS_DEDUCTION",
-    "note": "OBBBA temporary deduction, tax years 2025-2028 ONLY. $6,000 PER qualifying individual age 65+. Phaseout is 6% PER qualifying individual (so MFJ with both 65+ phases at 12% combined). Computed once on Schedule 1-A line 35 and entered on BOTH 36a and 36b. Taken BELOW the line — reduces taxable income only, NOT AGI or any MAGI.",
-    "sourceUrl": "https://www.irs.gov/pub/irs-pdf/f1040s1a.pdf",
-    "secondarySource": "https://www.irs.gov/newsroom/one-big-beautiful-bill-provisions-individuals-and-workers",
-    "verifiedDate": "2026-08-19",
-    "perPerson": 6000,
-    "phaseoutStart": { "single": 75000, "hoh": 75000, "mfj": 150000, "mfs": 75000 },
-    "phaseoutRatePerPerson": 0.06,
-    "belowTheLine": true,
-    "reducesAgi": false,
-    "applicableYears": { "first": 2025, "last": 2028 },
-    "magiUsed": "senior",
-    "openDecision": {
-      "id": "OPEN-1",
-      "field": "roundingPolicy",
-      "status": "UNRESOLVED",
-      "description": "Schedule 1-A whole-dollar rounding convention for the line-35 per-person phaseout is a form-instruction question. Fixtures currently carry UNROUNDED cents (e.g. SD-03 = 11999.88). Resolve against the Schedule 1-A instructions before Phase 2 ships; record the choice here and regenerate affected fixtures.",
-      "authority": "Schedule 1-A (Form 1040) instructions; statutory phaseout IRC 151(d)(5)"
-    }
-  },
-
-  "rmd": {
-    "applicableAge": {
-      "ruleId": "SECURE20_RMD_APPLICABLE_AGE",
-      "note": "SECURE 2.0 sec. 107. The 1959 statutory drafting glitch was resolved to age 73 by Treasury in the July 2024 final regulations.",
-      "sourceUrl": "https://www.federalregister.gov/documents/2024/07/19/2024-14542/required-minimum-distributions",
-      "secondarySource": "SECURE 2.0 Act sec. 107; T.D. 10001, 89 FR 58886 (July 19, 2024)",
-      "verifiedDate": "2026-08-19",
-      "rules": [
-        { "bornOnOrBefore": 1950, "age": 72, "note": "pre-SECURE 2.0 cohorts; 70.5 for born before 7/1/1949" },
-        { "bornBetween": [1951, 1959], "age": 73 },
-        { "bornOnOrAfter": 1960, "age": 75 }
-      ]
+  "ruleSetId": "federal-2026",
+  "taxYear": 2026,
+  "effectiveDate": "2026-01-01",
+  "expirationDate": "2026-12-31",
+  "lawMode": "current_law",
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "Rev. Proc. 2025-32",
+  "sourceUrl": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
+  "secondaryConfirmation": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+  "rules": {
+    "STD_DEDUCTION": {
+      "values": { "single": 16100, "mfj": 32200, "mfs": 16100, "hoh": 24150 },
+      "authority": "IRC 63(c); Rev. Proc. 2025-32"
     },
-    "uniformLifetimeTable": {
-      "ruleId": "ULT_2022_FINAL_REGS",
-      "note": "Treas. Reg. 1.401(a)(9)-9(c), 2022 final regulations. Distribution period by age at year end.",
-      "sourceUrl": "https://www.federalregister.gov/documents/2022/11/07/2022-24173/updated-life-expectancy-and-distribution-period-tables",
-      "verifiedDate": "2026-08-19",
-      "factors": {
-        "72": 27.4, "73": 26.5, "74": 25.5, "75": 24.6, "76": 23.7, "77": 22.9,
-        "78": 22.0, "79": 21.1, "80": 20.2, "81": 19.4, "82": 18.5, "83": 17.7,
-        "84": 16.8, "85": 16.0, "86": 15.2, "87": 14.4, "88": 13.7, "89": 12.9,
-        "90": 12.2
-      }
+    "ADDITIONAL_STD_DEDUCTION_AGE_65": {
+      "values": { "single": 2050, "hoh": 2050, "mfj": 1650, "mfs": 1650 },
+      "perQualifyingIndividual": true,
+      "authority": "IRC 63(f); Rev. Proc. 2025-32",
+      "note": "Separate from and stacked with the OBBBA senior bonus deduction below."
     },
-    "firstDollarsOutRule": {
-      "ruleId": "RMD_FIRST_DOLLARS_OUT",
-      "note": "The RMD is deemed distributed first and is NOT eligible for Roth conversion (Treas. Reg. 1.408A-4, Q&A-6). Amounts contributed to a Roth anyway are treated as a REGULAR contribution and are an excess contribution (6% IRC 4973 excise) only to the extent they exceed the allowable regular Roth contribution.",
-      "sourceUrl": "https://www.law.cornell.edu/cfr/text/26/1.408A-4",
-      "secondarySource": "IRC 4973",
-      "verifiedDate": "2026-08-19"
+    "ORDINARY_BRACKETS": {
+      "single": [[0,0.10],[12400,0.12],[50400,0.22],[105700,0.24],[201775,0.32],[256225,0.35],[640600,0.37]],
+      "mfj":    [[0,0.10],[24800,0.12],[100800,0.22],[211400,0.24],[403550,0.32],[512450,0.35],[768700,0.37]],
+      "hoh":    [[0,0.10],[17700,0.12],[67450,0.22],[105700,0.24],[201750,0.32],[256200,0.35],[640600,0.37]],
+      "format": "[bracketFloorTaxableIncome, marginalRate]",
+      "authority": "IRC 1(j); Rev. Proc. 2025-32"
+    },
+    "PREFERENTIAL_RATE_THRESHOLDS": {
+      "single": { "zeroRateTop": 49450, "fifteenRateTop": 545500 },
+      "mfj":    { "zeroRateTop": 98900, "fifteenRateTop": 613700 },
+      "hoh":    { "zeroRateTop": 66200, "fifteenRateTop": 579600 },
+      "measuredAgainst": "taxable_income",
+      "authority": "IRC 1(h); Rev. Proc. 2025-32"
+    },
+    "SOCIAL_SECURITY_TAXABILITY": {
+      "ruleId": "IRC_86_SS_TAXABILITY",
+      "base1": { "single": 25000, "hoh": 25000, "mfj": 32000, "mfs": 0 },
+      "base2Additional": { "single": 9000, "hoh": 9000, "mfj": 12000, "mfs": 0 },
+      "maxInclusionRate": 0.85,
+      "indexedForInflation": false,
+      "indexingNote": "UNINDEXED SINCE 1984/1993 BY STATUTE. Never inflate these in projections.",
+      "authority": "IRC 86",
+      "worksheet": "Form 1040 instructions, Social Security Benefits Worksheet"
+    },
+    "SENIOR_BONUS_DEDUCTION": {
+      "ruleId": "OBBBA_SENIOR_DEDUCTION",
+      "amountPerQualifyingIndividual": 6000,
+      "minimumAge": 65,
+      "phaseoutStartMagi": { "single": 75000, "hoh": 75000, "mfj": 150000, "mfs": 75000 },
+      "phaseoutRatePerQualifyingIndividual": 0.06,
+      "availableWithItemizedDeductions": true,
+      "reducesAgi": false,
+      "firstTaxYear": 2025,
+      "lastTaxYear": 2028,
+      "doNotExtrapolate": true,
+      "authority": "IRC 151(d)(5) as added by P.L. 119-21 (OBBBA); allowed via IRC 63(b)/(d), NOT in the IRC 62 above-the-line list",
+      "worksheet": "Schedule 1-A (Form 1040), Part V, lines 33-36b",
+      "sourceUrl": "https://www.irs.gov/pub/irs-pdf/f1040s1a.pdf",
+      "criticalNote": "Schedule 1-A computes ONE phaseout amount on line 35 and enters it on BOTH line 36a and line 36b. With two qualifying spouses the household therefore loses 12 cents of deduction per dollar of MAGI, not 6 cents. Full phaseout: 175000 single, 250000 MFJ both 65+.",
+      "openDecision": "ROUNDING_POLICY - see PHASE-0 spec section 6. Must be resolved with a citation before shipping."
+    },
+    "NIIT": {
+      "ruleId": "IRC_1411_NIIT",
+      "rate": 0.038,
+      "thresholds": { "single": 200000, "hoh": 200000, "mfj": 250000, "mfs": 125000 },
+      "indexedForInflation": false,
+      "base": "lesser_of_net_investment_income_or_magi_excess",
+      "rothConversionIsNetInvestmentIncome": false,
+      "authority": "IRC 1411; Form 8960",
+      "criticalNote": "A Roth conversion is NOT net investment income, but it DOES raise MAGI and can therefore pull existing investment income into the tax."
+    },
+    "CHARITABLE_AGI_FLOOR": {
+      "ruleId": "OBBBA_CHARITABLE_FLOOR",
+      "floorRateOfAgi": 0.005,
+      "firstTaxYear": 2026,
+      "appliesTo": "itemized_charitable_contributions",
+      "authority": "IRS Publication 505 (2026)",
+      "sourceUrl": "https://www.irs.gov/publications/p505",
+      "status": "PRIMARY_SOURCE_CONFIRMED"
+    },
+    "CHARITABLE_NONITEMIZER_DEDUCTION": {
+      "values": { "single": 1000, "mfj": 2000 },
+      "firstTaxYear": 2026,
+      "status": "RE_VERIFY_BEFORE_SHIPPING",
+      "authority": "PENDING - secondary sources only as of 2026-08-19"
+    },
+    "ITEMIZED_DEDUCTION_BENEFIT_CAP": {
+      "maxRate": 0.35,
+      "appliesToBracket": 0.37,
+      "firstTaxYear": 2026,
+      "status": "RE_VERIFY_BEFORE_SHIPPING",
+      "authority": "PENDING - secondary sources only as of 2026-08-19"
+    },
+    "QCD_LIMIT": {
+      "amountPerIndividual": 111000,
+      "minimumAge": 70.5,
+      "status": "RE_VERIFY_BEFORE_SHIPPING",
+      "authority": "IRC 408(d)(8); confirm against IRS Pub 590-B (2026)"
     }
-  },
-
-  "qcdLimit": {
-    "ruleId": "QCD_LIMIT_2026",
-    "value": 111000,
-    "note": "Per person age 70.5+. Present in the current app.",
-    "sourceUrl": "https://www.irs.gov/publications/p590b",
-    "verifiedDate": "2026-08-19",
-    "reVerifyBeforeShipping": true
-  },
-
-  "charitable2026": {
-    "ruleId": "CHARITABLE_2026_REWRITE",
-    "note": "Not exercised by Phase 0 fixtures. 0.5% AGI floor for itemizers (Pub 505, 2026); 35% benefit cap in the 37% bracket; $1,000/$2,000 (S/MFJ) above-the-line for non-itemizers. Flagged for re-verification before it drives any calculation.",
-    "sourceUrl": "https://www.irs.gov/publications/p505",
-    "verifiedDate": "2026-08-19",
-    "agiFloorItemizers": 0.005,
-    "reVerifyBeforeShipping": true
   }
 }

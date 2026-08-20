@@ -1,30 +1,30 @@
 {
-  "meta": {
-    "domain": "aca",
-    "coverageYear": 2026,
-    "povertyGuidelineYear": 2025,
-    "rulesVersion": "aca-2026.0.0",
-    "lawMode": "current_law",
-    "verifiedDate": "2026-08-19",
-    "note": "The enhanced (ARPA/IRA) premium tax credit subsidies expired 12/31/2025. Under current law the 400% FPL subsidy CLIFF is live for coverage year 2026 (H.R. 5145 passed the House 1/8/2026 but is NOT enacted). MAGI_ACA = AGI + tax-exempt interest + non-taxable Social Security + excluded foreign earned income. 2026 coverage uses the 2025 HHS poverty guidelines (48 contiguous states + DC)."
-  },
-  "premiumTaxCreditCliff": {
+  "ruleSetId": "aca-2026",
+  "coverageYear": 2026,
+  "povertyGuidelineYear": 2025,
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "IRC 36B; Form 8962 instructions; HHS 2025 Poverty Guidelines",
+  "sourceUrl": "https://www.irs.gov/instructions/i8962",
+  "magiDefinition": "adjusted_gross_income + tax_exempt_interest + nontaxable_social_security + excluded_foreign_earned_income",
+  "magiCriticalNote": "ACA MAGI includes the NON-TAXABLE portion of Social Security. No other MAGI in this engine does. Do not reuse IRMAA MAGI here.",
+  "subsidyCliff": {
     "ruleId": "ACA_36B_400FPL_CLIFF",
-    "isDiscontinuity": true,
-    "sourceUrl": "https://www.irs.gov/instructions/i8962",
-    "secondarySource": "CRS R48290; H.R. 5145 (119th Congress) — not enacted as of 2026-08-19",
-    "verifiedDate": "2026-08-19",
-    "fplMultiplier": 4,
-    "cliffBehavior": "At MAGI_ACA <= 400.00% FPL the premium tax credit is available; at 400.01% FPL the credit drops to $0.",
-    "watchItem": "H.R. 5145 is live legislation. Enactment of a subsidy extension is a rules-file version bump, not a code change."
+    "active": true,
+    "thresholdPercentOfFpl": 400,
+    "boundaryConvention": "INCLUSIVE. At exactly 400.00% FPL the credit survives; above it the credit is zero.",
+    "statutoryBasis": "Enhanced premium tax credits under ARPA/IRA expired 2025-12-31 and were not extended.",
+    "watchItem": {
+      "bill": "H.R. 5145 (119th Congress)",
+      "status": "Passed House 2026-01-08; NOT ENACTED as of 2026-08-19",
+      "url": "https://www.congress.gov/bill/119th-congress/house-bill/5145",
+      "ifEnacted": "Bump this rules file to a new version. No engine code change should be required. This is the test of whether the rules architecture was built correctly."
+    }
   },
-  "povertyGuidelines2025": {
-    "ruleId": "HHS_FPL_2025_48_STATES_DC",
-    "note": "48 contiguous states and DC. Used for 2026 coverage-year credit eligibility. Alaska and Hawaii have separate guidelines (not modeled in Phase 0 fixtures).",
-    "sourceUrl": "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines",
-    "secondarySource": "90 FR (2025 HHS Poverty Guidelines)",
-    "verifiedDate": "2026-08-19",
+  "federalPovertyGuidelines2025": {
     "region": "48_contiguous_states_and_dc",
-    "byHouseholdSize": { "1": 15650, "2": 21150, "3": 26650, "4": 32150 }
+    "1": 15650, "2": 21150, "3": 26650, "4": 32150,
+    "additionalPerPerson": 5500,
+    "note": "Alaska and Hawaii use separate guidelines. Add them before supporting those states."
   }
 }
