@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "domain": "medicare",
+    "premiumYear": 2026,
+    "magiSourceTaxYear": 2024,
+    "rulesVersion": "medicare-2026.0.0",
+    "lawMode": "current_law",
+    "verifiedDate": "2026-08-19",
+    "note": "IRMAA is a 2-year-lag Medicare surcharge: 2026 premiums are set by 2024 MAGI_IRMAA. Applies PER enrollee, not per household. Tier boundary is inclusive of the standard tier — surcharge begins ABOVE the listed amount (MAGI <= top => that tier)."
+  },
+  "irmaa": {
+    "ruleId": "IRMAA_2026_TIERS",
+    "sourceUrl": "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-and-deductibles",
+    "verifiedDate": "2026-08-19",
+    "standardPartBMonthly": 202.90,
+    "discontinuityRuleIds": ["IRMAA_TIER_1", "IRMAA_TIER_2", "IRMAA_TIER_3", "IRMAA_TIER_4", "IRMAA_TIER_5"],
+    "tiers": {
+      "single": [
+        { "magiUpTo": 109000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0, "tier": 0 },
+        { "magiUpTo": 137000, "partBMonthly": 284.10, "partDIrmaaMonthly": 14.50, "tier": 1, "discontinuityId": "IRMAA_TIER_1" },
+        { "magiUpTo": 171000, "partBMonthly": 405.80, "partDIrmaaMonthly": 37.50, "tier": 2, "discontinuityId": "IRMAA_TIER_2" },
+        { "magiUpTo": 205000, "partBMonthly": 527.50, "partDIrmaaMonthly": 60.40, "tier": 3, "discontinuityId": "IRMAA_TIER_3" },
+        { "magiUpTo": 500000, "partBMonthly": 649.20, "partDIrmaaMonthly": 83.30, "tier": 4, "discontinuityId": "IRMAA_TIER_4" },
+        { "magiUpTo": null, "partBMonthly": 689.90, "partDIrmaaMonthly": 91.00, "tier": 5, "discontinuityId": "IRMAA_TIER_5" }
+      ],
+      "mfj": [
+        { "magiUpTo": 218000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0, "tier": 0 },
+        { "magiUpTo": 274000, "partBMonthly": 284.10, "partDIrmaaMonthly": 14.50, "tier": 1, "discontinuityId": "IRMAA_TIER_1" },
+        { "magiUpTo": 342000, "partBMonthly": 405.80, "partDIrmaaMonthly": 37.50, "tier": 2, "discontinuityId": "IRMAA_TIER_2" },
+        { "magiUpTo": 410000, "partBMonthly": 527.50, "partDIrmaaMonthly": 60.40, "tier": 3, "discontinuityId": "IRMAA_TIER_3" },
+        { "magiUpTo": 750000, "partBMonthly": 649.20, "partDIrmaaMonthly": 83.30, "tier": 4, "discontinuityId": "IRMAA_TIER_4" },
+        { "magiUpTo": null, "partBMonthly": 689.90, "partDIrmaaMonthly": 91.00, "tier": 5, "discontinuityId": "IRMAA_TIER_5" }
+      ]
+    }
+  }
+}

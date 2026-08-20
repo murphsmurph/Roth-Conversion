@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "domain": "aca",
+    "coverageYear": 2026,
+    "povertyGuidelineYear": 2025,
+    "rulesVersion": "aca-2026.0.0",
+    "lawMode": "current_law",
+    "verifiedDate": "2026-08-19",
+    "note": "The enhanced (ARPA/IRA) premium tax credit subsidies expired 12/31/2025. Under current law the 400% FPL subsidy CLIFF is live for coverage year 2026 (H.R. 5145 passed the House 1/8/2026 but is NOT enacted). MAGI_ACA = AGI + tax-exempt interest + non-taxable Social Security + excluded foreign earned income. 2026 coverage uses the 2025 HHS poverty guidelines (48 contiguous states + DC)."
+  },
+  "premiumTaxCreditCliff": {
+    "ruleId": "ACA_36B_400FPL_CLIFF",
+    "isDiscontinuity": true,
+    "sourceUrl": "https://www.irs.gov/instructions/i8962",
+    "secondarySource": "CRS R48290; H.R. 5145 (119th Congress) — not enacted as of 2026-08-19",
+    "verifiedDate": "2026-08-19",
+    "fplMultiplier": 4,
+    "cliffBehavior": "At MAGI_ACA <= 400.00% FPL the premium tax credit is available; at 400.01% FPL the credit drops to $0.",
+    "watchItem": "H.R. 5145 is live legislation. Enactment of a subsidy extension is a rules-file version bump, not a code change."
+  },
+  "povertyGuidelines2025": {
+    "ruleId": "HHS_FPL_2025_48_STATES_DC",
+    "note": "48 contiguous states and DC. Used for 2026 coverage-year credit eligibility. Alaska and Hawaii have separate guidelines (not modeled in Phase 0 fixtures).",
+    "sourceUrl": "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines",
+    "secondarySource": "90 FR (2025 HHS Poverty Guidelines)",
+    "verifiedDate": "2026-08-19",
+    "region": "48_contiguous_states_and_dc",
+    "byHouseholdSize": { "1": 15650, "2": 21150, "3": 26650, "4": 32150 }
+  }
+}
