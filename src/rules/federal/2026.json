@@ -98,6 +98,20 @@
       "minimumAge": 70.5,
       "status": "RE_VERIFY_BEFORE_SHIPPING",
       "authority": "IRC 408(d)(8); confirm against IRS Pub 590-B (2026)"
+    },
+    "RMD_APPLICABLE_AGE": {
+      "ruleId": "SECURE20_RMD_APPLICABLE_AGE",
+      "authority": "SECURE 2.0 Act sec. 107; T.D. 10001, 89 FR 58886 (July 19, 2024)",
+      "sourceUrl": "https://www.federalregister.gov/documents/2024/07/19/2024-14542/required-minimum-distributions",
+      "verifiedDate": "2026-08-19",
+      "note": "Applicable age derived per birth year. The 1959 statutory drafting glitch was resolved to age 73 by Treasury in the July 2024 final regulations (so 1951-1959 -> 73).",
+      "byBirthYear": [
+        { "maxBirthYear": 1950, "age": 72 },
+        { "maxBirthYear": 1959, "age": 73 },
+        { "maxBirthYear": null, "age": 75 }
+      ],
+      "legacyApplicableAge": 73,
+      "legacyNote": "The pre-fix projector applied age 73 to every household regardless of birth year (a fixed input default). Phase 1 replaces this with the birth-year rule above."
     }
   }
 }
