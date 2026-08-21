@@ -203,7 +203,8 @@ sd_case("SD-02", 150000, [67, 66], "mfj", "MFJ both 65+, MAGI exactly $150,000 �
 sd_case("SD-03", 150001, [67, 66], "mfj", "MFJ both 65+, MAGI $150,001 — first dollar of phaseout",
         "CRITICAL. Reduction is 6% PER PERSON (IRC 151(d)(5)) = $0.12 total, not $0.06. "
         "Expected deduction $11,999.88. If your engine returns $11,999.94 you have the classic bug. "
-        "NOTE: rounding policy on Schedule 1-A is a RULE DECISION - see spec section 6.")
+        "NOTE: Schedule 1-A rounding (OPEN-1) is RESOLVED — carry cents, no intermediate whole-dollar "
+        "rounding; see docs/tax-rules/modeling-decisions.md.")
 sd_case("SD-04", 200000, [67, 66], "mfj", "MFJ both 65+, mid-phaseout at MAGI $200,000",
         "Excess $50,000 x 6% = $3,000 reduction per person. $3,000 remains each, $6,000 total.")
 sd_case("SD-05", 249999, [67, 66], "mfj", "MFJ both 65+, MAGI $249,999 — nearly gone")

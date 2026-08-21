@@ -150,6 +150,8 @@ export function optimizeConversion(base: LifetimeInput, opts: OptimizerOpts): Op
       { item: "federal / medicare / aca rules", status: "PENDING_ADVISOR_REVIEW" },
       { item: "state tax", status: "NOT MODELED (v1)" },
       { item: "taxable-account dividend/gain drag", status: "SIMPLIFIED" },
+      { item: "ordinary tax method", status: "EXACT BRACKETS (Tax Computation Worksheet; not the <$100k Tax Table — may differ ~$6/yr from a filed return)" },
+      { item: "rounding", status: "FULL CENTS (no whole-dollar rounding; may differ <$1/line from a filed return)" },
     ],
     calculationMetadata: calculationMetadata(base.taxYear, base.lawMode),
     disclaimer: DISCLAIMER,
