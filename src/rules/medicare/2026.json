@@ -1,0 +1,35 @@
+{
+  "ruleSetId": "medicare-2026",
+  "premiumYear": 2026,
+  "magiSourceTaxYear": 2024,
+  "lookbackYears": 2,
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "CMS 2026 Medicare Parts A & B Premiums and Deductibles",
+  "sourceUrl": "https://www.cms.gov/newsroom/fact-sheets",
+  "status": "RE_VERIFY_AGAINST_CMS_FACT_SHEET_BEFORE_SHIPPING",
+  "magiDefinition": "adjusted_gross_income + tax_exempt_interest",
+  "standardPartBPremiumMonthly": 202.90,
+  "appliesPerEnrollee": true,
+  "monthsPerYear": 12,
+  "tiers": {
+    "single": [
+      { "ruleId": "IRMAA_TIER_0", "magiMax": 109000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0.00 },
+      { "ruleId": "IRMAA_TIER_1", "magiMax": 137000, "partBMonthly": 284.10, "partDIrmaaMonthly": 14.50 },
+      { "ruleId": "IRMAA_TIER_2", "magiMax": 171000, "partBMonthly": 405.80, "partDIrmaaMonthly": 37.50 },
+      { "ruleId": "IRMAA_TIER_3", "magiMax": 205000, "partBMonthly": 527.50, "partDIrmaaMonthly": 60.40 },
+      { "ruleId": "IRMAA_TIER_4", "magiMax": 500000, "partBMonthly": 649.20, "partDIrmaaMonthly": 83.30 },
+      { "ruleId": "IRMAA_TIER_5", "magiMax": null,   "partBMonthly": 689.90, "partDIrmaaMonthly": 91.00 }
+    ],
+    "mfj": [
+      { "ruleId": "IRMAA_TIER_0", "magiMax": 218000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0.00 },
+      { "ruleId": "IRMAA_TIER_1", "magiMax": 274000, "partBMonthly": 284.10, "partDIrmaaMonthly": 14.50 },
+      { "ruleId": "IRMAA_TIER_2", "magiMax": 342000, "partBMonthly": 405.80, "partDIrmaaMonthly": 37.50 },
+      { "ruleId": "IRMAA_TIER_3", "magiMax": 410000, "partBMonthly": 527.50, "partDIrmaaMonthly": 60.40 },
+      { "ruleId": "IRMAA_TIER_4", "magiMax": 750000, "partBMonthly": 649.20, "partDIrmaaMonthly": 83.30 },
+      { "ruleId": "IRMAA_TIER_5", "magiMax": null,   "partBMonthly": 689.90, "partDIrmaaMonthly": 91.00 }
+    ]
+  },
+  "boundaryConvention": "magiMax is INCLUSIVE. Income at exactly magiMax stays in the lower tier.",
+  "lifeChangingEventRelief": "SSA-44 may reduce a surcharge after a qualifying life-changing event. A Roth conversion is NOT a qualifying event."
+}

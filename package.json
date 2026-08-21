@@ -1,0 +1,21 @@
+{
+  "name": "roth-conversion-engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Retirement tax-planning + Roth conversion engine. Pure, deterministic, oracle-validated.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint:magic": "node tools/check-magic-numbers.mjs",
+    "build": "vite build",
+    "fixtures:regen": "python3 tools/build_fixtures.py"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}

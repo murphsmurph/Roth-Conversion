@@ -1,0 +1,545 @@
+[
+  {
+    "id": "FED-01",
+    "folder": "federal",
+    "title": "Single, 45, wages only",
+    "tests": [
+      "standard_deduction",
+      "ordinary_brackets"
+    ]
+  },
+  {
+    "id": "FED-02",
+    "folder": "federal",
+    "title": "MFJ, both under 65, wages only",
+    "tests": [
+      "standard_deduction",
+      "ordinary_brackets"
+    ]
+  },
+  {
+    "id": "FED-03",
+    "folder": "federal",
+    "title": "MFJ, both 65+, IRA distribution only",
+    "tests": [
+      "age_65_additional_standard_deduction",
+      "senior_bonus_deduction",
+      "ordinary_brackets"
+    ]
+  },
+  {
+    "id": "FED-04",
+    "folder": "federal",
+    "title": "MFJ, ONE spouse 65+, IRA distribution only",
+    "tests": [
+      "age_65_additional_standard_deduction",
+      "senior_bonus_deduction"
+    ]
+  },
+  {
+    "id": "FED-05",
+    "folder": "federal",
+    "title": "Single, taxable income exactly at top of 12% bracket",
+    "tests": [
+      "bracket_boundary"
+    ]
+  },
+  {
+    "id": "FED-06",
+    "folder": "federal",
+    "title": "Single, one dollar into the 22% bracket",
+    "tests": [
+      "bracket_boundary"
+    ]
+  },
+  {
+    "id": "SS-01",
+    "folder": "social-security",
+    "title": "MFJ, provisional income below $32,000 \u2014 zero taxable SS",
+    "tests": [
+      "ss_tier_0"
+    ]
+  },
+  {
+    "id": "SS-02",
+    "folder": "social-security",
+    "title": "MFJ, provisional income inside the 50% band",
+    "tests": [
+      "ss_tier_50"
+    ]
+  },
+  {
+    "id": "SS-03",
+    "folder": "social-security",
+    "title": "MFJ, provisional income exactly $44,000",
+    "tests": [
+      "ss_tier_boundary"
+    ]
+  },
+  {
+    "id": "SS-04",
+    "folder": "social-security",
+    "title": "MFJ, one dollar past $44,000",
+    "tests": [
+      "ss_tier_boundary",
+      "ss_tier_85"
+    ]
+  },
+  {
+    "id": "SS-05",
+    "folder": "social-security",
+    "title": "MFJ, 85% ceiling fully reached",
+    "tests": [
+      "ss_tier_85",
+      "ss_ceiling"
+    ]
+  },
+  {
+    "id": "SS-06",
+    "folder": "social-security",
+    "title": "Single, 50% band",
+    "tests": [
+      "ss_tier_50",
+      "filing_status_single"
+    ]
+  },
+  {
+    "id": "SS-07",
+    "folder": "social-security",
+    "title": "MFJ, municipal bond interest enters provisional income",
+    "tests": [
+      "ss_tax_exempt_interest"
+    ]
+  },
+  {
+    "id": "SS-08a",
+    "folder": "social-security",
+    "title": "Social Security torpedo, inside the phase-in band \u2014 baseline",
+    "tests": [
+      "ss_torpedo",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "SS-08b",
+    "folder": "social-security",
+    "title": "Social Security torpedo, inside the phase-in band \u2014 +$10,000 conversion",
+    "tests": [
+      "ss_torpedo",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "SS-09a",
+    "folder": "social-security",
+    "title": "Social Security torpedo already spent (85% ceiling reached) \u2014 baseline",
+    "tests": [
+      "ss_torpedo",
+      "ss_ceiling",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "SS-09b",
+    "folder": "social-security",
+    "title": "Social Security torpedo already spent (85% ceiling reached) \u2014 +$10,000 conversion",
+    "tests": [
+      "ss_torpedo",
+      "ss_ceiling",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "SD-01",
+    "folder": "senior-deduction",
+    "title": "MFJ both 65+, MAGI $149,999 \u2014 full $12,000",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-02",
+    "folder": "senior-deduction",
+    "title": "MFJ both 65+, MAGI exactly $150,000 \u2014 full $12,000",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-03",
+    "folder": "senior-deduction",
+    "title": "MFJ both 65+, MAGI $150,001 \u2014 first dollar of phaseout",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-04",
+    "folder": "senior-deduction",
+    "title": "MFJ both 65+, mid-phaseout at MAGI $200,000",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-05",
+    "folder": "senior-deduction",
+    "title": "MFJ both 65+, MAGI $249,999 \u2014 nearly gone",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-06",
+    "folder": "senior-deduction",
+    "title": "MFJ both 65+, MAGI $250,000 \u2014 exactly zero",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-07",
+    "folder": "senior-deduction",
+    "title": "MFJ both 65+, MAGI $300,000 \u2014 floored at zero",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-08",
+    "folder": "senior-deduction",
+    "title": "MFJ, ONE spouse 65+, MAGI $200,000",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-09",
+    "folder": "senior-deduction",
+    "title": "Single 65+, MAGI $75,001 \u2014 first dollar of phaseout",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-10",
+    "folder": "senior-deduction",
+    "title": "Single 65+, MAGI $175,000 \u2014 exactly zero",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-11",
+    "folder": "senior-deduction",
+    "title": "MFJ, NEITHER spouse 65+ \u2014 no senior deduction",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_boundary"
+    ]
+  },
+  {
+    "id": "SD-12a",
+    "folder": "senior-deduction",
+    "title": "Senior deduction phaseout surtax band (MFJ, both 65+) \u2014 baseline",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_marginal_rate",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "SD-12b",
+    "folder": "senior-deduction",
+    "title": "Senior deduction phaseout surtax band (MFJ, both 65+) \u2014 +$10,000 conversion",
+    "tests": [
+      "senior_bonus_deduction",
+      "phaseout_marginal_rate",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "SD-13",
+    "folder": "senior-deduction",
+    "title": "Senior deduction does not reduce AGI or any MAGI",
+    "tests": [
+      "senior_bonus_deduction",
+      "magi_isolation"
+    ]
+  },
+  {
+    "id": "CG-01",
+    "folder": "capital-gains",
+    "title": "MFJ, all preferential income in the 0% bracket",
+    "tests": [
+      "qdcg_stacking",
+      "ltcg_0_rate"
+    ]
+  },
+  {
+    "id": "CG-02",
+    "folder": "capital-gains",
+    "title": "MFJ, preferential income straddles 0% / 15%",
+    "tests": [
+      "qdcg_stacking",
+      "ltcg_straddle"
+    ]
+  },
+  {
+    "id": "CG-03",
+    "folder": "capital-gains",
+    "title": "MFJ, all preferential income at 15%",
+    "tests": [
+      "qdcg_stacking",
+      "ltcg_15_rate",
+      "niit"
+    ]
+  },
+  {
+    "id": "CG-04",
+    "folder": "capital-gains",
+    "title": "MFJ, preferential income reaching the 20% rate",
+    "tests": [
+      "qdcg_stacking",
+      "ltcg_20_rate",
+      "niit"
+    ]
+  },
+  {
+    "id": "CG-05",
+    "folder": "capital-gains",
+    "title": "MFJ, NIIT applies on the lesser of NII or MAGI excess",
+    "tests": [
+      "niit"
+    ]
+  },
+  {
+    "id": "CG-06",
+    "folder": "capital-gains",
+    "title": "MFJ, MAGI at the NIIT threshold \u2014 zero NIIT",
+    "tests": [
+      "niit",
+      "niit_boundary"
+    ]
+  },
+  {
+    "id": "CG-07a",
+    "folder": "capital-gains",
+    "title": "Conversion drags existing investment income into NIIT \u2014 baseline",
+    "tests": [
+      "niit",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "CG-07b",
+    "folder": "capital-gains",
+    "title": "Conversion drags existing investment income into NIIT \u2014 +$80,000 conversion",
+    "tests": [
+      "niit",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "CG-08a",
+    "folder": "capital-gains",
+    "title": "Triple compound: SS torpedo + senior phaseout + LTCG stacking \u2014 baseline",
+    "tests": [
+      "ss_torpedo",
+      "senior_bonus_deduction",
+      "qdcg_stacking",
+      "compound_marginal_rate",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "CG-08b",
+    "folder": "capital-gains",
+    "title": "Triple compound: SS torpedo + senior phaseout + LTCG stacking \u2014 +$10,000 conversion",
+    "tests": [
+      "ss_torpedo",
+      "senior_bonus_deduction",
+      "qdcg_stacking",
+      "compound_marginal_rate",
+      "marginal_rate_pair"
+    ]
+  },
+  {
+    "id": "ACA-01",
+    "folder": "aca",
+    "title": "Household of 2, MAGI $84,599 \u2014 one dollar under the cliff",
+    "tests": [
+      "aca_400_fpl_cliff"
+    ]
+  },
+  {
+    "id": "ACA-02",
+    "folder": "aca",
+    "title": "Household of 2, MAGI exactly 400.00% FPL \u2014 still eligible",
+    "tests": [
+      "aca_400_fpl_cliff"
+    ]
+  },
+  {
+    "id": "ACA-03",
+    "folder": "aca",
+    "title": "Household of 2, MAGI $84,601 \u2014 CLIFF, credit drops to zero",
+    "tests": [
+      "aca_400_fpl_cliff"
+    ]
+  },
+  {
+    "id": "ACA-04",
+    "folder": "aca",
+    "title": "Household of 1, MAGI exactly 400.00% FPL",
+    "tests": [
+      "aca_400_fpl_cliff"
+    ]
+  },
+  {
+    "id": "ACA-05",
+    "folder": "aca",
+    "title": "Household of 1, one dollar over \u2014 cliff",
+    "tests": [
+      "aca_400_fpl_cliff"
+    ]
+  },
+  {
+    "id": "IRMAA-01",
+    "folder": "irmaa",
+    "title": "MFJ at exactly $218,000 \u2014 no surcharge",
+    "tests": [
+      "irmaa_tier_lookup"
+    ]
+  },
+  {
+    "id": "IRMAA-02",
+    "folder": "irmaa",
+    "title": "MFJ one dollar over \u2014 first tier",
+    "tests": [
+      "irmaa_tier_lookup"
+    ]
+  },
+  {
+    "id": "IRMAA-03",
+    "folder": "irmaa",
+    "title": "MFJ tier 2",
+    "tests": [
+      "irmaa_tier_lookup"
+    ]
+  },
+  {
+    "id": "IRMAA-04",
+    "folder": "irmaa",
+    "title": "MFJ tier 3",
+    "tests": [
+      "irmaa_tier_lookup"
+    ]
+  },
+  {
+    "id": "IRMAA-05",
+    "folder": "irmaa",
+    "title": "MFJ tier 4",
+    "tests": [
+      "irmaa_tier_lookup"
+    ]
+  },
+  {
+    "id": "IRMAA-06",
+    "folder": "irmaa",
+    "title": "MFJ top tier",
+    "tests": [
+      "irmaa_tier_lookup"
+    ]
+  },
+  {
+    "id": "IRMAA-07",
+    "folder": "irmaa",
+    "title": "Single tier 1 \u2014 surviving spouse case",
+    "tests": [
+      "irmaa_tier_lookup"
+    ]
+  },
+  {
+    "id": "IRMAA-08",
+    "folder": "irmaa",
+    "title": "MFJ filing status, only one spouse enrolled in Medicare",
+    "tests": [
+      "irmaa_tier_lookup"
+    ]
+  },
+  {
+    "id": "RMD-01",
+    "folder": "rmd",
+    "title": "RMD applicable age, born 1952",
+    "tests": [
+      "rmd_applicable_age"
+    ]
+  },
+  {
+    "id": "RMD-02",
+    "folder": "rmd",
+    "title": "RMD applicable age, born 1959",
+    "tests": [
+      "rmd_applicable_age"
+    ]
+  },
+  {
+    "id": "RMD-03",
+    "folder": "rmd",
+    "title": "RMD applicable age, born 1960",
+    "tests": [
+      "rmd_applicable_age"
+    ]
+  },
+  {
+    "id": "RMD-04",
+    "folder": "rmd",
+    "title": "RMD applicable age, born 1971",
+    "tests": [
+      "rmd_applicable_age"
+    ]
+  },
+  {
+    "id": "RMD-05",
+    "folder": "rmd",
+    "title": "Uniform Lifetime Table RMD, age 75, balance $1,000,000",
+    "tests": [
+      "rmd_uniform_lifetime_table"
+    ]
+  },
+  {
+    "id": "RMD-06",
+    "folder": "rmd",
+    "title": "Uniform Lifetime Table RMD, age 73, balance $500,000",
+    "tests": [
+      "rmd_uniform_lifetime_table"
+    ]
+  },
+  {
+    "id": "RMD-07",
+    "folder": "rmd",
+    "title": "Uniform Lifetime Table RMD, age 80, balance $2,400,000",
+    "tests": [
+      "rmd_uniform_lifetime_table"
+    ]
+  },
+  {
+    "id": "RMD-08",
+    "folder": "rmd",
+    "title": "Roth conversion cannot satisfy an RMD; RMD must come out first",
+    "tests": [
+      "rmd_ordering_rule"
+    ]
+  }
+]
