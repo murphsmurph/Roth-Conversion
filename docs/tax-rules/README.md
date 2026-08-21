@@ -2,7 +2,17 @@
 
 Each implemented rule: **Rule → Formula → Authority → Applicable years → Edge cases → Tests.**
 All constants live in `src/rules/**` (R3); the engine reads them via `src/engine/rules.ts`.
-Tax year 2026, `current_law`. `verifiedBy: PENDING_ADVISOR_REVIEW` on every rules file.
+Tax year 2026, `current_law`. `verifiedBy: PENDING_ADVISOR_REVIEW` on every rules file — a human
+advisor sign-off is still a required gate before client use.
+
+**Machine verification pass (2026-08-21).** Every numeric value across the federal, medicare, and aca
+rules files was cross-verified against multiple independent secondary sources reproducing the
+official releases (Rev. Proc. 2025-32 / IR-2025-103; CMS 2026 fact sheet pub. 2025-11-14; HHS 2025
+poverty guidelines; OBBBA / P.L. 119-21). All formerly-flagged `RE_VERIFY_*` constants
+(IRMAA tables, non-itemizer charitable deduction, itemized 2/37 benefit cap, QCD limit) now agree
+with source and are marked `*_CROSS_VERIFIED_2026-08-21`. The primary `.gov` pages were
+egress-blocked from the build environment, so this is corroboration-by-secondary-source plus internal
+consistency, **not** a substitute for the advisor sign-off. See each file's `machineVerification` field.
 
 ## Frozen order of operations (R4)
 `computeYear` (`src/engine/calculateYear.ts`) executes: gross income → provisional income → taxable
@@ -47,8 +57,9 @@ split & stacking → NIIT. Intermediate values are returned (R4a) and asserted b
 
 ### IRMAA_2026_TIERS — Medicare surcharge
 - **Formula:** tier by MAGI_IRMAA (2-yr lookback, magiMax inclusive); annual = ((partB − standard) +
-  partD) × 12 × enrollees. Per enrollee, not per household. **Authority:** CMS 2026. **Status:**
-  RE_VERIFY_AGAINST_CMS_FACT_SHEET.
+  partD) × 12 × enrollees. Per enrollee, not per household. **Authority:** CMS 2026 fact sheet
+  (pub. 2025-11-14). **Status:** all tier premiums, Part D amounts, and MAGI thresholds
+  cross-verified 2026-08-21 (advisor sign-off still pending).
 - **Edge cases:** boundary at exactly magiMax stays lower (IRMAA-01); per-enrollee, not doubled
   (IRMAA-08). **Tests:** `irmaa/IRMAA-01..08`. Engine: `calculateIRMAA.ts`.
 

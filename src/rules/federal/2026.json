@@ -4,11 +4,12 @@
   "effectiveDate": "2026-01-01",
   "expirationDate": "2026-12-31",
   "lawMode": "current_law",
-  "verifiedDate": "2026-08-19",
+  "verifiedDate": "2026-08-21",
   "verifiedBy": "PENDING_ADVISOR_REVIEW",
-  "primaryAuthority": "Rev. Proc. 2025-32",
+  "primaryAuthority": "Rev. Proc. 2025-32 (IR-2025-103)",
   "sourceUrl": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
   "secondaryConfirmation": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+  "machineVerification": "2026-08-21: core constants spot-checked against multiple independent reproductions of Rev. Proc. 2025-32 — standard deduction (single 16,100 / MFJ 32,200 / HOH 24,150) and the ordinary brackets (10% floor 12,400 single; top 37% at 640,600 single / 768,700 MFJ). The three formerly-flagged OBBBA constants below (non-itemizer charitable, itemized 2/37 benefit cap, QCD limit) were also cross-verified this date. Primary irs.gov PDFs not fetched directly (egress-blocked); human advisor sign-off (verifiedBy) still recommended before client use.",
   "rules": {
     "STD_DEDUCTION": {
       "values": { "single": 16100, "mfj": 32200, "mfs": 16100, "hoh": 24150 },
@@ -85,21 +86,25 @@
     "CHARITABLE_NONITEMIZER_DEDUCTION": {
       "values": { "single": 1000, "mfj": 2000 },
       "firstTaxYear": 2026,
-      "status": "RE_VERIFY_BEFORE_SHIPPING",
-      "authority": "PENDING - secondary sources only as of 2026-08-19"
+      "notIndexed": true,
+      "permanent": true,
+      "status": "VALUE_CROSS_VERIFIED_2026-08-21",
+      "authority": "P.L. 119-21 (OBBBA), effective TY2026; above-the-line deduction for cash gifts by non-itemizers, fixed $1,000/$2,000 (not inflation-indexed), permanent. Cross-verified against multiple independent tax-advisory summaries 2026-08-21; primary statutory text not fetched (egress-blocked). Not yet consumed by the engine.",
+      "note": "When itemizing is NOT elected, the 0.5% AGI floor (CHARITABLE_AGI_FLOOR) does not apply; DAF and non-cash gifts are excluded."
     },
     "ITEMIZED_DEDUCTION_BENEFIT_CAP": {
       "maxRate": 0.35,
       "appliesToBracket": 0.37,
       "firstTaxYear": 2026,
-      "status": "RE_VERIFY_BEFORE_SHIPPING",
-      "authority": "PENDING - secondary sources only as of 2026-08-19"
+      "status": "VALUE_CROSS_VERIFIED_2026-08-21",
+      "authority": "IRC 68 as amended by P.L. 119-21 (OBBBA) — the '2/37 rule': disallow 2/37 of the lesser of itemized deductions otherwise allowed or the taxable income in the 37% bracket, capping the benefit at 35 cents/dollar. Effective TY2026. Kicks in at the 37% bracket floors ($640,600 single / $768,700 MFJ). Cross-verified 2026-08-21; not yet consumed by the engine."
     },
     "QCD_LIMIT": {
       "amountPerIndividual": 111000,
+      "amountMfj": 222000,
       "minimumAge": 70.5,
-      "status": "RE_VERIFY_BEFORE_SHIPPING",
-      "authority": "IRC 408(d)(8); confirm against IRS Pub 590-B (2026)"
+      "status": "VALUE_CROSS_VERIFIED_2026-08-21",
+      "authority": "IRC 408(d)(8), inflation-indexed under SECURE 2.0 Act. 2026 limit $111,000/individual ($222,000 MFJ), continuing the progression 2023 $100k -> 2024 $105k -> 2025 $108k -> 2026 $111k. Cross-verified 2026-08-21 against multiple independent sources; confirm against IRS Pub 590-B (2026) at advisor review. Consumed by the legacy projector engine only."
     },
     "RMD_APPLICABLE_AGE": {
       "ruleId": "SECURE20_RMD_APPLICABLE_AGE",

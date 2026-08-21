@@ -2,10 +2,11 @@
   "ruleSetId": "aca-2026",
   "coverageYear": 2026,
   "povertyGuidelineYear": 2025,
-  "verifiedDate": "2026-08-19",
+  "verifiedDate": "2026-08-21",
   "verifiedBy": "PENDING_ADVISOR_REVIEW",
   "primaryAuthority": "IRC 36B; Form 8962 instructions; HHS 2025 Poverty Guidelines",
   "sourceUrl": "https://www.irs.gov/instructions/i8962",
+  "machineVerification": "2026-08-21: the 2025 HHS poverty guidelines (1-person $15,650, 2 $21,150, 3 $26,650, 4 $32,150; +$5,500/person) and the return of the 400% FPL cliff for coverage year 2026 (enhanced ARPA/IRA premium tax credits expired 2025-12-31, not extended) were cross-verified against multiple independent secondary sources. Derived cutoffs check out: 400% FPL = $62,600 single / $128,600 family-of-four. Primary aspe.hhs.gov / irs.gov pages not fetched directly (egress-blocked). Human advisor sign-off still recommended.",
   "magiDefinition": "adjusted_gross_income + tax_exempt_interest + nontaxable_social_security + excluded_foreign_earned_income",
   "magiCriticalNote": "ACA MAGI includes the NON-TAXABLE portion of Social Security. No other MAGI in this engine does. Do not reuse IRMAA MAGI here.",
   "subsidyCliff": {
@@ -15,8 +16,8 @@
     "boundaryConvention": "INCLUSIVE. At exactly 400.00% FPL the credit survives; above it the credit is zero.",
     "statutoryBasis": "Enhanced premium tax credits under ARPA/IRA expired 2025-12-31 and were not extended.",
     "watchItem": {
-      "bill": "H.R. 5145 (119th Congress)",
-      "status": "Passed House 2026-01-08; NOT ENACTED as of 2026-08-19",
+      "bill": "H.R. 5145 (119th Congress); related House-passed extension H.R. 1834",
+      "status": "NOT ENACTED as of 2026-08-21 (re-confirmed; extension remains stalled in the Senate)",
       "url": "https://www.congress.gov/bill/119th-congress/house-bill/5145",
       "ifEnacted": "Bump this rules file to a new version. No engine code change should be required. This is the test of whether the rules architecture was built correctly."
     }
