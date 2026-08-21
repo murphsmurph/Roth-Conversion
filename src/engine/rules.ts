@@ -4,6 +4,7 @@
 import federalRules from "../rules/federal/2026.json";
 import medicareRules from "../rules/medicare/2026.json";
 import acaRules from "../rules/aca/2026.json";
+import stateRules from "../rules/state/2026.json";
 import type { CalculationMetadata, FilingStatus, LawMode } from "./types";
 
 const F = federalRules.rules as Record<string, any>;
@@ -73,15 +74,20 @@ export const fplAdditionalPerPerson = (): number => acaRules.federalPovertyGuide
 export const acaThresholdPercent = (): number => acaRules.subsidyCliff.thresholdPercentOfFpl;
 export const ACA_CLIFF_RULE_ID = acaRules.subsidyCliff.ruleId as string;
 
+// ---- state (v1 flat-rate) ----
+export const noIncomeTaxStates = (): string[] => stateRules.noOrdinaryIncomeTaxStates as string[];
+export const stateDefaultRate = (): number => stateRules.advisorSuppliedRate.default;
+export const STATE_RULE_ID = stateRules.ruleSetId as string;
+
 // ---- provenance ----
-export const ENGINE_VERSION = "0.2.0-phase2";
+export const ENGINE_VERSION = "0.3.0-hardening";
 export function calculationMetadata(taxYear: number, lawMode: LawMode): CalculationMetadata {
   return {
     engineVersion: ENGINE_VERSION,
     federalRulesVersion: federalRules.ruleSetId,
     medicareRulesVersion: medicareRules.ruleSetId,
     acaRulesVersion: acaRules.ruleSetId,
-    stateRulesVersion: "none-phase2",
+    stateRulesVersion: stateRules.ruleSetId,
     calculationDate: "injected",
     taxYear,
     lawMode,

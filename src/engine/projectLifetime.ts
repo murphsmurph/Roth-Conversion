@@ -13,6 +13,7 @@
 import { computeYear } from "./calculateYear";
 import { calculateIrmaa } from "./calculateIRMAA";
 import { rmdApplicableAge } from "./calculateRMD";
+import { resolveStateOrdinaryRate, stateTaxOnOrdinary } from "./calculateState";
 import { seniorMinAge, ultFactor } from "./rules";
 import { cents } from "./money";
 import type { FilingStatus, LawMode, MagiIrmaa } from "./types";
@@ -46,6 +47,8 @@ export interface LifetimeInput {
   beneficiaryTaxRate: number;
   beneficiaryWindowYears: number; // SECURE Act 10-year window
   conversionByYear: number[];     // conversion per projection-year index (missing = 0)
+  stateCode?: string | null;      // v1 flat state tax: two-letter code (no-tax states auto-zero)
+  stateMarginalRate?: number | null; // v1 flat state tax: advisor-supplied effective marginal rate
 }
 
 export interface LifetimeRow {
@@ -60,6 +63,7 @@ export interface LifetimeRow {
   taxableSocialSecurity: number;
   taxableIncome: number;
   federalTax: number;
+  stateTax: number;
   irmaa: number;
   spendingNeed: number;
   traditional: number;
@@ -78,6 +82,9 @@ export interface LifetimeResult {
   finalAfterTaxWealthBeneficiary: number;
   survivorTransitionYear: number | null;
   depletionYear: number | null;
+  stateTaxRate: number;
+  stateTaxModeled: boolean;
+  stateTaxNote: string;
 }
 
 // Beneficiary inherits a pre-tax balance and drains it over N years at their own rate, the balance
@@ -97,6 +104,12 @@ export function projectLifetime(input: LifetimeInput): LifetimeResult {
   const married = input.filingStatus === "mfj" && input.spouses.length >= 2;
   const N = input.beneficiaryWindowYears;
   const g = input.growthRate;
+
+  // v1 flat state tax: resolve one effective ordinary-income rate for the whole projection.
+  const stateRes = resolveStateOrdinaryRate({
+    stateCode: input.stateCode ?? null, advisorMarginalRate: input.stateMarginalRate ?? null,
+  });
+  const stateRate = stateRes.rate;
 
   // mutable per-spouse traditional balances
   const trad = input.spouses.map(s => s.traditionalIra);
@@ -203,6 +216,11 @@ export function projectLifetime(input: LifetimeInput): LifetimeResult {
       ? calculateIrmaa(fin.magi.irmaa as unknown as MagiIrmaa, filing, bothAlive ? input.medicareEnrollees : 1).annualHouseholdSurchargeAboveStandard
       : 0;
 
+    // v1 flat state tax on the year's federal ordinary taxable income (0 when not modeled), funded
+    // from taxable then Roth. Second-order state tax on the spending withdrawal itself is not
+    // grossed up (a documented v1 simplification); state brackets/exclusions are not modeled.
+    const stateTax = stateTaxOnOrdinary(fin.ordinaryIncome, stateRate);
+
     // apply account changes: draw ordinary IRA (rmd + conversion + spending withdrawal) pro-rata
     const iraOut = rmdTotal + conversion + tradWithdraw;
     const tt = totalTradBefore || 1;
@@ -210,6 +228,12 @@ export function projectLifetime(input: LifetimeInput): LifetimeResult {
     roth += conversion - fromRoth;
     taxable += surplus - fromTaxable;
     roth = Math.max(0, roth); taxable = Math.max(0, taxable);
+
+    // fund state tax: taxable first, then Roth
+    let stNeed = stateTax;
+    const stFromTaxable = Math.min(taxable, stNeed); taxable -= stFromTaxable; stNeed -= stFromTaxable;
+    if (stNeed > 0) { const stFromRoth = Math.min(roth, stNeed); roth -= stFromRoth; stNeed -= stFromRoth; }
+    if (stNeed > 1 && depletionYear === null) depletionYear = year;
 
     // grow at year end
     for (let idx = 0; idx < trad.length; idx++) trad[idx] = trad[idx]! * (1 + g);
@@ -226,7 +250,8 @@ export function projectLifetime(input: LifetimeInput): LifetimeResult {
       year, ageA, ageB, filing,
       socialSecurity: cents(ssTotal), pension: cents(pensionTotal), rmd: cents(rmdTotal),
       conversion: cents(conversion), taxableSocialSecurity: cents(fin.taxableSocialSecurity),
-      taxableIncome: cents(fin.taxableIncome), federalTax: cents(federalTax), irmaa: cents(irmaa),
+      taxableIncome: cents(fin.taxableIncome), federalTax: cents(federalTax), stateTax: cents(stateTax),
+      irmaa: cents(irmaa),
       spendingNeed: cents(spendingNeed), traditional: cents(tradTot), roth: cents(roth),
       taxable: cents(taxable), afterTaxWealthFlat: cents(flat), afterTaxWealthBeneficiary: cents(benef),
       depleted,
@@ -242,6 +267,9 @@ export function projectLifetime(input: LifetimeInput): LifetimeResult {
     finalAfterTaxWealthBeneficiary: last.afterTaxWealthBeneficiary,
     survivorTransitionYear,
     depletionYear,
+    stateTaxRate: stateRate,
+    stateTaxModeled: stateRes.modeled,
+    stateTaxNote: stateRes.note,
   };
 }
 

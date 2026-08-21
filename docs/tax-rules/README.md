@@ -76,8 +76,22 @@ split & stacking → NIIT. Intermediate values are returned (R4a) and asserted b
 - **Tests:** `rmd/RMD-01..08` (pass). `rmd/RMD-08` was a flagged discrepancy, now **RESOLVED at
   the generator** — see `RMD-08-discrepancy.md`. Engine: `calculateRMD.ts`.
 
+### STATE_INCOME_TAX — v1 flat-rate (hardening)
+- **Model:** the nine no-income-tax states (AK, FL, NV, NH, SD, TN, TX, WA, WY) are modeled as data
+  at **0%** on ordinary income (including Roth conversions); every other state uses an
+  **advisor-supplied flat effective marginal rate**. The engine **never guesses** a state's rate or
+  brackets (Rule 4) — a taxing state with no supplied rate is flagged **NOT MODELED** (defaulted to
+  0), not assigned a fabricated rate. Applied consistently to the marginal sweep, lifetime
+  projection, and optimizer.
+- **Not modeled (v1):** per-state progressive brackets, retirement-income exclusions, state SS
+  treatment, state Roth-conversion rules, local/city taxes, and state capital-gains (e.g., WA).
+- **Authority:** each state's Department of Revenue; Tax Foundation 2026 rate tables. No-tax list
+  cross-verified 2026-08-21 (incl. NH's I&D phase-out completing 2025-01-01).
+- **Tests:** `tests/unit/state.test.ts`. Engine: `calculateState.ts`. Rules: `src/rules/state/2026.json`.
+
 ## Status
-62/62 fixtures + 6/6 property tests pass; the CI suite is gating. Both former open rule decisions
-are now resolved with citations — **OPEN-1** (senior rounding) and **OPEN-2** (Tax Table vs. Tax
-Computation Worksheet) both resolved in favor of exact, unrounded computation; see
-`modeling-decisions.md`. No open rule decisions remain.
+90/90 tests pass (62/62 fixtures + 6/6 property + Phase 3–5 units + 7 state-tax units); the CI suite
+is gating. Both former open rule decisions are resolved with citations — **OPEN-1** (senior rounding)
+and **OPEN-2** (Tax Table vs. Tax Computation Worksheet) in favor of exact, unrounded computation;
+see `modeling-decisions.md`. No open rule decisions remain. All rules-file constants were
+machine-verified 2026-08-21 (advisor sign-off still pending). State tax is a v1 flat-rate model.
