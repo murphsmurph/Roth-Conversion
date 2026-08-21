@@ -182,11 +182,23 @@ disclosed ≤~$6/yr and <$1/line divergence from a hand-filed 1040 (`modeling-de
 
 ## 8. Deployment status
 
-- **Live site** (`index.html`, GitHub Pages at murphsmurph.github.io/Roth-Conversion/) currently
-  runs the **legacy** engine (`src/engine/legacy/projectorEngine.ts`, inlined by `build-site.mjs`).
-- **The validated Phase 2–5 engine is NOT yet wired into the page.** It is fully built, tested, and
-  documented, but the UI still shows legacy math. Wiring it in is the natural next project (a product
-  decision, not a defined phase).
+`index.html` (GitHub Pages at murphsmurph.github.io/Roth-Conversion/) inlines **two** engines, both
+built from source by `tools/build-site.mjs` so the page stays one self-contained file:
+
+- **Legacy projector** (`src/engine/legacy/projectorEngine.ts`) drives the existing rich projection
+  UI — 50-state detail, QCD, estate/IRD, Monte Carlo, breakeven/tax-drag, the year-by-year table.
+- **Validated Phase 2–5 engine** (`src/engine/index.ts`, esbuild-bundled to the `window.RTP` global)
+  powers the **"Optimal conversion"** panel: the optimizer's recommended range, preferred target,
+  binding constraint by rule id, expected benefit, why-not-more/less, the marginal-cost sweep curve,
+  a sensitivity grid, and a provenance/data-quality/disclaimer footer. Runs on demand (a button),
+  since the optimizer does ~100 lifetime projections. Fully updatable from the versioned rules JSON —
+  editing `src/rules/**` and rebuilding re-inlines the new numbers with no engine code change.
+
+The integration is **additive**: the validated engine adds the optimizer panel without changing any
+existing feature. A full swap was deliberately NOT done because it would regress the 50-state model
+to the flat-rate v1 and drop QCD / estate / Monte Carlo, which the validated engine does not yet
+model. The panel is verified end-to-end in headless Chromium (`tools/` note: see the browser check
+in the integration commit) across the recommend, portfolio-depletion, and single-filer cases.
 
 ---
 
@@ -208,7 +220,7 @@ npm run lint:magic         # no stray tax numbers in the engine
 npm test                   # 90/90: fixtures + properties + phase + state units
 npm run fixtures:regen     # regenerate fixtures from the oracle (should byte-diff to nothing)
 npm run build              # vite build
-node tools/build-site.mjs  # inline the (legacy) engine into index.html
+node tools/build-site.mjs  # inline BOTH engines into index.html (legacy factory + esbuild RTP bundle)
 ```
 
 **Adding / updating a tax constant:** edit the rules JSON (with authority + sourceUrl +

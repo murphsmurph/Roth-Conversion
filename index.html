@@ -261,6 +261,24 @@
       <div class="banner" id="lastBanner"><span class="ic">&mdash;</span><span>&mdash;</span></div>
       <div class="verdict" id="verdict"><p class="t">Bottom line</p><p class="b">&mdash;</p><p class="d"></p></div>
 
+      <div class="sectlabel">Optimal conversion <span style="text-transform:none;letter-spacing:0;font-family:Georgia,serif;color:var(--slate-l)">&mdash; validated engine, oracle-checked (independent of the projection above)</span></div>
+      <div class="banner info" id="optIntro"><span class="ic">&#9678;</span><span>The fixture-verified engine searches the annual Roth conversion that maximizes lifetime after-tax wealth, and names the tax threshold that caps it. <button id="optRun" type="button" style="margin-left:8px;padding:6px 13px;border:1px solid #2f6b4f;background:#2f6b4f;color:#fff;border-radius:6px;cursor:pointer;font:inherit;font-size:13px;white-space:nowrap">Find optimal conversion &rarr;</button></span></div>
+      <div id="optResults" style="display:none">
+        <div class="cards2">
+          <div class="bigcard win"><p class="nm">Recommended range</p><p class="hl good" id="optRange">&mdash;</p><p class="sub2" id="optRangeSub">&mdash;</p></div>
+          <div class="bigcard"><p class="nm">Preferred target (per year)</p><p class="hl" id="optTarget" style="color:var(--ink)">&mdash;</p><p class="sub2" id="optTargetSub">&mdash;</p></div>
+        </div>
+        <div class="cards2">
+          <div class="bigcard win"><p class="nm">Expected benefit &mdash; lifetime after-tax wealth</p><p class="hl good" id="optBenefit">&mdash;</p><p class="sub2" id="optBenefitSub">vs. converting nothing</p></div>
+          <div class="bigcard"><p class="nm">Binding constraint</p><p class="hl warn" id="optBinding">&mdash;</p><p class="sub2" id="optBindingSub">&mdash;</p></div>
+        </div>
+        <div class="banner info" id="optWhy"><span class="ic">?</span><span>&mdash;</span></div>
+        <div class="chartcard"><div class="chart-h"><h3>Average cost of converting &mdash; validated engine</h3><p>Average economic cost (federal + IRMAA + ACA + state) per dollar converted, across the whole conversion. Dashed lines mark IRMAA-tier / ACA-cliff jumps.</p></div><svg id="optSweep" role="img" aria-label="Average conversion cost curve"></svg></div>
+        <div class="sectlabel">Sensitivity &mdash; preferred target under alternative assumptions</div>
+        <div class="tblscroll"><table class="tbl" id="optSensTbl"><thead></thead><tbody></tbody></table></div>
+        <div class="banner" id="optProv" style="margin-top:14px"><span class="ic">&#8224;</span><span>&mdash;</span></div>
+      </div>
+
       <div class="sectlabel">After-tax legacy</div>
       <div class="cards2">
         <div class="bigcard win"><p class="nm">Convert plan</p><p class="hl good" id="scnConv">&mdash;</p><p class="sub2" id="scnConvSub">Roth passes tax-free; little traditional left to tax</p></div>
@@ -349,6 +367,1119 @@
     </main>
   </div>
 </div>
+<script>
+/* ===RTP-ENGINE-START=== */
+/* Bundled by tools/build-site.mjs from src/engine/index.ts — do not edit here. */
+"use strict";
+var RTP = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // src/engine/index.ts
+  var engine_exports = {};
+  __export(engine_exports, {
+    ENGINE_VERSION: () => ENGINE_VERSION,
+    calculateAca: () => calculateAca,
+    calculateIrmaa: () => calculateIrmaa,
+    calculationMetadata: () => calculationMetadata,
+    computeYear: () => computeYear,
+    crossoverYear: () => crossoverYear,
+    noIncomeTaxStates: () => noIncomeTaxStates,
+    optimizeConversion: () => optimizeConversion,
+    projectLifetime: () => projectLifetime,
+    resolveStateOrdinaryRate: () => resolveStateOrdinaryRate,
+    rmdAmount: () => rmdAmount,
+    rmdApplicableAge: () => rmdApplicableAge,
+    rmdOrdering: () => rmdOrdering,
+    stateTaxOnOrdinary: () => stateTaxOnOrdinary,
+    sweepConversion: () => sweepConversion
+  });
+
+  // src/rules/federal/2026.json
+  var __default = {
+    ruleSetId: "federal-2026",
+    taxYear: 2026,
+    effectiveDate: "2026-01-01",
+    expirationDate: "2026-12-31",
+    lawMode: "current_law",
+    verifiedDate: "2026-08-21",
+    verifiedBy: "PENDING_ADVISOR_REVIEW",
+    primaryAuthority: "Rev. Proc. 2025-32 (IR-2025-103)",
+    sourceUrl: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
+    secondaryConfirmation: "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+    machineVerification: "2026-08-21: core constants spot-checked against multiple independent reproductions of Rev. Proc. 2025-32 \u2014 standard deduction (single 16,100 / MFJ 32,200 / HOH 24,150) and the ordinary brackets (10% floor 12,400 single; top 37% at 640,600 single / 768,700 MFJ). The three formerly-flagged OBBBA constants below (non-itemizer charitable, itemized 2/37 benefit cap, QCD limit) were also cross-verified this date. Primary irs.gov PDFs not fetched directly (egress-blocked); human advisor sign-off (verifiedBy) still recommended before client use.",
+    rules: {
+      STD_DEDUCTION: {
+        values: { single: 16100, mfj: 32200, mfs: 16100, hoh: 24150 },
+        authority: "IRC 63(c); Rev. Proc. 2025-32"
+      },
+      ADDITIONAL_STD_DEDUCTION_AGE_65: {
+        values: { single: 2050, hoh: 2050, mfj: 1650, mfs: 1650 },
+        perQualifyingIndividual: true,
+        authority: "IRC 63(f); Rev. Proc. 2025-32",
+        note: "Separate from and stacked with the OBBBA senior bonus deduction below."
+      },
+      ORDINARY_BRACKETS: {
+        single: [[0, 0.1], [12400, 0.12], [50400, 0.22], [105700, 0.24], [201775, 0.32], [256225, 0.35], [640600, 0.37]],
+        mfj: [[0, 0.1], [24800, 0.12], [100800, 0.22], [211400, 0.24], [403550, 0.32], [512450, 0.35], [768700, 0.37]],
+        hoh: [[0, 0.1], [17700, 0.12], [67450, 0.22], [105700, 0.24], [201750, 0.32], [256200, 0.35], [640600, 0.37]],
+        format: "[bracketFloorTaxableIncome, marginalRate]",
+        authority: "IRC 1(j); Rev. Proc. 2025-32"
+      },
+      PREFERENTIAL_RATE_THRESHOLDS: {
+        single: { zeroRateTop: 49450, fifteenRateTop: 545500 },
+        mfj: { zeroRateTop: 98900, fifteenRateTop: 613700 },
+        hoh: { zeroRateTop: 66200, fifteenRateTop: 579600 },
+        rates: { zero: 0, fifteen: 0.15, twenty: 0.2 },
+        measuredAgainst: "taxable_income",
+        authority: "IRC 1(h); Rev. Proc. 2025-32"
+      },
+      SOCIAL_SECURITY_TAXABILITY: {
+        ruleId: "IRC_86_SS_TAXABILITY",
+        base1: { single: 25e3, hoh: 25e3, mfj: 32e3, mfs: 0 },
+        base2Additional: { single: 9e3, hoh: 9e3, mfj: 12e3, mfs: 0 },
+        lowerInclusionRate: 0.5,
+        maxInclusionRate: 0.85,
+        indexedForInflation: false,
+        indexingNote: "UNINDEXED SINCE 1984/1993 BY STATUTE. Never inflate these in projections.",
+        authority: "IRC 86",
+        worksheet: "Form 1040 instructions, Social Security Benefits Worksheet"
+      },
+      SENIOR_BONUS_DEDUCTION: {
+        ruleId: "OBBBA_SENIOR_DEDUCTION",
+        amountPerQualifyingIndividual: 6e3,
+        minimumAge: 65,
+        phaseoutStartMagi: { single: 75e3, hoh: 75e3, mfj: 15e4, mfs: 75e3 },
+        phaseoutRatePerQualifyingIndividual: 0.06,
+        availableWithItemizedDeductions: true,
+        reducesAgi: false,
+        firstTaxYear: 2025,
+        lastTaxYear: 2028,
+        doNotExtrapolate: true,
+        authority: "IRC 151(d)(5) as added by P.L. 119-21 (OBBBA); allowed via IRC 63(b)/(d), NOT in the IRC 62 above-the-line list",
+        worksheet: "Schedule 1-A (Form 1040), Part V, lines 33-36b",
+        sourceUrl: "https://www.irs.gov/pub/irs-pdf/f1040s1a.pdf",
+        criticalNote: "Schedule 1-A computes ONE phaseout amount on line 35 and enters it on BOTH line 36a and line 36b. With two qualifying spouses the household therefore loses 12 cents of deduction per dollar of MAGI, not 6 cents. Full phaseout: 175000 single, 250000 MFJ both 65+.",
+        openDecision: "ROUNDING_POLICY - see PHASE-0 spec section 6. Must be resolved with a citation before shipping."
+      },
+      NIIT: {
+        ruleId: "IRC_1411_NIIT",
+        rate: 0.038,
+        thresholds: { single: 2e5, hoh: 2e5, mfj: 25e4, mfs: 125e3 },
+        indexedForInflation: false,
+        base: "lesser_of_net_investment_income_or_magi_excess",
+        rothConversionIsNetInvestmentIncome: false,
+        authority: "IRC 1411; Form 8960",
+        criticalNote: "A Roth conversion is NOT net investment income, but it DOES raise MAGI and can therefore pull existing investment income into the tax."
+      },
+      CHARITABLE_AGI_FLOOR: {
+        ruleId: "OBBBA_CHARITABLE_FLOOR",
+        floorRateOfAgi: 5e-3,
+        firstTaxYear: 2026,
+        appliesTo: "itemized_charitable_contributions",
+        authority: "IRS Publication 505 (2026)",
+        sourceUrl: "https://www.irs.gov/publications/p505",
+        status: "PRIMARY_SOURCE_CONFIRMED"
+      },
+      CHARITABLE_NONITEMIZER_DEDUCTION: {
+        values: { single: 1e3, mfj: 2e3 },
+        firstTaxYear: 2026,
+        notIndexed: true,
+        permanent: true,
+        status: "VALUE_CROSS_VERIFIED_2026-08-21",
+        authority: "P.L. 119-21 (OBBBA), effective TY2026; above-the-line deduction for cash gifts by non-itemizers, fixed $1,000/$2,000 (not inflation-indexed), permanent. Cross-verified against multiple independent tax-advisory summaries 2026-08-21; primary statutory text not fetched (egress-blocked). Not yet consumed by the engine.",
+        note: "When itemizing is NOT elected, the 0.5% AGI floor (CHARITABLE_AGI_FLOOR) does not apply; DAF and non-cash gifts are excluded."
+      },
+      ITEMIZED_DEDUCTION_BENEFIT_CAP: {
+        maxRate: 0.35,
+        appliesToBracket: 0.37,
+        firstTaxYear: 2026,
+        status: "VALUE_CROSS_VERIFIED_2026-08-21",
+        authority: "IRC 68 as amended by P.L. 119-21 (OBBBA) \u2014 the '2/37 rule': disallow 2/37 of the lesser of itemized deductions otherwise allowed or the taxable income in the 37% bracket, capping the benefit at 35 cents/dollar. Effective TY2026. Kicks in at the 37% bracket floors ($640,600 single / $768,700 MFJ). Cross-verified 2026-08-21; not yet consumed by the engine."
+      },
+      QCD_LIMIT: {
+        amountPerIndividual: 111e3,
+        amountMfj: 222e3,
+        minimumAge: 70.5,
+        status: "VALUE_CROSS_VERIFIED_2026-08-21",
+        authority: "IRC 408(d)(8), inflation-indexed under SECURE 2.0 Act. 2026 limit $111,000/individual ($222,000 MFJ), continuing the progression 2023 $100k -> 2024 $105k -> 2025 $108k -> 2026 $111k. Cross-verified 2026-08-21 against multiple independent sources; confirm against IRS Pub 590-B (2026) at advisor review. Consumed by the legacy projector engine only."
+      },
+      RMD_APPLICABLE_AGE: {
+        ruleId: "SECURE20_RMD_APPLICABLE_AGE",
+        authority: "SECURE 2.0 Act sec. 107; T.D. 10001, 89 FR 58886 (July 19, 2024)",
+        sourceUrl: "https://www.federalregister.gov/documents/2024/07/19/2024-14542/required-minimum-distributions",
+        verifiedDate: "2026-08-19",
+        note: "Applicable age derived per birth year. The 1959 statutory drafting glitch was resolved to age 73 by Treasury in the July 2024 final regulations (so 1951-1959 -> 73).",
+        byBirthYear: [
+          { maxBirthYear: 1950, age: 72 },
+          { maxBirthYear: 1959, age: 73 },
+          { maxBirthYear: null, age: 75 }
+        ],
+        legacyApplicableAge: 73,
+        legacyNote: "The pre-fix projector applied age 73 to every household regardless of birth year (a fixed input default). Phase 1 replaces this with the birth-year rule above."
+      },
+      RMD_UNIFORM_LIFETIME_TABLE: {
+        ruleId: "ULT_2022_FINAL_REGS",
+        authority: "Treas. Reg. 1.401(a)(9)-9(c) (2022 final regulations)",
+        sourceUrl: "https://www.federalregister.gov/documents/2022/11/07/2022-24173/updated-life-expectancy-and-distribution-period-tables",
+        verifiedDate: "2026-08-19",
+        note: "Distribution period by age at year end. Balance is the prior December 31 value. Roth IRAs are excluded from lifetime RMDs.",
+        distributionPeriodByAge: {
+          "72": 27.4,
+          "73": 26.5,
+          "74": 25.5,
+          "75": 24.6,
+          "76": 23.7,
+          "77": 22.9,
+          "78": 22,
+          "79": 21.1,
+          "80": 20.2,
+          "81": 19.4,
+          "82": 18.5,
+          "83": 17.7,
+          "84": 16.8,
+          "85": 16,
+          "86": 15.2,
+          "87": 14.4,
+          "88": 13.7,
+          "89": 12.9,
+          "90": 12.2,
+          "91": 11.5,
+          "92": 10.8,
+          "93": 10.1,
+          "94": 9.5,
+          "95": 8.9,
+          "96": 8.4,
+          "97": 7.8,
+          "98": 7.3,
+          "99": 6.8,
+          "100": 6.4,
+          "101": 6,
+          "102": 5.6,
+          "103": 5.2,
+          "104": 4.9,
+          "105": 4.6,
+          "106": 4.3,
+          "107": 4.1,
+          "108": 3.9,
+          "109": 3.7,
+          "110": 3.5,
+          "111": 3.4,
+          "112": 3.3,
+          "113": 3.1,
+          "114": 3,
+          "115": 2.9,
+          "116": 2.8,
+          "117": 2.7,
+          "118": 2.5,
+          "119": 2.3,
+          "120": 2
+        }
+      },
+      RMD_ORDERING: {
+        ruleId: "RMD_FIRST_DOLLARS_OUT",
+        authority: "Treas. Reg. 1.408A-4, Q&A-6; IRC 4973",
+        verifiedDate: "2026-08-19",
+        note: "The RMD is deemed distributed first and is NOT eligible for Roth conversion. An RMD amount contributed to a Roth is a REGULAR contribution and is an excess contribution (6% IRC 4973 excise) to the extent it exceeds the allowable regular Roth contribution. Absent earned income the allowance is 0."
+      }
+    }
+  };
+
+  // src/rules/medicare/2026.json
+  var __default2 = {
+    ruleSetId: "medicare-2026",
+    premiumYear: 2026,
+    magiSourceTaxYear: 2024,
+    lookbackYears: 2,
+    verifiedDate: "2026-08-21",
+    verifiedBy: "PENDING_ADVISOR_REVIEW",
+    primaryAuthority: "CMS 2026 Medicare Parts A & B Premiums and Deductibles (fact sheet published 2025-11-14)",
+    sourceUrl: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-and-deductibles",
+    publicationDate: "2025-11-14",
+    status: "VALUES_CROSS_VERIFIED_SECONDARY_2026-08-21",
+    machineVerification: "Every value in this file (standard Part B premium, all six per-tier Part B premiums, all six Part D IRMAA amounts, and both single and MFJ MAGI thresholds) was cross-verified 2026-08-21 against multiple independent secondary sources reproducing the CMS 2026 release. The primary CMS fact sheet was NOT fetched directly (cms.gov is egress-blocked from the build environment). Human advisor sign-off (verifiedBy) is still recommended before client use.",
+    magiDefinition: "adjusted_gross_income + tax_exempt_interest",
+    standardPartBPremiumMonthly: 202.9,
+    appliesPerEnrollee: true,
+    monthsPerYear: 12,
+    tiers: {
+      single: [
+        { ruleId: "IRMAA_TIER_0", magiMax: 109e3, partBMonthly: 202.9, partDIrmaaMonthly: 0 },
+        { ruleId: "IRMAA_TIER_1", magiMax: 137e3, partBMonthly: 284.1, partDIrmaaMonthly: 14.5 },
+        { ruleId: "IRMAA_TIER_2", magiMax: 171e3, partBMonthly: 405.8, partDIrmaaMonthly: 37.5 },
+        { ruleId: "IRMAA_TIER_3", magiMax: 205e3, partBMonthly: 527.5, partDIrmaaMonthly: 60.4 },
+        { ruleId: "IRMAA_TIER_4", magiMax: 5e5, partBMonthly: 649.2, partDIrmaaMonthly: 83.3 },
+        { ruleId: "IRMAA_TIER_5", magiMax: null, partBMonthly: 689.9, partDIrmaaMonthly: 91 }
+      ],
+      mfj: [
+        { ruleId: "IRMAA_TIER_0", magiMax: 218e3, partBMonthly: 202.9, partDIrmaaMonthly: 0 },
+        { ruleId: "IRMAA_TIER_1", magiMax: 274e3, partBMonthly: 284.1, partDIrmaaMonthly: 14.5 },
+        { ruleId: "IRMAA_TIER_2", magiMax: 342e3, partBMonthly: 405.8, partDIrmaaMonthly: 37.5 },
+        { ruleId: "IRMAA_TIER_3", magiMax: 41e4, partBMonthly: 527.5, partDIrmaaMonthly: 60.4 },
+        { ruleId: "IRMAA_TIER_4", magiMax: 75e4, partBMonthly: 649.2, partDIrmaaMonthly: 83.3 },
+        { ruleId: "IRMAA_TIER_5", magiMax: null, partBMonthly: 689.9, partDIrmaaMonthly: 91 }
+      ]
+    },
+    boundaryConvention: "magiMax is INCLUSIVE. Income at exactly magiMax stays in the lower tier.",
+    lifeChangingEventRelief: "SSA-44 may reduce a surcharge after a qualifying life-changing event. A Roth conversion is NOT a qualifying event."
+  };
+
+  // src/rules/aca/2026.json
+  var __default3 = {
+    ruleSetId: "aca-2026",
+    coverageYear: 2026,
+    povertyGuidelineYear: 2025,
+    verifiedDate: "2026-08-21",
+    verifiedBy: "PENDING_ADVISOR_REVIEW",
+    primaryAuthority: "IRC 36B; Form 8962 instructions; HHS 2025 Poverty Guidelines",
+    sourceUrl: "https://www.irs.gov/instructions/i8962",
+    machineVerification: "2026-08-21: the 2025 HHS poverty guidelines (1-person $15,650, 2 $21,150, 3 $26,650, 4 $32,150; +$5,500/person) and the return of the 400% FPL cliff for coverage year 2026 (enhanced ARPA/IRA premium tax credits expired 2025-12-31, not extended) were cross-verified against multiple independent secondary sources. Derived cutoffs check out: 400% FPL = $62,600 single / $128,600 family-of-four. Primary aspe.hhs.gov / irs.gov pages not fetched directly (egress-blocked). Human advisor sign-off still recommended.",
+    magiDefinition: "adjusted_gross_income + tax_exempt_interest + nontaxable_social_security + excluded_foreign_earned_income",
+    magiCriticalNote: "ACA MAGI includes the NON-TAXABLE portion of Social Security. No other MAGI in this engine does. Do not reuse IRMAA MAGI here.",
+    subsidyCliff: {
+      ruleId: "ACA_36B_400FPL_CLIFF",
+      active: true,
+      thresholdPercentOfFpl: 400,
+      boundaryConvention: "INCLUSIVE. At exactly 400.00% FPL the credit survives; above it the credit is zero.",
+      statutoryBasis: "Enhanced premium tax credits under ARPA/IRA expired 2025-12-31 and were not extended.",
+      watchItem: {
+        bill: "H.R. 5145 (119th Congress); related House-passed extension H.R. 1834",
+        status: "NOT ENACTED as of 2026-08-21 (re-confirmed; extension remains stalled in the Senate)",
+        url: "https://www.congress.gov/bill/119th-congress/house-bill/5145",
+        ifEnacted: "Bump this rules file to a new version. No engine code change should be required. This is the test of whether the rules architecture was built correctly."
+      }
+    },
+    federalPovertyGuidelines2025: {
+      region: "48_contiguous_states_and_dc",
+      "1": 15650,
+      "2": 21150,
+      "3": 26650,
+      "4": 32150,
+      additionalPerPerson: 5500,
+      note: "Alaska and Hawaii use separate guidelines. Add them before supporting those states."
+    }
+  };
+
+  // src/rules/state/2026.json
+  var __default4 = {
+    ruleSetId: "state-2026",
+    taxYear: 2026,
+    verifiedDate: "2026-08-21",
+    verifiedBy: "PENDING_ADVISOR_REVIEW",
+    primaryAuthority: "Each state's Department of Revenue; Tax Foundation, State Individual Income Tax Rates and Brackets (2026)",
+    sourceUrl: "https://taxfoundation.org/data/all/state/state-income-tax-rates/",
+    coverageModel: "v1 FLAT-RATE. Only the nine states with no broad-based personal income tax are modeled as data (0% on ordinary income, including Roth conversions). For every other state the engine applies an ADVISOR-SUPPLIED flat effective marginal rate and never guesses a state's rate or brackets (Rule 4).",
+    noOrdinaryIncomeTaxStates: ["AK", "FL", "NV", "NH", "SD", "TN", "TX", "WA", "WY"],
+    stateCaveats: {
+      WA: "Washington levies a tax on certain long-term capital gains above an annual threshold but does NOT tax ordinary income or Roth conversions. Ordinary-income rate is 0 here; the capital-gains tax is out of scope for this flat-rate v1.",
+      NH: "New Hampshire's Interest & Dividends tax finished phasing out on 2025-01-01; from 2026 there is no state tax on any income, including Roth conversions.",
+      TN: "Tennessee's Hall tax on interest and dividends was fully repealed effective 2021."
+    },
+    advisorSuppliedRate: {
+      mechanism: "For any state NOT in noOrdinaryIncomeTaxStates, the advisor supplies a single effective marginal state rate for the household. The engine applies it as a flat rate to incremental ordinary income (Roth conversions and taxable withdrawals).",
+      default: 0,
+      doNotGuess: true,
+      notModeled: [
+        "per-state progressive brackets",
+        "state retirement-income exclusions / pension subtractions",
+        "state treatment of Social Security",
+        "state-specific Roth-conversion rules or credits",
+        "local / city income taxes",
+        "state capital-gains treatment (e.g., WA)"
+      ]
+    },
+    machineVerification: "2026-08-21: the nine no-income-tax states (AK, FL, NV, NH, SD, TN, TX, WA, WY) were cross-verified against multiple independent secondary sources, including the NH interest-and-dividends phase-out completing 2025-01-01. No per-state rate is embedded, so nothing here is guessed. Human advisor sign-off still recommended."
+  };
+
+  // src/engine/rules.ts
+  var F = __default.rules;
+  function pick(obj, status) {
+    const v = obj[status];
+    if (v === void 0) throw new Error(`rules: no entry for filing status '${status}'`);
+    return v;
+  }
+  var stdDeduction = (s) => pick(F.STD_DEDUCTION.values, s);
+  var additional65 = (s) => pick(F.ADDITIONAL_STD_DEDUCTION_AGE_65.values, s);
+  var ordinaryBrackets = (s) => pick(F.ORDINARY_BRACKETS, s);
+  var ORDINARY_BRACKETS_RULE_ID = "ORDINARY_BRACKETS_2026";
+  var prefThresholds = (s) => pick(F.PREFERENTIAL_RATE_THRESHOLDS, s);
+  var prefRates = () => F.PREFERENTIAL_RATE_THRESHOLDS.rates;
+  var LTCG_RULE_ID = "LTCG_QD_STACKING_IRC_1H";
+  var ssBase1 = (s) => pick(F.SOCIAL_SECURITY_TAXABILITY.base1, s);
+  var ssBase2Additional = (s) => pick(F.SOCIAL_SECURITY_TAXABILITY.base2Additional, s);
+  var ssLowerRate = () => F.SOCIAL_SECURITY_TAXABILITY.lowerInclusionRate;
+  var ssMaxRate = () => F.SOCIAL_SECURITY_TAXABILITY.maxInclusionRate;
+  var SS_RULE_ID = F.SOCIAL_SECURITY_TAXABILITY.ruleId;
+  var niitRate = () => F.NIIT.rate;
+  var niitThreshold = (s) => pick(F.NIIT.thresholds, s);
+  var NIIT_RULE_ID = F.NIIT.ruleId;
+  var seniorPerPerson = () => F.SENIOR_BONUS_DEDUCTION.amountPerQualifyingIndividual;
+  var seniorPhaseoutStart = (s) => pick(F.SENIOR_BONUS_DEDUCTION.phaseoutStartMagi, s);
+  var seniorPhaseoutRate = () => F.SENIOR_BONUS_DEDUCTION.phaseoutRatePerQualifyingIndividual;
+  var seniorMinAge = () => F.SENIOR_BONUS_DEDUCTION.minimumAge;
+  var SENIOR_RULE_ID = F.SENIOR_BONUS_DEDUCTION.ruleId;
+  var rmdAgeBands = () => F.RMD_APPLICABLE_AGE.byBirthYear;
+  var RMD_AGE_RULE_ID = F.RMD_APPLICABLE_AGE.ruleId;
+  var ultFactor = (age) => F.RMD_UNIFORM_LIFETIME_TABLE.distributionPeriodByAge[String(age)];
+  var ULT_RULE_ID = F.RMD_UNIFORM_LIFETIME_TABLE.ruleId;
+  var RMD_ORDERING_RULE_ID = F.RMD_ORDERING.ruleId;
+  var irmaaTiers = (s) => pick(__default2.tiers, s);
+  var irmaaStandardPartB = () => __default2.standardPartBPremiumMonthly;
+  var irmaaMonths = () => __default2.monthsPerYear;
+  var fplByHousehold = (n2) => __default3.federalPovertyGuidelines2025[String(n2)];
+  var acaThresholdPercent = () => __default3.subsidyCliff.thresholdPercentOfFpl;
+  var ACA_CLIFF_RULE_ID = __default3.subsidyCliff.ruleId;
+  var noIncomeTaxStates = () => __default4.noOrdinaryIncomeTaxStates;
+  var stateDefaultRate = () => __default4.advisorSuppliedRate.default;
+  var STATE_RULE_ID = __default4.ruleSetId;
+  var ENGINE_VERSION = "0.3.0-hardening";
+  function calculationMetadata(taxYear, lawMode) {
+    return {
+      engineVersion: ENGINE_VERSION,
+      federalRulesVersion: __default.ruleSetId,
+      medicareRulesVersion: __default2.ruleSetId,
+      acaRulesVersion: __default3.ruleSetId,
+      stateRulesVersion: __default4.ruleSetId,
+      calculationDate: "injected",
+      taxYear,
+      lawMode
+    };
+  }
+
+  // src/engine/calculateSocialSecurity.ts
+  function socialSecurityTaxable(grossSocialSecurity, otherIncome, taxExemptInterest, adjustments, status) {
+    const half = ssLowerRate();
+    const max = ssMaxRate();
+    const halfBenefits = grossSocialSecurity * half;
+    const combined = halfBenefits + otherIncome + taxExemptInterest;
+    const provisional = Math.max(0, combined - adjustments);
+    if (provisional <= 0) return { taxable: 0, provisional };
+    const over1 = Math.max(0, provisional - ssBase1(status));
+    if (over1 <= 0) return { taxable: 0, provisional };
+    const base2 = ssBase2Additional(status);
+    const over2 = Math.max(0, over1 - base2);
+    const inLowerBand = Math.min(over1, base2);
+    const lowerHalf = inLowerBand * half;
+    const lowerInclusion = Math.min(halfBenefits, lowerHalf);
+    const upperInclusion = over2 * max;
+    const taxable = Math.min(lowerInclusion + upperInclusion, grossSocialSecurity * max);
+    return { taxable, provisional };
+  }
+
+  // src/engine/calculateDeductions.ts
+  function seniorDeduction(magiSenior, status, nQualifying) {
+    if (nQualifying === 0) return { total: 0, schedule1a: { note: "no qualifying individual" } };
+    const perPerson = seniorPerPerson();
+    const excess = Math.max(0, magiSenior - seniorPhaseoutStart(status));
+    const perPersonAfter = Math.max(0, perPerson - excess * seniorPhaseoutRate());
+    const line36a = nQualifying >= 1 ? perPersonAfter : 0;
+    const line36b = nQualifying >= 2 ? perPersonAfter : 0;
+    const total = line36a + line36b;
+    return { total, schedule1a: { "33": perPerson, "34": excess, "35": perPersonAfter, "36a": line36a, "36b": line36b, total } };
+  }
+  function countAge65Plus(ages) {
+    const min = seniorMinAge();
+    return ages.filter((a) => a >= min).length;
+  }
+  function computeDeductions(status, ages, magiSenior, itemizedDeductions, qbiDeduction) {
+    const n65 = countAge65Plus(ages);
+    let base;
+    let kind;
+    if (itemizedDeductions == null) {
+      base = stdDeduction(status) + additional65(status) * n65;
+      kind = "standard";
+    } else {
+      base = itemizedDeductions;
+      kind = "itemized";
+    }
+    const senior = seniorDeduction(magiSenior, status, n65).total;
+    const total = base + senior + qbiDeduction;
+    return { kind, base, nAge65Plus: n65, seniorBonusDeduction: senior, qbi: qbiDeduction, charitable: 0, total };
+  }
+
+  // src/engine/calculateTax.ts
+  function ordinaryTax(taxableIncome, status) {
+    const taxable = Math.max(0, taxableIncome);
+    const bands = ordinaryBrackets(status);
+    let tax = 0;
+    for (let i = 0; i < bands.length; i++) {
+      const floor = bands[i][0];
+      const rate = bands[i][1];
+      const nextFloor = i + 1 < bands.length ? bands[i + 1][0] : Infinity;
+      if (taxable > floor) tax += (Math.min(taxable, nextFloor) - floor) * rate;
+      else break;
+    }
+    return Math.max(0, tax);
+  }
+  function qdcgWorksheet(taxableIncome, qualifiedDividends, netLtcg, status) {
+    const th = prefThresholds(status);
+    const rate = prefRates();
+    const L1 = Math.max(0, taxableIncome);
+    const L4 = qualifiedDividends + netLtcg;
+    const L5 = Math.max(0, L1 - L4);
+    const L6 = Math.min(L1, th.zeroRateTop);
+    const L7 = Math.min(L5, L6);
+    const L8 = L6 - L7;
+    const L9 = Math.min(L1, L4);
+    const L12 = Math.min(L1, th.fifteenRateTop);
+    const L13 = L5 + L8;
+    const L14 = Math.max(0, L12 - L13);
+    const L15 = Math.min(L9 - L8, L14);
+    const L18 = L9 - (L8 + L15);
+    const preferentialTax = L15 * rate.fifteen + L18 * rate.twenty;
+    const viaWorksheet = preferentialTax + ordinaryTax(L5, status);
+    const viaOrdinary = ordinaryTax(L1, status);
+    return {
+      regularTax: Math.min(viaWorksheet, viaOrdinary),
+      ordinaryTaxableIncome: L5,
+      taxedAtZero: L8,
+      taxedAtFifteen: L15,
+      taxedAtTwenty: L18
+    };
+  }
+
+  // src/engine/money.ts
+  var cents = (x) => Math.round(x * 100) / 100;
+
+  // src/engine/calculateNIIT.ts
+  function niitTax(magiNiit, netInvestmentIncome, status) {
+    const excess = Math.max(0, magiNiit - niitThreshold(status));
+    const base = Math.min(netInvestmentIncome, excess);
+    return cents(base * niitRate());
+  }
+
+  // src/engine/calculateYear.ts
+  var n = (v) => v != null ? v : 0;
+  function computeYear(input) {
+    var _a;
+    const status = input.status;
+    const ages = input.ages;
+    const wages = n(input.wages), interest = n(input.interest);
+    const qualifiedDividends = n(input.qualifiedDividends);
+    const ordinaryDividends = (_a = input.ordinaryDividends) != null ? _a : qualifiedDividends;
+    const netLtcg = n(input.netLtcg), iraDistributions = n(input.iraDistributions);
+    const rothConversion = n(input.rothConversion), pension = n(input.pension);
+    const otherOrdinary = n(input.otherOrdinary), adjustments = n(input.adjustments);
+    const taxExemptInterest = n(input.taxExemptInterest), qbi = n(input.qbiDeduction);
+    const grossSs = n(input.grossSocialSecurity);
+    const itemized = input.itemizedDeductions;
+    const otherIncome = wages + interest + ordinaryDividends + netLtcg + iraDistributions + rothConversion + pension + otherOrdinary;
+    const ss = socialSecurityTaxable(grossSs, otherIncome, taxExemptInterest, adjustments, status);
+    const agi = otherIncome + ss.taxable - adjustments;
+    const magi = {
+      irmaa: agi + taxExemptInterest,
+      niit: agi,
+      aca: agi + taxExemptInterest + (grossSs - ss.taxable),
+      senior: agi
+    };
+    const deductions = computeDeductions(status, ages, magi.senior, itemized, qbi);
+    const taxableIncome = Math.max(0, agi - deductions.total);
+    const q = qdcgWorksheet(taxableIncome, qualifiedDividends, netLtcg, status);
+    const nii = interest + ordinaryDividends + netLtcg;
+    const niit = niitTax(magi.niit, nii, status);
+    const totalFederalTax = cents(q.regularTax + niit);
+    return {
+      grossIncome: otherIncome + grossSs,
+      provisionalIncome: ss.provisional,
+      taxableSocialSecurity: ss.taxable,
+      agi,
+      magi,
+      deductions,
+      taxableIncome,
+      ordinaryIncome: q.ordinaryTaxableIncome,
+      preferential: { taxedAtZero: q.taxedAtZero, taxedAtFifteen: q.taxedAtFifteen, taxedAtTwenty: q.taxedAtTwenty },
+      regularTax: cents(q.regularTax),
+      niit,
+      amt: 0,
+      additionalMedicareTax: 0,
+      stateTax: 0,
+      totalFederalTax,
+      acaCost: 0,
+      irmaaFutureCost: 0,
+      totalEconomicCost: totalFederalTax,
+      appliedRuleIds: [SS_RULE_ID, ORDINARY_BRACKETS_RULE_ID, SENIOR_RULE_ID, NIIT_RULE_ID],
+      ruleIds: {
+        taxableSocialSecurity: SS_RULE_ID,
+        regularTax: ORDINARY_BRACKETS_RULE_ID,
+        seniorBonusDeduction: SENIOR_RULE_ID,
+        niit: NIIT_RULE_ID
+      },
+      calculationMetadata: calculationMetadata(input.taxYear, input.lawMode)
+    };
+  }
+
+  // src/engine/calculateRMD.ts
+  function rmdApplicableAge(birthYear) {
+    for (const band of rmdAgeBands()) {
+      if (band.maxBirthYear === null || birthYear <= band.maxBirthYear) {
+        return { rmdApplicableAge: band.age, appliedRuleIds: [RMD_AGE_RULE_ID] };
+      }
+    }
+    throw new Error("RMD applicable-age bands are not exhaustive (missing open-ended final band).");
+  }
+  function rmdAmount(priorYearEndBalance, ageAtYearEnd) {
+    const factor = ultFactor(ageAtYearEnd);
+    if (factor === void 0) throw new Error(`no Uniform Lifetime Table factor for age ${ageAtYearEnd}`);
+    return { rmd: cents(priorYearEndBalance / factor), distributionPeriod: factor, appliedRuleIds: [ULT_RULE_ID] };
+  }
+  function rmdOrdering(args) {
+    const ageAtYearEnd = args.taxYear - args.birthYear;
+    const factor = ultFactor(ageAtYearEnd);
+    if (factor === void 0) throw new Error(`no Uniform Lifetime Table factor for age ${ageAtYearEnd}`);
+    const rmdRequiredFirst = cents(args.priorYearEndBalance / factor);
+    const amountEligibleForConversion = args.priorYearEndBalance - rmdRequiredFirst;
+    const allowableRegularRothContributionThisFixture = 0;
+    const excessContributionThisFixture = Math.max(0, rmdRequiredFirst - allowableRegularRothContributionThisFixture);
+    return {
+      rmdRequiredFirst,
+      amountEligibleForConversion,
+      conversionOfRmdAmountPermitted: false,
+      excessContributionThisFixture,
+      allowableRegularRothContributionThisFixture,
+      appliedRuleIds: [RMD_ORDERING_RULE_ID]
+    };
+  }
+
+  // src/engine/calculateIRMAA.ts
+  function calculateIrmaa(magiIrmaa, status, enrolled) {
+    const tiers = irmaaTiers(status);
+    const standardPartB = irmaaStandardPartB();
+    const magi = magiIrmaa;
+    for (let i = 0; i < tiers.length; i++) {
+      const t = tiers[i];
+      if (t.magiMax === null || magi <= t.magiMax) {
+        const surchargeMonthlyPerPerson = t.partBMonthly - standardPartB + t.partDIrmaaMonthly;
+        return {
+          annualHouseholdSurchargeAboveStandard: cents(surchargeMonthlyPerPerson * irmaaMonths() * enrolled),
+          tier: i,
+          partBMonthly: t.partBMonthly,
+          partDIrmaaMonthly: t.partDIrmaaMonthly,
+          surchargeMonthlyPerPerson,
+          enrolled,
+          appliedRuleIds: [t.ruleId]
+        };
+      }
+    }
+    throw new Error("IRMAA tiers are not exhaustive (missing open-ended top tier).");
+  }
+
+  // src/engine/calculateACA.ts
+  function calculateAca(magiAca, householdSize) {
+    const fpl100 = fplByHousehold(householdSize);
+    if (fpl100 === void 0) throw new Error(`ACA: no FPL guideline for household size ${householdSize}`);
+    const magi = magiAca;
+    const fpl400 = fpl100 * (acaThresholdPercent() / 100);
+    const fplPercentage = magi / fpl100 * 100;
+    const eligible = magi <= fpl400;
+    return {
+      fpl100Percent: fpl100,
+      fpl400Percent: fpl400,
+      fplPercentage,
+      premiumTaxCreditEligible: eligible,
+      creditMultiplier: eligible ? 1 : 0,
+      appliedRuleIds: [ACA_CLIFF_RULE_ID],
+      discontinuityId: ACA_CLIFF_RULE_ID
+    };
+  }
+
+  // src/engine/sweepConversion.ts
+  function topOrdinaryRate(taxableIncome, status) {
+    const bands = ordinaryBrackets(status);
+    let rate = bands[0][1];
+    for (const band of bands) if (taxableIncome >= band[0]) rate = band[1];
+    return rate;
+  }
+  function sweepConversion(base, opts) {
+    var _a, _b, _c, _d, _e;
+    const status = base.status;
+    const ages = base.ages;
+    const seniorMin = seniorMinAge();
+    const nSeniors = ages.filter((a) => a >= seniorMin).length;
+    const grossSs = (_a = base.grossSocialSecurity) != null ? _a : 0;
+    const nii = ((_b = base.interest) != null ? _b : 0) + ((_d = (_c = base.ordinaryDividends) != null ? _c : base.qualifiedDividends) != null ? _d : 0) + ((_e = base.netLtcg) != null ? _e : 0);
+    const trackIrmaa = opts.medicareEnrollees > 0;
+    const trackAca = opts.annualAcaCredit > 0;
+    const seniorEnd = (s) => seniorPhaseoutStart(s) + seniorPerPerson() / seniorPhaseoutRate();
+    const snap = (c) => {
+      const y = computeYear({ ...base, rothConversion: c });
+      const magiIrmaa = y.magi.irmaa;
+      const magiAca = y.magi.aca;
+      const irmaa = trackIrmaa ? calculateIrmaa(magiIrmaa, status, opts.medicareEnrollees) : { annualHouseholdSurchargeAboveStandard: 0, tier: 0, appliedRuleIds: ["IRMAA_TIER_0"] };
+      const acaEligible = trackAca ? computeAcaEligible(magiAca, opts.householdSize) : true;
+      let ssState = "na";
+      if (grossSs > 0) {
+        if (y.provisionalIncome <= ssBase1(status)) ssState = "none";
+        else if (y.taxableSocialSecurity >= grossSs * ssMaxRate() - 1) ssState = "ceiling";
+        else ssState = "phasing";
+      }
+      let seniorState = "na";
+      if (nSeniors > 0) {
+        const m = y.magi.senior;
+        if (m < seniorPhaseoutStart(status)) seniorState = "full";
+        else if (m >= seniorEnd(status)) seniorState = "gone";
+        else seniorState = "phasing";
+      }
+      const p = y.preferential;
+      const prefState = `${p.taxedAtZero > 0 ? 1 : 0}${p.taxedAtFifteen > 0 ? 1 : 0}${p.taxedAtTwenty > 0 ? 1 : 0}`;
+      const niitBaseTop = niitThreshold(status) + nii;
+      const magiNiit = y.magi.niit;
+      const niitState = nii <= 0 ? "na" : magiNiit <= niitThreshold(status) ? "off" : magiNiit >= niitBaseTop ? "full" : "phasing";
+      return {
+        c,
+        fed: y.totalFederalTax,
+        irmaaSurcharge: irmaa.annualHouseholdSurchargeAboveStandard,
+        magiIrmaa,
+        magiAca,
+        // marginal ordinary bracket is set by ORDINARY taxable income (preferential stacks on top)
+        brRate: topOrdinaryRate(y.ordinaryIncome, status),
+        ssState,
+        seniorState,
+        prefState,
+        niitState,
+        irmaaTier: irmaa.tier,
+        irmaaRuleId: irmaa.appliedRuleIds[0],
+        acaEligible
+      };
+    };
+    const base0 = snap(0);
+    const disc = [];
+    if (trackIrmaa) {
+      for (const t of irmaaTiers(status)) {
+        if (t.magiMax !== null) {
+          const conv = t.magiMax - base0.magiIrmaa;
+          if (conv > 0 && conv < opts.maxConversion) disc.push(conv);
+        }
+      }
+    }
+    if (trackAca) {
+      const fpl = fplByHousehold(opts.householdSize);
+      if (fpl !== void 0) {
+        const conv = fpl * (acaThresholdPercent() / 100) - base0.magiAca;
+        if (conv > 0 && conv < opts.maxConversion) disc.push(conv);
+      }
+    }
+    const cache = /* @__PURE__ */ new Map();
+    cache.set(0, base0);
+    const snapAt = (c) => {
+      let s = cache.get(c);
+      if (s === void 0) {
+        s = snap(c);
+        cache.set(c, s);
+      }
+      return s;
+    };
+    const diff = (prev, cur) => {
+      const out = [];
+      if (cur.brRate !== prev.brRate) out.push({ ruleId: ORDINARY_BRACKETS_RULE_ID, cause: "ordinary bracket boundary", kind: "kink" });
+      if (cur.ssState !== prev.ssState && cur.ssState !== "na") out.push({ ruleId: SS_RULE_ID, cause: `Social Security ${cur.ssState === "ceiling" ? "85% ceiling reached" : "phase-in / torpedo"}`, kind: "kink" });
+      if (cur.seniorState !== prev.seniorState && cur.seniorState !== "na") out.push({ ruleId: SENIOR_RULE_ID, cause: "senior-deduction phaseout", kind: "kink" });
+      if (cur.prefState !== prev.prefState) out.push({ ruleId: LTCG_RULE_ID, cause: "LTCG/QD rate-band stacking", kind: "kink" });
+      if (cur.niitState !== prev.niitState && cur.niitState !== "na") out.push({ ruleId: NIIT_RULE_ID, cause: `NIIT ${cur.niitState === "full" ? "fully phased in" : "threshold"}`, kind: "kink" });
+      if (trackIrmaa && cur.irmaaTier !== prev.irmaaTier) out.push({ ruleId: cur.irmaaRuleId, cause: `IRMAA tier ${prev.irmaaTier} -> ${cur.irmaaTier}`, kind: "jump" });
+      if (trackAca && cur.acaEligible !== prev.acaEligible) out.push({ ruleId: ACA_CLIFF_RULE_ID, cause: "ACA 400% FPL cliff", kind: "jump" });
+      return out;
+    };
+    const cost = (s) => {
+      const incFed = s.fed - base0.fed;
+      const incIrmaa = s.irmaaSurcharge - base0.irmaaSurcharge;
+      const acaLoss = s.acaEligible ? 0 : opts.annualAcaCredit;
+      const state = s.c * opts.stateMarginalRate;
+      return incFed + incIrmaa + acaLoss + state;
+    };
+    const points = /* @__PURE__ */ new Set();
+    for (let c = 0; c <= opts.maxConversion; c += opts.coarseStep) points.add(c);
+    for (const d of disc) {
+      const lo = Math.max(0, d - opts.fineWindow), hi = Math.min(opts.maxConversion, d + opts.fineWindow);
+      for (let c = lo; c <= hi; c += opts.fineStep) points.add(Math.round(c));
+    }
+    let grid = [...points].sort((a, b) => a - b);
+    for (let pass = 0; pass < 2; pass++) {
+      const add = [];
+      for (let i = 1; i < grid.length; i++) {
+        if (grid[i] - grid[i - 1] <= opts.fineStep) continue;
+        if (diff(snapAt(grid[i - 1]), snapAt(grid[i])).length > 0) {
+          for (let c = grid[i - 1] + opts.fineStep; c < grid[i]; c += opts.fineStep) add.push(Math.round(c));
+        }
+      }
+      if (add.length === 0) break;
+      for (const c of add) points.add(c);
+      grid = [...points].sort((a, b) => a - b);
+    }
+    const steps = [];
+    let prevSnap = base0;
+    let prevCost = 0;
+    for (let i = 0; i < grid.length; i++) {
+      const s = snapAt(grid[i]);
+      const c = s.c;
+      const totalCost = cost(s);
+      const crossings = i === 0 ? [] : diff(prevSnap, s);
+      const dC = i === 0 ? 0 : c - prevSnap.c;
+      const marginalRate = i === 0 || dC === 0 ? 0 : (totalCost - prevCost) / dC;
+      steps.push({
+        conversion: c,
+        totalFederalTax: s.fed,
+        incrementalFederalTax: s.fed - base0.fed,
+        incrementalIrmaa: s.irmaaSurcharge - base0.irmaaSurcharge,
+        acaCreditLoss: s.acaEligible ? 0 : opts.annualAcaCredit,
+        stateTax: c * opts.stateMarginalRate,
+        totalEconomicCost: totalCost,
+        marginalRate,
+        averageRate: c > 0 ? totalCost / c : 0,
+        crossings
+      });
+      prevSnap = s;
+      prevCost = totalCost;
+    }
+    return { steps, inflections: steps.filter((s) => s.crossings.length > 0) };
+  }
+  function computeAcaEligible(magiAca, householdSize) {
+    const fpl = fplByHousehold(householdSize);
+    if (fpl === void 0) return false;
+    return magiAca <= fpl * (acaThresholdPercent() / 100);
+  }
+
+  // src/engine/calculateState.ts
+  function resolveStateOrdinaryRate(input) {
+    const code = input.stateCode ? input.stateCode.trim().toUpperCase() : null;
+    const ruleId = STATE_RULE_ID;
+    if (code && noIncomeTaxStates().includes(code)) {
+      return {
+        rate: stateDefaultRate(),
+        basis: "no_income_tax_state",
+        modeled: true,
+        ruleId,
+        note: `${code} has no broad-based personal income tax in 2026 (0% on ordinary income and Roth conversions).`
+      };
+    }
+    if (input.advisorMarginalRate !== null && input.advisorMarginalRate >= 0) {
+      return {
+        rate: input.advisorMarginalRate,
+        basis: "advisor_supplied",
+        modeled: true,
+        ruleId,
+        note: "Flat advisor-supplied effective marginal state rate applied to incremental ordinary income. Per-state brackets, retirement-income exclusions, and state SS/conversion rules are not modeled (v1)."
+      };
+    }
+    return {
+      rate: stateDefaultRate(),
+      basis: "unspecified_default_zero",
+      modeled: false,
+      ruleId,
+      note: code ? `No effective marginal rate was supplied for ${code}; state tax is NOT MODELED and defaulted to 0. The engine does not guess state rates (Rule 4). Supply the household's effective marginal state rate to model it.` : "No state specified; state tax is NOT MODELED (defaulted to 0). Supply a state code and/or an effective marginal rate to model it."
+    };
+  }
+  function stateTaxOnOrdinary(ordinaryAmount, rate) {
+    return Math.max(0, ordinaryAmount) * rate;
+  }
+
+  // src/engine/projectLifetime.ts
+  function beneficiaryDrawdownNet(balance, growth, years, rate) {
+    let bal = balance, net = 0;
+    for (let k = 0; k < years; k++) {
+      bal *= 1 + growth;
+      const w = bal / (years - k);
+      net += w * (1 - rate);
+      bal -= w;
+    }
+    return net;
+  }
+  function projectLifetime(input) {
+    var _a, _b, _c;
+    const married = input.filingStatus === "mfj" && input.spouses.length >= 2;
+    const N = input.beneficiaryWindowYears;
+    const g = input.growthRate;
+    const stateRes = resolveStateOrdinaryRate({
+      stateCode: (_a = input.stateCode) != null ? _a : null,
+      advisorMarginalRate: (_b = input.stateMarginalRate) != null ? _b : null
+    });
+    const stateRate = stateRes.rate;
+    const trad = input.spouses.map((s) => s.traditionalIra);
+    let roth = input.rothBalance;
+    let taxable = input.taxableBalance;
+    let bothAlive = married;
+    let survivorTransitionYear = null;
+    let depletionYear = null;
+    const rows = [];
+    const startAgeA = input.spouses[0].age;
+    for (let i = 0; startAgeA + i <= input.horizonAge; i++) {
+      const year = input.taxYear + i;
+      const ageA = startAgeA + i;
+      const ageB = married ? input.spouses[1].age + i : null;
+      const infl = Math.pow(1 + input.inflationRate, i);
+      if (bothAlive && input.firstDeathAtAgeA > 0 && ageA >= input.firstDeathAtAgeA) {
+        bothAlive = false;
+        survivorTransitionYear = year;
+        const goneIdx = input.whoDiesFirst === "A" ? 0 : 1;
+        const survIdx = goneIdx === 0 ? 1 : 0;
+        trad[survIdx] += trad[goneIdx];
+        trad[goneIdx] = 0;
+      }
+      const filing = bothAlive ? "mfj" : married ? "single" : input.filingStatus;
+      let ssTotal = 0, pensionTotal = 0, rmdTotal = 0;
+      const livingAges = [];
+      input.spouses.forEach((s, idx) => {
+        const ageS = s.age + i;
+        const isGone = married && !bothAlive && (input.whoDiesFirst === "A" ? idx === 0 : idx === 1);
+        if (isGone) return;
+        livingAges.push(ageS);
+        if (ageS >= s.ssClaimAge) ssTotal += s.socialSecurityAnnual * infl;
+        pensionTotal += s.pensionAnnual * infl;
+        const applic = rmdApplicableAge(s.birthYear).rmdApplicableAge;
+        if (ageS >= applic && trad[idx] > 0) {
+          const f = ultFactor(ageS);
+          if (f !== void 0) rmdTotal += trad[idx] / f;
+        }
+      });
+      if (married && !bothAlive) {
+        const goneIdx = input.whoDiesFirst === "A" ? 0 : 1;
+        const survIdx = goneIdx === 0 ? 1 : 0;
+        const gone = input.spouses[goneIdx], surv = input.spouses[survIdx];
+        const goneSs = surv.age + i >= gone.ssClaimAge ? gone.socialSecurityAnnual * infl : 0;
+        const ownSs = surv.age + i >= surv.ssClaimAge ? surv.socialSecurityAnnual * infl : 0;
+        ssTotal = Math.max(ownSs, goneSs);
+        pensionTotal = surv.pensionAnnual * infl + gone.pensionAnnual * gone.pensionSurvivorFraction * infl;
+      }
+      const totalTradBefore = trad.reduce((a, b) => a + b, 0);
+      let conversion = (_c = input.conversionByYear[i]) != null ? _c : 0;
+      conversion = Math.max(0, Math.min(conversion, totalTradBefore - rmdTotal));
+      const otherOrdinary = input.otherOrdinaryAnnual * infl;
+      const spendingNeed = input.spendingAnnual * infl;
+      const yearOf = (w) => computeYear({
+        taxYear: year,
+        lawMode: input.lawMode,
+        status: filing,
+        ages: livingAges,
+        grossSocialSecurity: ssTotal,
+        pension: pensionTotal,
+        iraDistributions: rmdTotal + w,
+        rothConversion: conversion,
+        otherOrdinary
+      });
+      const base = yearOf(0);
+      const tax0 = base.totalFederalTax;
+      const cashIn = ssTotal + pensionTotal + rmdTotal + otherOrdinary;
+      let shortfall = spendingNeed + tax0 - cashIn;
+      let fromTaxable = 0, fromRoth = 0, tradWithdraw = 0, surplus = 0;
+      if (shortfall <= 0) {
+        surplus = -shortfall;
+      } else {
+        fromTaxable = Math.min(taxable, shortfall);
+        shortfall -= fromTaxable;
+        if (shortfall > 0) {
+          fromRoth = Math.min(roth, shortfall);
+          shortfall -= fromRoth;
+        }
+        if (shortfall > 0) {
+          let w = shortfall;
+          for (let k = 0; k < 100; k++) {
+            const extra = yearOf(w).totalFederalTax - tax0;
+            const nw = shortfall + extra;
+            if (Math.abs(nw - w) < 1) {
+              w = nw;
+              break;
+            }
+            w = nw;
+          }
+          const avail = totalTradBefore - rmdTotal - conversion;
+          tradWithdraw = Math.min(w, Math.max(0, avail));
+          const netRaised = tradWithdraw - (yearOf(tradWithdraw).totalFederalTax - tax0);
+          shortfall -= netRaised;
+          if (shortfall > 1 && depletionYear === null) depletionYear = year;
+        }
+      }
+      const fin = yearOf(tradWithdraw);
+      const federalTax = fin.totalFederalTax;
+      const onMedicare = input.medicareEnrollees > 0 && livingAges.some((a) => a >= seniorMinAge());
+      const irmaa = onMedicare ? calculateIrmaa(fin.magi.irmaa, filing, bothAlive ? input.medicareEnrollees : 1).annualHouseholdSurchargeAboveStandard : 0;
+      const stateTax = stateTaxOnOrdinary(fin.ordinaryIncome, stateRate);
+      const iraOut = rmdTotal + conversion + tradWithdraw;
+      const tt = totalTradBefore || 1;
+      for (let idx = 0; idx < trad.length; idx++) trad[idx] = Math.max(0, trad[idx] - iraOut * (trad[idx] / tt));
+      roth += conversion - fromRoth;
+      taxable += surplus - fromTaxable;
+      roth = Math.max(0, roth);
+      taxable = Math.max(0, taxable);
+      let stNeed = stateTax;
+      const stFromTaxable = Math.min(taxable, stNeed);
+      taxable -= stFromTaxable;
+      stNeed -= stFromTaxable;
+      if (stNeed > 0) {
+        const stFromRoth = Math.min(roth, stNeed);
+        roth -= stFromRoth;
+        stNeed -= stFromRoth;
+      }
+      if (stNeed > 1 && depletionYear === null) depletionYear = year;
+      for (let idx = 0; idx < trad.length; idx++) trad[idx] = trad[idx] * (1 + g);
+      roth *= 1 + g;
+      taxable *= 1 + g;
+      const tradTot = trad.reduce((a, b) => a + b, 0);
+      const flat = roth + taxable + tradTot * (1 - input.beneficiaryTaxRate);
+      const benef = roth * Math.pow(1 + g, N) + taxable + beneficiaryDrawdownNet(tradTot, g, N, input.beneficiaryTaxRate);
+      const depleted = tradTot + roth + taxable <= 1;
+      if (depleted && depletionYear === null) depletionYear = year;
+      rows.push({
+        year,
+        ageA,
+        ageB,
+        filing,
+        socialSecurity: cents(ssTotal),
+        pension: cents(pensionTotal),
+        rmd: cents(rmdTotal),
+        conversion: cents(conversion),
+        taxableSocialSecurity: cents(fin.taxableSocialSecurity),
+        taxableIncome: cents(fin.taxableIncome),
+        federalTax: cents(federalTax),
+        stateTax: cents(stateTax),
+        irmaa: cents(irmaa),
+        spendingNeed: cents(spendingNeed),
+        traditional: cents(tradTot),
+        roth: cents(roth),
+        taxable: cents(taxable),
+        afterTaxWealthFlat: cents(flat),
+        afterTaxWealthBeneficiary: cents(benef),
+        depleted
+      });
+    }
+    const last = rows[rows.length - 1];
+    return {
+      rows,
+      afterTaxWealthMethod: "beneficiary 10-year drawdown at beneficiary rate (primary); flat haircut (sensitivity)",
+      beneficiaryTaxRate: input.beneficiaryTaxRate,
+      finalAfterTaxWealthFlat: last.afterTaxWealthFlat,
+      finalAfterTaxWealthBeneficiary: last.afterTaxWealthBeneficiary,
+      survivorTransitionYear,
+      depletionYear,
+      stateTaxRate: stateRate,
+      stateTaxModeled: stateRes.modeled,
+      stateTaxNote: stateRes.note
+    };
+  }
+  function crossoverYear(convert, nothing, method) {
+    const pick2 = (r) => method === "flat" ? r.afterTaxWealthFlat : r.afterTaxWealthBeneficiary;
+    const n2 = Math.min(convert.rows.length, nothing.rows.length);
+    for (let i = 0; i < n2; i++) {
+      if (pick2(convert.rows[i]) >= pick2(nothing.rows[i])) return convert.rows[i].year;
+    }
+    return null;
+  }
+
+  // src/engine/optimizeConversion.ts
+  var DISCLAIMER = "Planning projection, not tax advice. Figures are estimates under current 2026 law and the stated assumptions, which will change. Roth conversions are irrevocable and affect Medicare (IRMAA), taxation of Social Security, and other income-tested items. Confirm with a qualified tax professional (CPA or EA) before acting.";
+  function yearZeroInput(base) {
+    let ss = 0, pension = 0, rmd = 0;
+    for (const s of base.spouses) {
+      if (s.age >= s.ssClaimAge) ss += s.socialSecurityAnnual;
+      pension += s.pensionAnnual;
+      const applic = rmdApplicableAge(s.birthYear).rmdApplicableAge;
+      if (s.age >= applic) {
+        const f = ultFactor(s.age);
+        if (f !== void 0) rmd += s.traditionalIra / f;
+      }
+    }
+    return {
+      taxYear: base.taxYear,
+      lawMode: base.lawMode,
+      status: base.filingStatus,
+      ages: base.spouses.map((s) => s.age),
+      grossSocialSecurity: ss,
+      pension,
+      iraDistributions: rmd,
+      otherOrdinary: base.otherOrdinaryAnnual
+    };
+  }
+  function wealthOf(base, annualAmount, years) {
+    const schedule = Array.from({ length: years }, () => annualAmount);
+    return projectLifetime({ ...base, conversionByYear: schedule }).finalAfterTaxWealthBeneficiary;
+  }
+  function bestAnnual(base, opts) {
+    const grid = [];
+    for (let a = 0; a <= opts.candidateMax; a += opts.candidateStep) grid.push({ a, w: wealthOf(base, a, opts.conversionYears) });
+    let best = grid[0];
+    for (const p of grid) if (p.w > best.w) best = p;
+    return { best: best.a, wealthAt0: grid[0].w, maxWealth: best.w, grid };
+  }
+  function optimizeConversion(base, opts) {
+    var _a, _b, _c, _d;
+    const { best, wealthAt0, maxWealth, grid } = bestAnnual(base, opts);
+    const maxBenefit = maxWealth - wealthAt0;
+    const threshold = maxBenefit - opts.rangeTolerance * Math.max(0, maxBenefit);
+    const inRange = grid.filter((p) => p.w - wealthAt0 >= threshold);
+    const low = inRange.length ? Math.min(...inRange.map((p) => p.a)) : 0;
+    const high = inRange.length ? Math.max(...inRange.map((p) => p.a)) : 0;
+    const preferred = Math.round(best / opts.roundTo) * opts.roundTo;
+    const stateRes = resolveStateOrdinaryRate({
+      stateCode: (_a = base.stateCode) != null ? _a : null,
+      advisorMarginalRate: (_b = base.stateMarginalRate) != null ? _b : null
+    });
+    const sweep = sweepConversion(yearZeroInput(base), { ...opts.sweepOpts, stateMarginalRate: stateRes.rate });
+    const jumps = sweep.inflections.flatMap((s) => s.crossings.filter((c) => c.kind === "jump").map((c) => ({ conversion: s.conversion, ruleId: c.ruleId, cause: c.cause }))).sort((x, y) => x.conversion - y.conversion);
+    const binding = (_c = jumps.find((j) => j.conversion >= high)) != null ? _c : null;
+    const nextThresholdAbove = (_d = jumps.find((j) => binding ? j.conversion > binding.conversion : j.conversion > high)) != null ? _d : null;
+    const expectedBenefit = maxBenefit;
+    const noConvert = projectLifetime({ ...base, conversionByYear: [] });
+    const optimal = projectLifetime({ ...base, conversionByYear: Array.from({ length: opts.conversionYears }, () => best) });
+    const cross = crossoverYear(optimal, noConvert, "beneficiary");
+    const targetUnder = (mut) => Math.round(bestAnnual({ ...base, ...mut }, opts).best / opts.roundTo) * opts.roundTo;
+    const sensitivity = [
+      { dimension: "returns (growth)", low: targetUnder({ growthRate: base.growthRate - opts.growthDelta }), base: preferred, high: targetUnder({ growthRate: base.growthRate + opts.growthDelta }) },
+      { dimension: "longevity (horizon age)", low: targetUnder({ horizonAge: base.horizonAge - opts.horizonDelta }), base: preferred, high: targetUnder({ horizonAge: base.horizonAge + opts.horizonDelta }) },
+      { dimension: "future / beneficiary tax rate", low: targetUnder({ beneficiaryTaxRate: base.beneficiaryTaxRate - opts.beneficiaryRateDelta }), base: preferred, high: targetUnder({ beneficiaryTaxRate: base.beneficiaryTaxRate + opts.beneficiaryRateDelta }) }
+    ];
+    const whyNotMore = binding ? `Converting past about $${high.toLocaleString()} crosses ${binding.cause} (${binding.ruleId}), whose added cost outweighs the benefit.` : maxBenefit > 0 ? `Beyond about $${high.toLocaleString()} the marginal conversion cost exceeds the projected benefit at this horizon.` : "Converting does not improve projected after-tax wealth for this household.";
+    const whyNotLess = maxBenefit > 0 ? `Below about $${low.toLocaleString()} low-cost bracket space is left unused, giving up projected after-tax wealth.` : "n/a \u2014 the recommendation is not to convert.";
+    return {
+      preferredTarget: maxBenefit > 0 ? preferred : 0,
+      optimalRangeLow: low,
+      optimalRangeHigh: high,
+      bindingConstraintRuleId: binding ? binding.ruleId : null,
+      bindingConstraintCause: binding ? binding.cause : maxBenefit > 0 ? "marginal cost exceeds benefit" : "no benefit to converting",
+      whyNotMore,
+      whyNotLess,
+      nextThresholdAbove,
+      expectedBenefit,
+      crossoverYear: cross,
+      sensitivity,
+      assumptions: {
+        growthRate: base.growthRate,
+        inflationRate: base.inflationRate,
+        horizonAge: base.horizonAge,
+        beneficiaryTaxRate: base.beneficiaryTaxRate,
+        conversionYears: opts.conversionYears,
+        afterTaxWealthMethod: "beneficiary 10-year drawdown (primary)",
+        stateMarginalRate: stateRes.rate
+      },
+      lawMode: base.lawMode,
+      dataQuality: [
+        { item: "federal / medicare / aca rules", status: "PENDING_ADVISOR_REVIEW" },
+        { item: "state tax", status: stateRes.modeled ? `MODELED (v1 flat ${(stateRes.rate * 100).toFixed(2)}%): ${stateRes.note}` : `NOT MODELED: ${stateRes.note}` },
+        { item: "taxable-account dividend/gain drag", status: "SIMPLIFIED" },
+        { item: "ordinary tax method", status: "EXACT BRACKETS (Tax Computation Worksheet; not the <$100k Tax Table \u2014 may differ ~$6/yr from a filed return)" },
+        { item: "rounding", status: "FULL CENTS (no whole-dollar rounding; may differ <$1/line from a filed return)" }
+      ],
+      calculationMetadata: calculationMetadata(base.taxYear, base.lawMode),
+      disclaimer: DISCLAIMER
+    };
+  }
+  return __toCommonJS(engine_exports);
+})();
+window.RTP = RTP;
+/* ===RTP-ENGINE-END=== */
+</script>
 <script>
 (function(){
   "use strict";
@@ -879,6 +2010,93 @@
         eb.innerHTML="At these inputs the gross estate is below the exemption, so estate tax is "+fmt(ec.fedEstTax+ec.stEstTax)+". The conversion's estate benefit here comes mainly from removing the heirs' income tax on the traditional balance.";
     }
   }
+
+  // ---- Optimal-conversion panel: powered by the validated Phase 2-5 engine (window.RTP) ----
+  // Runs on demand (the optimizer does ~100 lifetime projections, so it is not tied to every keystroke).
+  function buildHousehold(){
+    const married=S.married;
+    const spouses=[{label:"A",birthYear:2026-S.ageA,age:S.ageA,traditionalIra:S.tradA,socialSecurityAnnual:S.ssA,ssClaimAge:S.ssAgeA,pensionAnnual:0,pensionSurvivorFraction:0}];
+    if(married)spouses.push({label:"B",birthYear:2026-S.ageB,age:S.ageB,traditionalIra:S.tradB,socialSecurityAnnual:S.ssB,ssClaimAge:S.ssAgeB,pensionAnnual:0,pensionSurvivorFraction:0});
+    return {taxYear:2026,lawMode:"current_law",filingStatus:married?"mfj":"single",spouses:spouses,
+      rothBalance:S.roth,taxableBalance:S.cash,otherOrdinaryAnnual:S.ord,spendingAnnual:S.spend,
+      growthRate:S.g,inflationRate:S.inf,horizonAge:Math.max(S.ageA+1,S.endAge),
+      firstDeathAtAgeA:married?S.deathAgeA:0,whoDiesFirst:S.firstGone,medicareEnrollees:married?2:1,
+      beneficiaryTaxRate:S.heir,beneficiaryWindowYears:10,conversionByYear:[],
+      stateCode:S.state,stateMarginalRate:null};
+  }
+  function optOpts(){
+    const married=S.married,years=Math.max(1,(S.stopAge||S.ageA+1)-S.ageA);
+    return {conversionYears:years,candidateStep:10000,candidateMax:150000,rangeTolerance:0.05,roundTo:1000,
+      sweepOpts:{maxConversion:250000,coarseStep:1000,fineStep:100,fineWindow:5000,marginalEpsilon:0.01,
+        medicareEnrollees:married?2:1,householdSize:married?2:1,annualAcaCredit:0,stateMarginalRate:0},
+      growthDelta:0.02,horizonDelta:5,beneficiaryRateDelta:0.05};
+  }
+  function yearZeroInput(hh){
+    let ss=0,rmd=0;const ages=[];
+    hh.spouses.forEach(function(s){ages.push(s.age);
+      if(s.age>=s.ssClaimAge)ss+=s.socialSecurityAnnual;
+      const applic=RTP.rmdApplicableAge(s.birthYear).rmdApplicableAge;
+      if(s.age>=applic)rmd+=RTP.rmdAmount(s.traditionalIra,s.age).rmd;});
+    return {taxYear:2026,lawMode:"current_law",status:hh.filingStatus,ages:ages,
+      grossSocialSecurity:ss,pension:0,iraDistributions:rmd,otherOrdinary:hh.otherOrdinaryAnnual};
+  }
+  function drawSweep(sw){
+    const svg=$("optSweep");if(!svg)return;const steps=sw.steps;if(!steps.length){svg.innerHTML="";return;}
+    const W=720,H=260,pad={l:64,r:14,t:14,b:28};
+    const xs=steps.map(function(s){return s.conversion;});
+    const ys=steps.map(function(s){return Math.max(0,s.averageRate);});
+    const xmax=Math.max.apply(null,xs)||1,ymax=Math.max(0.05,Math.max.apply(null,ys));
+    const X=function(v){return pad.l+(v/xmax)*(W-pad.l-pad.r);};
+    const Y=function(v){return H-pad.b-(v/ymax)*(H-pad.t-pad.b);};
+    let g="";
+    for(let k=0;k<=4;k++){const gy=pad.t+(k/4)*(H-pad.t-pad.b),val=ymax*(1-k/4);
+      g+='<line x1="'+pad.l+'" y1="'+gy+'" x2="'+(W-pad.r)+'" y2="'+gy+'" stroke="#ece6d8"/>';
+      g+='<text x="'+(pad.l-8)+'" y="'+(gy+4)+'" text-anchor="end" font-size="10" fill="#9aa097" font-family="ui-monospace,monospace">'+(val*100).toFixed(0)+'%</text>';}
+    [0,Math.floor(steps.length/2),steps.length-1].forEach(function(i){if(steps[i]!=null)g+='<text x="'+X(xs[i])+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" fill="#9aa097" font-family="ui-monospace,monospace">'+fmtK(xs[i])+'</text>';});
+    sw.inflections.forEach(function(s){s.crossings.forEach(function(c){if(c.kind==="jump")g+='<line x1="'+X(s.conversion)+'" y1="'+pad.t+'" x2="'+X(s.conversion)+'" y2="'+(H-pad.b)+'" stroke="#b5462f" stroke-dasharray="3 3" stroke-width="1.2"/>';});});
+    let d="M "+X(xs[0])+" "+Y(ys[0]);for(let i=1;i<steps.length;i++)d+=" L "+X(xs[i])+" "+Y(ys[i]);
+    g+='<path d="'+d+'" fill="none" stroke="#9a6a1f" stroke-width="2" stroke-linejoin="round"/>';
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);svg.innerHTML=g;
+  }
+  function runOptimizer(){
+    const intro=$("optIntro").querySelector("span:last-child");
+    if(!window.RTP||!RTP.optimizeConversion){intro.textContent="Validated-engine bundle not loaded — run tools/build-site.mjs, then reload.";return;}
+    read();if(S.endAge<=S.ageA)S.endAge=S.ageA+1;
+    const hh=buildHousehold(),opts=optOpts();
+    let r;try{r=RTP.optimizeConversion(hh,opts);}catch(e){intro.innerHTML="Could not optimize at these inputs: "+e.message;return;}
+    $("optResults").style.display="";
+    const yrs=opts.conversionYears;
+    const recommend=r.preferredTarget>0&&r.expectedBenefit>0;
+    // depletion context for the no-benefit case
+    let deplAge=null;try{const nb=RTP.projectLifetime(hh);const d=nb.rows.find(function(x){return x.depleted;});if(d)deplAge=d.ageA;}catch(e){}
+    if(recommend){
+      $("optRange").textContent=fmtK(r.optimalRangeLow)+" – "+fmtK(r.optimalRangeHigh);$("optRange").className="hl good";
+      $("optRangeSub").textContent="per year for "+yrs+" year"+(yrs>1?"s":"")+" — amounts within "+(opts.rangeTolerance*100).toFixed(0)+"% of the best projected outcome";
+      $("optTarget").textContent=fmt(r.preferredTarget);
+      $("optTargetSub").textContent="the single best annual amount on the search grid";
+      $("optBenefit").textContent="+"+fmt(r.expectedBenefit);$("optBenefit").className="hl good";
+      $("optBenefitSub").textContent="more lifetime after-tax wealth vs converting nothing"+(r.crossoverYear!=null?" · crossover "+r.crossoverYear:"");
+      if(r.bindingConstraintRuleId){$("optBinding").textContent=r.bindingConstraintRuleId;$("optBinding").className="hl warn";}
+      else{$("optBinding").textContent="marginal cost";$("optBinding").className="hl";}
+      $("optBindingSub").textContent=r.bindingConstraintCause;
+    }else{
+      $("optRange").textContent="Not recommended";$("optRange").className="hl warn";
+      $("optRangeSub").textContent=deplAge!=null?"the portfolio is projected to run dry at age "+deplAge+" whether or not you convert":"converting does not improve projected after-tax wealth for this household";
+      $("optTarget").textContent="$0";
+      $("optTargetSub").textContent=deplAge!=null?"fix the spending shortfall before considering conversions":"low/again-lower future rate with little tax drag";
+      $("optBenefit").textContent="$0";$("optBenefit").className="hl";
+      $("optBenefitSub").textContent=deplAge!=null?"both plans deplete — there is no after-tax wealth to compare":"no projected gain from converting at these inputs";
+      $("optBinding").textContent=deplAge!=null?"portfolio depletion":"no benefit";$("optBinding").className="hl warn";
+      $("optBindingSub").textContent=deplAge!=null?"spending outpaces income and assets by age "+deplAge:"marginal cost exceeds benefit at every level";
+    }
+    $("optWhy").querySelector("span:last-child").innerHTML="<b>Why not more:</b> "+r.whyNotMore+" &nbsp;<b>Why not less:</b> "+r.whyNotLess;
+    $("optSensTbl").querySelector("thead").innerHTML="<tr><th>Assumption</th><th>Lower case</th><th>Base</th><th>Higher case</th></tr>";
+    $("optSensTbl").querySelector("tbody").innerHTML=r.sensitivity.map(function(s){return "<tr><td>"+s.dimension+"</td><td>"+fmt(s.low)+"</td><td>"+fmt(s.base)+"</td><td>"+fmt(s.high)+"</td></tr>";}).join("");
+    const m=r.calculationMetadata,dq=r.dataQuality.map(function(d){return d.item+": "+d.status;}).join(" · ");
+    $("optProv").querySelector("span:last-child").innerHTML="<b>Engine "+m.engineVersion+"</b> · rules "+m.federalRulesVersion+" / "+m.medicareRulesVersion+" / "+m.acaRulesVersion+" / "+m.stateRulesVersion+". "+r.disclaimer+"<br><span style=\"color:var(--slate)\">"+dq+"</span>";
+    try{drawSweep(RTP.sweepConversion(yearZeroInput(hh),opts.sweepOpts));}catch(e){}
+  }
+  $("optRun").addEventListener("click",runOptimizer);
 
   document.querySelectorAll("input.num:not(.money)").forEach(i=>i.addEventListener("input",update));
   $("state").addEventListener("change",update);
