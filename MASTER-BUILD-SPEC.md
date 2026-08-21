@@ -200,6 +200,19 @@ to the flat-rate v1 and drop QCD / estate / Monte Carlo, which the validated eng
 model. The panel is verified end-to-end in headless Chromium (`tools/` note: see the browser check
 in the integration commit) across the recommend, portfolio-depletion, and single-filer cases.
 
+**Two engines, cross-checked.** `tests/unit/legacy-crosscheck.test.ts` compares the legacy engine's
+federal kernel against the validated `computeYear`. On the **shared kernel** (ordinary brackets + the
+IRC 86 Social Security worksheet + LTCG/QD stacking + NIIT) the two agree **to the cent** — so any
+future drift is caught in CI. The test also documents, as assertions, the two places the validated
+engine is deliberately **more accurate** than the legacy projection UI:
+  1. **OBBBA senior deduction** — `computeYear` models the $6,000/person 65+ bonus; the legacy engine
+     does not, so at 65+ the legacy projection over-states tax by roughly the bonus × marginal rate.
+  2. **Dividends in SS provisional income** — IRC 86 provisional income includes AGI (so qualified
+     dividends count); the legacy engine omits them, so with SS + dividends it under-states how much
+     Social Security is taxable.
+Both are motivation for the eventual consolidation onto one engine (§ roadmap), and both are why the
+optimizer panel's federal numbers can differ slightly from the year-by-year table above it.
+
 ---
 
 ## 9. What is NOT modeled (v1)

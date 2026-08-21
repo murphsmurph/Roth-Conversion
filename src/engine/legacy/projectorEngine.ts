@@ -292,5 +292,8 @@ export function createProjectorEngine(S){
       legChildren:last.roth+last.trad*(1-S.heir)+last.cashNet,
       legSurvivor:last.roth+last.trad*(1-S.surv)+last.cashNet});
   }
-  return { run, deflateRes, estateLegacy, breakevenAge, legacyPath, validate, effRateNow, monteCarlo, ST };
+  // Federal primitives + constant tables exposed for the legacy-vs-validated cross-check test
+  // (tests/unit/legacy-crosscheck.test.ts). Pure read access — no behavior change.
+  const _fed = { taxableSS, ordTax, ltcgTax, niitTax, STD, STD65 };
+  return { run, deflateRes, estateLegacy, breakevenAge, legacyPath, validate, effRateNow, monteCarlo, ST, _fed };
 }
