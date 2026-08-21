@@ -139,6 +139,9 @@ def senior_deduction(magi, status, n_qualifying):
 # NOTE: real returns with taxable income < $100,000 use the Tax Table, which
 # taxes the MIDPOINT of a $50 band. Expect up to ~$6 divergence when validating
 # against a filed return. Document that; do not chase it.
+# OPEN-2 RESOLVED: exact brackets at ALL income levels is the intended method for this planning
+# engine (Tax Table bucketing would inject rule-less $50 steps into the marginal sweep).
+# See docs/tax-rules/modeling-decisions.md.
 # ----------------------------------------------------------------------------
 
 def ordinary_tax(taxable, status):

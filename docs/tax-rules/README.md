@@ -36,7 +36,8 @@ split & stacking → NIIT. Intermediate values are returned (R4a) and asserted b
 - **Authority:** IRC 151(d)(5) as added by P.L. 119-21 (OBBBA); Schedule 1-A. **Years: 2025–2028 only**
   (`doNotExtrapolate`).
 - **Edge cases:** SD-03 first phaseout dollar → **$11,999.88** (12%, not 6%); SD-13 does not move AGI.
-  **OPEN-1** (Schedule 1-A rounding) is unresolved — fixtures carry unrounded cents.
+  **OPEN-1** (Schedule 1-A rounding) is **RESOLVED**: carry cents, no intermediate whole-dollar
+  rounding — see `modeling-decisions.md`.
 - **Tests:** `senior-deduction/SD-01..13`. Engine: `calculateDeductions.ts`.
 
 ### IRC_1411_NIIT — net investment income tax
@@ -65,6 +66,7 @@ split & stacking → NIIT. Intermediate values are returned (R4a) and asserted b
   the generator** — see `RMD-08-discrepancy.md`. Engine: `calculateRMD.ts`.
 
 ## Status
-62/62 fixtures + 6/6 property tests pass; the CI suite is gating. Open rule decisions **OPEN-1**
-(senior rounding) and **OPEN-2** (Tax Table vs. Worksheet) remain to be resolved with a citation
-before shipping.
+62/62 fixtures + 6/6 property tests pass; the CI suite is gating. Both former open rule decisions
+are now resolved with citations — **OPEN-1** (senior rounding) and **OPEN-2** (Tax Table vs. Tax
+Computation Worksheet) both resolved in favor of exact, unrounded computation; see
+`modeling-decisions.md`. No open rule decisions remain.
