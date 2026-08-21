@@ -11,6 +11,7 @@
     "lint:magic": "node tools/check-magic-numbers.mjs",
     "build": "vite build",
     "build:site": "node tools/build-site.mjs",
+    "build:review": "node tools/build-review-packet.mjs",
     "fixtures:regen": "python3 tools/build_fixtures.py"
   },
   "devDependencies": {
