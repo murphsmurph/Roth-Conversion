@@ -28,6 +28,7 @@ export const prefThresholds = (s: FilingStatus): { zeroRateTop: number; fifteenR
   pick(F.PREFERENTIAL_RATE_THRESHOLDS, s);
 export const prefRates = (): { zero: number; fifteen: number; twenty: number } =>
   F.PREFERENTIAL_RATE_THRESHOLDS.rates;
+export const LTCG_RULE_ID = "LTCG_QD_STACKING_IRC_1H";
 
 // ---- Social Security taxability (IRC 86) ----
 export const ssBase1 = (s: FilingStatus): number => pick<number>(F.SOCIAL_SECURITY_TAXABILITY.base1, s);
