@@ -9,6 +9,7 @@
 import { projectLifetime, crossoverYear, type LifetimeInput } from "./projectLifetime";
 import { sweepConversion, type SweepOpts } from "./sweepConversion";
 import { rmdApplicableAge } from "./calculateRMD";
+import { resolveStateOrdinaryRate } from "./calculateState";
 import { calculationMetadata, ultFactor } from "./rules";
 import type { CalculationMetadata, YearInput } from "./types";
 
@@ -97,8 +98,12 @@ export function optimizeConversion(base: LifetimeInput, opts: OptimizerOpts): Op
   const high = inRange.length ? Math.max(...inRange.map(p => p.a)) : 0;
   const preferred = Math.round(best / opts.roundTo) * opts.roundTo;
 
-  // binding constraint: the enumerated discontinuity nearest above the range top, from the marginal sweep
-  const sweep = sweepConversion(yearZeroInput(base), opts.sweepOpts);
+  // binding constraint: the enumerated discontinuity nearest above the range top, from the marginal
+  // sweep. Make the marginal cost state-aware via the resolved flat state rate (0 when not modeled).
+  const stateRes = resolveStateOrdinaryRate({
+    stateCode: base.stateCode ?? null, advisorMarginalRate: base.stateMarginalRate ?? null,
+  });
+  const sweep = sweepConversion(yearZeroInput(base), { ...opts.sweepOpts, stateMarginalRate: stateRes.rate });
   const jumps = sweep.inflections
     .flatMap(s => s.crossings.filter(c => c.kind === "jump").map(c => ({ conversion: s.conversion, ruleId: c.ruleId, cause: c.cause })))
     .sort((x, y) => x.conversion - y.conversion);
@@ -144,11 +149,12 @@ export function optimizeConversion(base: LifetimeInput, opts: OptimizerOpts): Op
       growthRate: base.growthRate, inflationRate: base.inflationRate, horizonAge: base.horizonAge,
       beneficiaryTaxRate: base.beneficiaryTaxRate, conversionYears: opts.conversionYears,
       afterTaxWealthMethod: "beneficiary 10-year drawdown (primary)",
+      stateMarginalRate: stateRes.rate,
     },
     lawMode: base.lawMode,
     dataQuality: [
       { item: "federal / medicare / aca rules", status: "PENDING_ADVISOR_REVIEW" },
-      { item: "state tax", status: "NOT MODELED (v1)" },
+      { item: "state tax", status: stateRes.modeled ? `MODELED (v1 flat ${(stateRes.rate * 100).toFixed(2)}%): ${stateRes.note}` : `NOT MODELED: ${stateRes.note}` },
       { item: "taxable-account dividend/gain drag", status: "SIMPLIFIED" },
       { item: "ordinary tax method", status: "EXACT BRACKETS (Tax Computation Worksheet; not the <$100k Tax Table — may differ ~$6/yr from a filed return)" },
       { item: "rounding", status: "FULL CENTS (no whole-dollar rounding; may differ <$1/line from a filed return)" },

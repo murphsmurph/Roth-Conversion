@@ -1,0 +1,29 @@
+{
+  "ruleSetId": "state-2026",
+  "taxYear": 2026,
+  "verifiedDate": "2026-08-21",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "Each state's Department of Revenue; Tax Foundation, State Individual Income Tax Rates and Brackets (2026)",
+  "sourceUrl": "https://taxfoundation.org/data/all/state/state-income-tax-rates/",
+  "coverageModel": "v1 FLAT-RATE. Only the nine states with no broad-based personal income tax are modeled as data (0% on ordinary income, including Roth conversions). For every other state the engine applies an ADVISOR-SUPPLIED flat effective marginal rate and never guesses a state's rate or brackets (Rule 4).",
+  "noOrdinaryIncomeTaxStates": ["AK", "FL", "NV", "NH", "SD", "TN", "TX", "WA", "WY"],
+  "stateCaveats": {
+    "WA": "Washington levies a tax on certain long-term capital gains above an annual threshold but does NOT tax ordinary income or Roth conversions. Ordinary-income rate is 0 here; the capital-gains tax is out of scope for this flat-rate v1.",
+    "NH": "New Hampshire's Interest & Dividends tax finished phasing out on 2025-01-01; from 2026 there is no state tax on any income, including Roth conversions.",
+    "TN": "Tennessee's Hall tax on interest and dividends was fully repealed effective 2021."
+  },
+  "advisorSuppliedRate": {
+    "mechanism": "For any state NOT in noOrdinaryIncomeTaxStates, the advisor supplies a single effective marginal state rate for the household. The engine applies it as a flat rate to incremental ordinary income (Roth conversions and taxable withdrawals).",
+    "default": 0,
+    "doNotGuess": true,
+    "notModeled": [
+      "per-state progressive brackets",
+      "state retirement-income exclusions / pension subtractions",
+      "state treatment of Social Security",
+      "state-specific Roth-conversion rules or credits",
+      "local / city income taxes",
+      "state capital-gains treatment (e.g., WA)"
+    ]
+  },
+  "machineVerification": "2026-08-21: the nine no-income-tax states (AK, FL, NV, NH, SD, TN, TX, WA, WY) were cross-verified against multiple independent secondary sources, including the NH interest-and-dividends phase-out completing 2025-01-01. No per-state rate is embedded, so nothing here is guessed. Human advisor sign-off still recommended."
+}
