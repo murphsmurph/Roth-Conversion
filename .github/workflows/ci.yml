@@ -18,8 +18,10 @@ jobs:
         run: npm run lint:magic
       - name: Typecheck
         run: npm run typecheck
-      # The fixture + property suite is RED BY DESIGN until Phase 2 (no engine yet), so it is
-      # non-gating for now. Flip continue-on-error off in Phase 2 when 62/62 must pass.
-      - name: Fixture + property suite (red-by-design through Phase 1)
+      # Phase 2: 61/62 fixtures + 6/6 property tests pass. The one remaining red, rmd/RMD-08, is a
+      # FLAGGED fixture discrepancy (see docs/tax-rules/RMD-08-discrepancy.md) — not edited per
+      # Rule 5. Kept non-gating until RMD-08 is resolved in the oracle; then flip continue-on-error
+      # off so the suite gates at 62/62.
+      - name: Fixture + property suite (61/62 green; RMD-08 flagged)
         continue-on-error: true
         run: npm test

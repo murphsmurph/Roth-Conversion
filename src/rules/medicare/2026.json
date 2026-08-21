@@ -11,6 +11,7 @@
   "magiDefinition": "adjusted_gross_income + tax_exempt_interest",
   "standardPartBPremiumMonthly": 202.90,
   "appliesPerEnrollee": true,
+  "monthsPerYear": 12,
   "tiers": {
     "single": [
       { "ruleId": "IRMAA_TIER_0", "magiMax": 109000, "partBMonthly": 202.90, "partDIrmaaMonthly": 0.00 },

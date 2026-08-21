@@ -31,6 +31,7 @@
       "single": { "zeroRateTop": 49450, "fifteenRateTop": 545500 },
       "mfj":    { "zeroRateTop": 98900, "fifteenRateTop": 613700 },
       "hoh":    { "zeroRateTop": 66200, "fifteenRateTop": 579600 },
+      "rates": { "zero": 0, "fifteen": 0.15, "twenty": 0.20 },
       "measuredAgainst": "taxable_income",
       "authority": "IRC 1(h); Rev. Proc. 2025-32"
     },
@@ -38,6 +39,7 @@
       "ruleId": "IRC_86_SS_TAXABILITY",
       "base1": { "single": 25000, "hoh": 25000, "mfj": 32000, "mfs": 0 },
       "base2Additional": { "single": 9000, "hoh": 9000, "mfj": 12000, "mfs": 0 },
+      "lowerInclusionRate": 0.5,
       "maxInclusionRate": 0.85,
       "indexedForInflation": false,
       "indexingNote": "UNINDEXED SINCE 1984/1993 BY STATUTE. Never inflate these in projections.",
@@ -112,6 +114,29 @@
       ],
       "legacyApplicableAge": 73,
       "legacyNote": "The pre-fix projector applied age 73 to every household regardless of birth year (a fixed input default). Phase 1 replaces this with the birth-year rule above."
+    },
+    "RMD_UNIFORM_LIFETIME_TABLE": {
+      "ruleId": "ULT_2022_FINAL_REGS",
+      "authority": "Treas. Reg. 1.401(a)(9)-9(c) (2022 final regulations)",
+      "sourceUrl": "https://www.federalregister.gov/documents/2022/11/07/2022-24173/updated-life-expectancy-and-distribution-period-tables",
+      "verifiedDate": "2026-08-19",
+      "note": "Distribution period by age at year end. Balance is the prior December 31 value. Roth IRAs are excluded from lifetime RMDs.",
+      "distributionPeriodByAge": {
+        "72": 27.4, "73": 26.5, "74": 25.5, "75": 24.6, "76": 23.7, "77": 22.9,
+        "78": 22.0, "79": 21.1, "80": 20.2, "81": 19.4, "82": 18.5, "83": 17.7,
+        "84": 16.8, "85": 16.0, "86": 15.2, "87": 14.4, "88": 13.7, "89": 12.9,
+        "90": 12.2, "91": 11.5, "92": 10.8, "93": 10.1, "94": 9.5, "95": 8.9,
+        "96": 8.4, "97": 7.8, "98": 7.3, "99": 6.8, "100": 6.4, "101": 6.0,
+        "102": 5.6, "103": 5.2, "104": 4.9, "105": 4.6, "106": 4.3, "107": 4.1,
+        "108": 3.9, "109": 3.7, "110": 3.5, "111": 3.4, "112": 3.3, "113": 3.1,
+        "114": 3.0, "115": 2.9, "116": 2.8, "117": 2.7, "118": 2.5, "119": 2.3, "120": 2.0
+      }
+    },
+    "RMD_ORDERING": {
+      "ruleId": "RMD_FIRST_DOLLARS_OUT",
+      "authority": "Treas. Reg. 1.408A-4, Q&A-6; IRC 4973",
+      "verifiedDate": "2026-08-19",
+      "note": "The RMD is deemed distributed first and is NOT eligible for Roth conversion. An RMD amount contributed to a Roth is a REGULAR contribution and is an excess contribution (6% IRC 4973 excise) to the extent it exceeds the allowable regular Roth contribution. Absent earned income the allowance is 0."
     }
   }
 }
