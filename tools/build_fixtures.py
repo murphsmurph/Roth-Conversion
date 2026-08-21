@@ -1,9 +1,9 @@
 import json, os, sys
 from decimal import Decimal as D
 sys.path.insert(0, os.path.dirname(__file__))
-from oracle import compute_year, irmaa_annual, rmd_age, rmd_amount, FPL_2025, senior_deduction
+from oracle import compute_year, irmaa_annual, rmd_age, rmd_amount, FPL_2025, senior_deduction, cents
 
-ROOT = os.path.join(os.path.dirname(__file__), "..", "fixtures")
+ROOT = os.path.join(os.path.dirname(__file__), "..", "tests", "fixtures")
 
 def ser(o):
     if isinstance(o, D):
@@ -384,14 +384,23 @@ for fid, bal, age in [("RMD-05", 1000000, 75), ("RMD-06", 500000, 73), ("RMD-07"
          authority=["Treas. Reg. 1.401(a)(9)-9(c)"],
          notes="Balance is the PRIOR December 31 value. Roth IRAs are excluded from lifetime RMDs.")
 
+# Expected values are DERIVED from the oracle for this fixture's own stated inputs, not
+# hand-typed: age at year end = tax_year - birth_year = 2026 - 1952 = 74, whose Uniform
+# Lifetime Table divisor is 25.5, so the RMD is 1,000,000 / 25.5 = 39,215.69. (A prior
+# revision hard-coded 40,650.41, which is the age-75 divisor 24.6 and was inconsistent with
+# this fixture's birth_year/tax_year — see docs/tax-rules/RMD-08-discrepancy.md.)
+rmd08_bal = 1000000
+rmd08_age = 2026 - 1952  # age attained by year end
+rmd08_amt, _ = rmd_amount(rmd08_bal, rmd08_age)
+rmd08_eligible = cents(D(rmd08_bal) - D(rmd08_amt))
 emit("rmd", "RMD-08", "Roth conversion cannot satisfy an RMD; RMD must come out first",
      ["rmd_ordering_rule"],
-     {"birth_year": 1952, "tax_year": 2026, "prior_year_end_balance": 1000000,
+     {"birth_year": 1952, "tax_year": 2026, "prior_year_end_balance": rmd08_bal,
       "attempted_roth_conversion": 100000},
-     {"rmd_required_first": 40650.41, "amount_eligible_for_conversion": 959349.59,
+     {"rmd_required_first": rmd08_amt, "amount_eligible_for_conversion": rmd08_eligible,
       "conversion_of_rmd_amount_permitted": False,
       "excess_contribution": "rmd_amount_contributed_to_roth minus allowable_regular_roth_contribution",
-      "excess_contribution_this_fixture": 40650.41,
+      "excess_contribution_this_fixture": rmd08_amt,
       "allowable_regular_roth_contribution_this_fixture": 0},
      authority=["Treas. Reg. 1.408A-4, Q&A-6", "IRC 4973"],
      notes="First-dollars-out rule: the RMD is deemed distributed first and is NOT eligible "
