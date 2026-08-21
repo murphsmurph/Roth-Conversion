@@ -1,8 +1,17 @@
-# FLAGGED FIXTURE DISCREPANCY — `rmd/RMD-08`
+# RESOLVED FIXTURE DISCREPANCY — `rmd/RMD-08`
+
+> **Status: RESOLVED (2026-08-21).** Resolution 3 below was applied at the generator: the
+> fixture's expected values are now **derived from the oracle** (`tools/oracle.py`) for the
+> fixture's own `birth_year: 1952` / `tax_year: 2026` inputs, rather than hard-coded. RMD-08 now
+> expects `rmd_required_first = 39,215.69` (age-74 divisor 25.5) and the full suite gates at
+> **62/62 fixtures + 6/6 properties**. The history below is retained for provenance.
+
+---
 
 Per CLAUDE.md Rule 5 ("if you believe a fixture is wrong, stop and say so with a citation; do NOT
-edit the fixture"), this documents a disagreement between the engine and fixture RMD-08. The fixture
-is **unmodified**; the engine follows the standard rule; RMD-08 is left failing pending a decision.
+edit the fixture"), this documented a disagreement between the engine and fixture RMD-08. The
+fixture was left **unmodified and failing** until the author authorized a fix; the engine always
+followed the standard rule.
 
 ## The disagreement
 `rmd/RMD-08` input: `birth_year: 1952`, `tax_year: 2026`, `prior_year_end_balance: 1,000,000`.
@@ -28,15 +37,23 @@ by one year of age.
 Note the applicable-age rule is separate and correct: born 1952 → applicable age 73 (RMDs begin
 2025). That does not change the 2026 divisor, which is indexed to age **74**.
 
-## Suggested resolution (author/reviewer decision — not made here)
-One of:
-1. Change `birth_year` to **1951** (keeps the age-75 / 40,650.41 expectation), or
-2. Change `tax_year` to **2027** (1952-born is 75 in 2027), or
-3. Keep 1952/2026 and correct the expected values to the age-74 divisor:
-   `rmd_required_first = 39,215.69`, `amount_eligible_for_conversion = 960,784.31`,
-   `excess_contribution_this_fixture = 39,215.69`.
+## Resolution applied
+The author authorized the fix; **Resolution 3** was chosen (keep the canonical `1952 / 2026`
+inputs; correct the expected values to the age-74 divisor):
+`rmd_required_first = 39,215.69`, `amount_eligible_for_conversion = 960,784.31`,
+`excess_contribution_this_fixture = 39,215.69`.
 
-Since fixtures are regenerated from `tools/oracle.py` / `tools/build_fixtures.py`, the fix belongs
-there (the RMD-08 expected values are currently hard-coded literals in `build_fixtures.py`).
+The fix was made at the generator, not by hand-editing the fixture. `tools/build_fixtures.py` no
+longer hard-codes RMD-08's expected values — it now computes them from the oracle for the fixture's
+own stated inputs:
 
-Until resolved, the CI fixture suite is left non-gating; 61/62 fixtures + 6/6 property tests pass.
+```python
+rmd08_age = 2026 - 1952          # = 74, age attained by year end
+rmd08_amt, _ = rmd_amount(rmd08_bal, rmd08_age)   # 1,000,000 / 25.5 = 39,215.69 (oracle ULT[74])
+rmd08_eligible = cents(D(rmd08_bal) - D(rmd08_amt))
+```
+
+This makes the expectation self-consistent with the inputs by construction and immune to the
+same one-year-of-age slip recurring. A byte-diff of a full regeneration against the prior canonical
+fixture set confirmed **only `rmd/RMD-08` changed**. The CI fixture suite is now **gating** at
+62/62 fixtures + 6/6 property tests (`.github/workflows/ci.yml`, `continue-on-error` removed).

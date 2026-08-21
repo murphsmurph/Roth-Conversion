@@ -61,10 +61,10 @@ split & stacking → NIIT. Intermediate values are returned (R4a) and asserted b
 - **Formula:** applicable age by birth year (≤1950→72, 1951–1959→73, 1960+→75); RMD = prior-year-end
   balance ÷ Uniform Lifetime Table divisor for age at year end.
 - **Authority:** SECURE 2.0 sec. 107; T.D. 10001, 89 FR 58886; Treas. Reg. 1.401(a)(9)-9(c).
-- **Tests:** `rmd/RMD-01..07` (pass). **`rmd/RMD-08` is FLAGGED — see `RMD-08-discrepancy.md`.**
-  Engine: `calculateRMD.ts`.
+- **Tests:** `rmd/RMD-01..08` (pass). `rmd/RMD-08` was a flagged discrepancy, now **RESOLVED at
+  the generator** — see `RMD-08-discrepancy.md`. Engine: `calculateRMD.ts`.
 
 ## Status
-61/62 fixtures + 6/6 property tests pass. RMD-08 is a flagged fixture discrepancy (Rule 5 — not
-edited, not forced). Open rule decisions **OPEN-1** (senior rounding) and **OPEN-2** (Tax Table vs.
-Worksheet) remain to be resolved with a citation before shipping.
+62/62 fixtures + 6/6 property tests pass; the CI suite is gating. Open rule decisions **OPEN-1**
+(senior rounding) and **OPEN-2** (Tax Table vs. Worksheet) remain to be resolved with a citation
+before shipping.
