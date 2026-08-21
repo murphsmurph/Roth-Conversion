@@ -6,7 +6,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const START = "// ===ENGINE-START===";
 const END = "// ===ENGINE-END===";
-const TARGETS = ["index.html", "roth-conversion-projector.html"];
+// index.html is the single canonical page. roth-conversion-projector.html is a redirect stub to it.
+const TARGETS = ["index.html"];
 
 const factory = readFileSync("src/engine/legacy/projectorEngine.ts", "utf8")
   .replace(/^\/\/ @ts-nocheck\r?\n/, "")
