@@ -1,0 +1,82 @@
+[
+  {
+    "id": "INH-01",
+    "title": "Inherited land \u2014 FMV known, basis NOT verified",
+    "catches": "The headline guardrail: FMV silently copied into taxBasis."
+  },
+  {
+    "id": "INH-02",
+    "title": "Inherited TRADITIONAL IRA \u2014 no step-up exists at all",
+    "catches": "A basis step-up applied to income in respect of a decedent."
+  },
+  {
+    "id": "INH-03",
+    "title": "Inherited stock sold 4 months after death",
+    "catches": "Holding period computed from the beneficiary's actual holding period."
+  },
+  {
+    "id": "INH-04",
+    "title": "Inherited IRA distribution is ordinary income, not capital gain",
+    "catches": "IRC 1223(9) long-term treatment wrongly extended to IRD."
+  },
+  {
+    "id": "INH-05",
+    "title": "Community property, Texas \u2014 FULL double step-up",
+    "catches": "Only the decedent's half stepped up in a community property state."
+  },
+  {
+    "id": "INH-06",
+    "title": "Elective community property trust state \u2014 UNSETTLED, do not model",
+    "catches": "Auto-applying the double step-up in an opt-in CP trust state."
+  },
+  {
+    "id": "INH-07",
+    "title": "Alternate valuation date is an ESTATE-level election",
+    "catches": "AVD modeled as a free per-asset field."
+  },
+  {
+    "id": "INH-08",
+    "title": "10-year rule end date \u2014 the off-by-one",
+    "catches": "tenYearRuleEndDate computed as 10 years from the DATE of death."
+  },
+  {
+    "id": "INH-09",
+    "title": "Minor child EDB \u2014 clock starts at 21",
+    "catches": "10-year clock started at the date of death for a minor child of the owner."
+  },
+  {
+    "id": "INH-10",
+    "title": "Successor beneficiary with unknown original facts",
+    "catches": "A fresh 10-year window granted to a successor beneficiary."
+  },
+  {
+    "id": "INH-11",
+    "title": "Year-of-death RMD where death PRECEDED the RBD",
+    "catches": "Reporting 'not_satisfied' when no year-of-death RMD was ever due."
+  },
+  {
+    "id": "INH-12",
+    "title": "Year-of-death RMD unsatisfied \u2014 but the excise waiver is automatic",
+    "catches": "Alarmist wording on a situation with an automatic statutory cure."
+  },
+  {
+    "id": "INH-13",
+    "title": "Separate accounts not yet established \u2014 deadline still open",
+    "catches": "A purely retrospective module missing a live, time-critical deadline."
+  },
+  {
+    "id": "INH-14",
+    "title": "Accumulation trust as beneficiary \u2014 compressed brackets",
+    "catches": "Treating a trust beneficiary as if taxed at individual rates."
+  },
+  {
+    "id": "INH-15",
+    "title": "Inherited rental \u2014 depreciation RESTARTS, decedent's does not carry over",
+    "catches": "The requirements document's own flag wording, which is misleading here."
+  },
+  {
+    "id": "INH-16",
+    "title": "Cross-reference \u2014 the same distribution in two sections",
+    "catches": "The inheritance module holding its own distribution totals."
+  }
+]

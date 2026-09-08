@@ -1,0 +1,20 @@
+{
+  "ruleSetId": "ltc-2026",
+  "taxYear": 2026,
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "IRC 213(d)(10); Rev. Proc. 2025-32",
+  "status": "RE_VERIFY_BEFORE_SHIPPING",
+  "secondarySource": "Edward Jones 2026 IRAs card (advisor-supplied, 2026-08-19)",
+  "maxDeductibleLtcPremiumByAge": {
+    "40AndUnder": 500, "41to50": 930, "51to60": 1860, "61to70": 4960, "over70": 6200
+  },
+  "maxDeductibleLtcPremium2025": {
+    "40AndUnder": 480, "41to50": 900, "51to60": 1800, "61to70": 4810, "over70": 6020
+  },
+  "qualifiedLtcPerDiemBenefitLimit": { "2025": 420, "2026": 430 },
+  "conversionInteraction": {
+    "ruleId": "IRC_213_MEDICAL_OFFSET",
+    "note": "LTC premiums count as medical expenses subject to the 7.5%-of-AGI floor. A conversion raises AGI and therefore SHRINKS the medical deduction - a real marginal cost. The reverse is the late-life planning play in Gemini Findings 2 section 8 phase 3: a year with very large deductible medical or LTC costs can absorb a large conversion cheaply. The engine should surface high-medical-expense years as conversion opportunities."
+  }
+}

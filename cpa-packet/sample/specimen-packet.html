@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Specimen — Tax Coordination Report</title>
+<style>
+  :root{
+    --ink:#16181d; --ink-2:#4a4f5a; --ink-3:#767c88;
+    --rule:#d9dce2; --rule-2:#eceef2;
+    --paper:#ffffff; --page-bg:#e9ebef;
+    --accent:#1f3a5f; --accent-soft:#eef2f8;
+    --review:#8a5a00; --review-soft:#fdf5e3; --review-rule:#e6cf9a;
+    --action:#8f2d24; --action-soft:#fbeeec; --action-rule:#e5bab4;
+    --ok:#1f5d3f; --ok-soft:#eef6f1;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ink:#e8eaee; --ink-2:#b3b9c4; --ink-3:#8b919d;
+      --rule:#3a3f49; --rule-2:#2a2e36;
+      --paper:#1b1e24; --page-bg:#111318;
+      --accent:#9dbce4; --accent-soft:#1f2735;
+      --review:#e0b765; --review-soft:#2b2415; --review-rule:#5c4a20;
+      --action:#e59d93; --action-soft:#2d1c1a; --action-rule:#5e332c;
+      --ok:#7fc4a0; --ok-soft:#16241c;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page-bg);color:var(--ink);
+       font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+  .page{position:relative;background:var(--paper);max-width:8.5in;margin:0 auto 20px;
+        padding:0.6in 0.65in 0.75in;overflow:hidden}
+  .wm{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;
+      justify-content:center;z-index:2}
+  .wm span{transform:rotate(-27deg);font:700 46px/1 var(--sans);letter-spacing:.08em;
+           color:var(--ink-3);opacity:.09;white-space:nowrap;text-align:center}
+  .content{position:relative;z-index:1}
+
+  .masthead{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;
+            border-bottom:2px solid var(--accent);padding-bottom:12px;margin-bottom:6px}
+  .masthead h1{margin:0;font-size:21px;letter-spacing:-.01em}
+  .masthead .sub{margin:3px 0 0;color:var(--ink-2);font-size:13px}
+  .meta{text-align:right;font-size:11.5px;color:var(--ink-2);line-height:1.65;white-space:nowrap}
+  .meta b{color:var(--ink);font-weight:600}
+
+  h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+     margin:26px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--rule)}
+  h3{font-size:13.5px;margin:16px 0 6px}
+
+  .disclaimer{background:var(--accent-soft);border-left:3px solid var(--accent);
+              padding:11px 13px;margin:14px 0;font-size:12px;line-height:1.55;color:var(--ink-2)}
+  .disclaimer b{display:block;color:var(--ink);font-size:12.5px;margin-bottom:3px}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 2px}
+  th{text-align:left;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:600;padding:5px 8px 5px 0;border-bottom:1px solid var(--rule)}
+  td{padding:5px 8px 5px 0;border-bottom:1px solid var(--rule-2);vertical-align:top}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;padding-right:0}
+  tr.total td{border-top:1.5px solid var(--rule);border-bottom:none;font-weight:600;padding-top:7px}
+  .unk{color:var(--ink-3)}
+
+  .chip{display:inline-block;font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;
+        padding:1px 5px;border:1px solid var(--rule);border-radius:3px;color:var(--ink-3);
+        white-space:nowrap;font-weight:600}
+  .chip.cv{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+  .chip.calc{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+  .badge{display:inline-block;font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+         font-weight:700;padding:2px 7px;border-radius:3px;vertical-align:2px;margin-left:8px}
+  .badge.complete{background:var(--ok-soft);color:var(--ok)}
+  .badge.partial{background:var(--review-soft);color:var(--review)}
+  .badge.review{background:var(--action-soft);color:var(--action)}
+
+  .scope{border:1px solid var(--rule);padding:12px 14px;margin:14px 0;font-size:12px}
+  .scope .warn{margin-top:9px;padding:8px 10px;background:var(--action-soft);
+               border-left:3px solid var(--action);color:var(--ink);font-weight:600;line-height:1.45}
+
+  .flags{border:1.5px solid var(--action);margin:16px 0}
+  .flags header{background:var(--action-soft);padding:9px 14px;font-weight:700;font-size:12.5px;
+                letter-spacing:.03em;border-bottom:1px solid var(--action-rule)}
+  .flags ul{list-style:none;margin:0;padding:4px 0}
+  .flags li{padding:7px 14px;border-bottom:1px solid var(--rule-2);font-size:12.5px;display:flex;gap:10px}
+  .flags li:last-child{border-bottom:none}
+  .sev{flex:0 0 62px;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+       padding-top:2px}
+  .sev.action{color:var(--action)} .sev.review{color:var(--review)} .sev.info{color:var(--ink-3)}
+  .flags .fid{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);display:block;margin-top:2px}
+
+  .xref{font-size:11px;color:var(--ink-2);font-style:italic;padding:5px 0 0}
+  .basis{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+
+  .note{font-size:11.5px;color:var(--ink-2);margin:7px 0;line-height:1.5}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+  .tw{overflow-x:auto}
+
+  footer{margin-top:22px;padding-top:9px;border-top:1px solid var(--rule);
+         display:flex;justify-content:space-between;font-size:10px;color:var(--ink-3)}
+
+  @media (max-width:760px){ .cols{grid-template-columns:1fr} .page{padding:22px 16px} }
+  @media print{
+    body{background:#fff} .page{margin:0;max-width:none;padding:0}
+    @page{size:letter;margin:0.6in}
+    tr,li{break-inside:avoid} h2{break-after:avoid}
+    .page{break-after:page} .page:last-child{break-after:auto}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════ PAGE 1 ══════════════════════════ -->
+<div class="page">
+  <div class="wm"><span>EDUCATIONAL EXAMPLE</span></div>
+  <div class="content">
+
+    <div class="masthead">
+      <div>
+        <h1>2026 Tax Coordination Report</h1>
+        <p class="sub">Format specimen · synthetic data · educational use</p>
+      </div>
+      <div class="meta">
+        <b>SPECIMEN HOUSEHOLD</b><br>
+        Pat &amp; Alex Sample<br>
+        Tax year 2026 · Report TCR-2026-SPEC-v2<br>
+        Generated 2027-03-04 · <b>Supersedes v1</b> (2027-01-18)
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <b>Planning &amp; Coordination Document — Not Tax Preparation</b>
+      This report summarizes tax-relevant financial activity known to the financial advisor and is
+      intended to assist the client and tax professional with tax preparation and planning. It is not
+      a substitute for official tax forms, custodian records, or professional tax advice. Final tax
+      treatment should be independently determined by the client's tax professional.
+    </div>
+
+    <div class="scope">
+      <b>Scope of this report</b> — data as of <b>2027-03-01</b>. Final Forms 1099 had been issued as
+      of this date. Reissued following a corrected Form 1099-DIV for account ···0000.
+      <div style="margin-top:7px;color:var(--ink-2)">
+        Accounts included: Joint Brokerage ···0000 · Traditional IRA (Pat) ···0000 ·
+        Traditional IRA (Alex) ···0000 · Roth IRA (Pat) ···0000 · 529 — L. Sample ···0000
+      </div>
+      <div class="warn">
+        It has not been confirmed whether the client holds retirement accounts outside this firm.
+        Required minimum distribution amounts below reflect only the accounts listed. Amounts may be
+        incomplete.
+      </div>
+    </div>
+
+    <div class="flags">
+      <header>CPA Attention &amp; Review Items — 6</header>
+      <ul>
+        <li><span class="sev action">Action</span><div>
+          <b>RMD aggregation cannot be confirmed.</b> Held-away retirement accounts unconfirmed;
+          IRA RMDs may be aggregated across accounts not visible to the advisor.
+          <span class="fid">FLAG_RMD_HELD_AWAY_UNCONFIRMED</span></div></li>
+        <li><span class="sev action">Action</span><div>
+          <b>Cost basis missing on 3 lots.</b> Noncovered securities sold; basis not reported by the
+          custodian and not supplied by the client. Basis has not been estimated.
+          <span class="fid">FLAG_MISSING_BASIS</span></div></li>
+        <li><span class="sev review">Review</span><div>
+          <b>Roth conversion completed.</b> Total conversions of $47,500 during 2026. Nondeductible
+          IRA basis is on file for one spouse — Form 8606 and pro-rata review suggested.
+          <span class="fid">FLAG_ROTH_CONVERSION · FLAG_FORM_8606_REVIEW</span></div></li>
+        <li><span class="sev review">Review</span><div>
+          <b>Qualified charitable distributions of $18,000.</b> Classified as QCDs by the advisor and
+          confirmed cleared. Also reflected in retirement distributions on page 4.
+          <span class="fid">FLAG_QCD_ACTIVITY</span></div></li>
+        <li><span class="sev review">Review</span><div>
+          <b>Estimated-tax review recommended</b> due to Roth conversions and realized gains.
+          <span class="fid">FLAG_ESTIMATED_TAX_REVIEW</span></div></li>
+        <li><span class="sev info">Info</span><div>
+          <b>Schedule K-1 expected</b> — Sample Energy Partners LP. Tax document not included in this
+          report. <span class="fid">FLAG_K1_EXPECTED</span></div></li>
+      </ul>
+    </div>
+
+    <div class="cols">
+      <div>
+        <h2>Investment income <span class="badge partial">Partial</span></h2>
+        <table>
+          <tr><td>Taxable interest</td><td class="n">4,120</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>U.S. Treasury interest</td><td class="n">6,840</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>Tax-exempt municipal interest</td><td class="n">9,275</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>Private activity bond interest</td><td class="n unk">—</td><td class="n"><span class="chip">Unknown</span></td></tr>
+          <tr><td>Ordinary dividends</td><td class="n">31,460</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>&nbsp;&nbsp;of which qualified</td><td class="n">27,905</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>Capital gain distributions</td><td class="n">8,215</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>Section 199A / REIT dividends</td><td class="n">1,340</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>Foreign tax paid</td><td class="n">612</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>Nondividend distributions</td><td class="n">0</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+        </table>
+        <p class="note"><b>Private activity bond interest is unknown, not zero.</b> The custodian
+        did not break this out. Relevant to AMT review.</p>
+      </div>
+
+      <div>
+        <h2>Retirement activity <span class="badge review">CPA Review</span></h2>
+        <table>
+          <tr><td>Traditional IRA distributions</td><td class="n">96,400</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>&nbsp;&nbsp;Roth conversions</td><td class="n">47,500</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>&nbsp;&nbsp;QCDs</td><td class="n">18,000</td><td class="n"><span class="chip">Advisor</span></td></tr>
+          <tr><td>&nbsp;&nbsp;Cash to client</td><td class="n">30,900</td><td class="n"><span class="chip calc">Calculated</span></td></tr>
+          <tr><td>RMD required (accounts shown)</td><td class="n">41,230</td><td class="n"><span class="chip calc">Calculated</span></td></tr>
+          <tr><td>RMD distributions applied</td><td class="n">41,230</td><td class="n"><span class="chip calc">Calculated</span></td></tr>
+          <tr><td>Remaining (accounts shown)</td><td class="n">0</td><td class="n"><span class="chip calc">Calculated</span></td></tr>
+          <tr><td>Federal withholding</td><td class="n">9,640</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+          <tr><td>State withholding</td><td class="n">0</td><td class="n"><span class="chip cv">Custodian</span></td></tr>
+        </table>
+        <p class="note">See page 4 for the RMD reconciliation. <b>This report does not conclude that
+        the household's RMD obligation has been satisfied</b> — see the scope note above.</p>
+      </div>
+    </div>
+
+    <h2>Capital gains &amp; losses <span class="badge partial">Partial</span></h2>
+    <div class="tw"><table>
+      <tr><th>Category</th><th class="n">Proceeds</th><th class="n">Cost basis</th><th class="n">Gain / (loss)</th><th>Source</th></tr>
+      <tr><td>Short-term, covered</td><td class="n">62,400</td><td class="n">58,910</td><td class="n">3,490</td><td><span class="chip cv">Custodian</span></td></tr>
+      <tr><td>Long-term, covered</td><td class="n">214,850</td><td class="n">131,275</td><td class="n">83,575</td><td><span class="chip cv">Custodian</span></td></tr>
+      <tr><td>Long-term, noncovered</td><td class="n">44,600</td><td class="n unk">—</td><td class="n unk">—</td><td><span class="chip">Unknown</span></td></tr>
+      <tr><td>Wash-sale adjustments</td><td class="n">—</td><td class="n">—</td><td class="n">2,140</td><td><span class="chip cv">Custodian</span></td></tr>
+      <tr><td>Capital-loss carryforward from 2025</td><td class="n">—</td><td class="n">—</td><td class="n">(18,240)</td><td><span class="chip">Prior return</span></td></tr>
+      <tr class="total"><td>Net reportable to date <span class="basis">· gross flows</span></td>
+          <td class="n">321,850</td><td class="n unk">incomplete</td><td class="n">—</td><td></td></tr>
+    </table></div>
+    <p class="note"><b>Basis has not been estimated for the noncovered lots.</b> A net capital
+    gain or loss for the year cannot be determined from advisor records alone. Carryforward figure
+    supplied by the client from the 2025 return and has not been independently verified.</p>
+
+    <footer><span>Educational example — not an advisory deliverable. Synthetic data.</span>
+            <span>Page 1 of 9 · TCR-2026-SPEC-v2</span></footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════ PAGE 4 ══════════════════════════ -->
+<div class="page">
+  <div class="wm"><span>EDUCATIONAL EXAMPLE</span></div>
+  <div class="content">
+    <div class="masthead">
+      <div><h1 style="font-size:17px">Retirement Distributions · RMD · QCD</h1>
+           <p class="sub">Page 4</p></div>
+      <div class="meta"><b>SPECIMEN HOUSEHOLD</b><br>Tax year 2026 · TCR-2026-SPEC-v2</div>
+    </div>
+
+    <h2>Distributions by account <span class="badge review">CPA Review</span></h2>
+    <div class="tw"><table>
+      <tr><th>Account</th><th>Owner</th><th class="n">Gross</th><th class="n">QCD</th>
+          <th class="n">Conversion</th><th class="n">Cash</th><th class="n">Fed w/h</th></tr>
+      <tr><td>Traditional IRA ···0000</td><td>Pat</td><td class="n">74,900</td><td class="n">18,000</td>
+          <td class="n">47,500</td><td class="n">9,400</td><td class="n">7,140</td></tr>
+      <tr><td>Traditional IRA ···0000</td><td>Alex</td><td class="n">21,500</td><td class="n">0</td>
+          <td class="n">0</td><td class="n">21,500</td><td class="n">2,500</td></tr>
+      <tr class="total"><td colspan="2">Total <span class="basis">· gross flows</span></td>
+          <td class="n">96,400</td><td class="n">18,000</td><td class="n">47,500</td>
+          <td class="n">30,900</td><td class="n">9,640</td></tr>
+    </table></div>
+    <p class="xref">Gross distributions include $18,000 of qualified charitable distributions, also
+      shown on page 7 (Charitable Giving), and $9,640 of federal withholding, also shown on page 8
+      (Withholding &amp; Estimated Tax Payments). <b>These pages should not be added together.</b></p>
+
+    <h2>RMD reconciliation — Pat Sample</h2>
+    <div class="tw"><table>
+      <tr><th>Component</th><th class="n">Amount</th><th>Source</th></tr>
+      <tr><td>Prior year-end (12/31/2025) balance</td><td class="n">1,092,600</td><td><span class="chip cv">Custodian · final</span></td></tr>
+      <tr><td>Birth year 1953 → applicable age 73</td><td class="n">—</td><td><span class="chip calc">SECURE 2.0 §107</span></td></tr>
+      <tr><td>Uniform Lifetime Table divisor</td><td class="n">26.5</td><td><span class="chip calc">Treas. Reg. 1.401(a)(9)-9(c)</span></td></tr>
+      <tr><td>Calculated RMD, this account</td><td class="n">41,230.19</td><td><span class="chip calc">Calculated</span></td></tr>
+      <tr><td>Distributions taken</td><td class="n">74,900.00</td><td><span class="chip cv">Custodian</span></td></tr>
+      <tr><td>&nbsp;&nbsp;of which QCDs counted toward RMD</td><td class="n">18,000.00</td><td><span class="chip">Advisor</span></td></tr>
+      <tr class="total"><td>Remaining, this account</td><td class="n">0.00</td><td></td></tr>
+    </table></div>
+    <p class="note"><b>Accounts held outside this firm have not been confirmed.</b> Traditional IRA
+      required minimum distributions may be aggregated across all of an individual's IRAs; employer
+      plan RMDs may not be aggregated with IRAs and must each be satisfied separately. This report
+      reflects only the accounts listed on page 1 and does not determine whether the household's
+      total RMD obligation for 2026 has been met.</p>
+
+    <h2>Qualified charitable distributions</h2>
+    <div class="tw"><table>
+      <tr><th>Date</th><th>IRA</th><th>Charity</th><th class="n">Amount</th><th>Ref</th><th>Status</th><th>Source</th></tr>
+      <tr><td>2026-04-14</td><td>Trad IRA ···0000</td><td>Specimen Community Foundation</td>
+          <td class="n">10,000</td><td>#10241</td><td>Cleared</td><td><span class="chip">Advisor</span></td></tr>
+      <tr><td>2026-11-02</td><td>Trad IRA ···0000</td><td>Specimen Food Bank</td>
+          <td class="n">8,000</td><td>#10388</td><td>Cleared</td><td><span class="chip">Advisor</span></td></tr>
+      <tr class="total"><td colspan="3">Total classified as QCD</td><td class="n">18,000</td><td colspan="3"></td></tr>
+    </table></div>
+    <p class="note">Each item above was explicitly classified as a qualified charitable distribution
+      by the advisor. Charitable payments from an IRA are not automatically treated as QCDs.
+      Eligibility and reporting remain for the tax professional to determine.</p>
+
+    <footer><span>Educational example — not an advisory deliverable. Synthetic data.</span>
+            <span>Page 4 of 9 · TCR-2026-SPEC-v2</span></footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════ PAGE 9 ══════════════════════════ -->
+<div class="page">
+  <div class="wm"><span>EDUCATIONAL EXAMPLE</span></div>
+  <div class="content">
+    <div class="masthead">
+      <div><h1 style="font-size:17px">Account Fees &amp; Investment Expenses</h1>
+           <p class="sub">Page 9</p></div>
+      <div class="meta"><b>SPECIMEN HOUSEHOLD</b><br>Tax year 2026 · TCR-2026-SPEC-v2</div>
+    </div>
+
+    <h2>Fees by account <span class="badge complete">Complete</span></h2>
+    <div class="tw"><table>
+      <tr><th>Account</th><th>Type</th><th class="n">Advisory</th><th class="n">Custodial</th>
+          <th class="n">Planning</th><th>Paid from</th><th>Source</th></tr>
+      <tr><td>Joint Brokerage ···0000</td><td>Taxable</td><td class="n">3,410</td><td class="n">0</td>
+          <td class="n">0</td><td>Taxable account</td><td><span class="chip cv">Custodian</span></td></tr>
+      <tr><td>Traditional IRA ···0000</td><td>Trad IRA</td><td class="n">1,120</td><td class="n">75</td>
+          <td class="n">0</td><td>Traditional IRA</td><td><span class="chip cv">Custodian</span></td></tr>
+      <tr><td>Roth IRA ···0000</td><td>Roth IRA</td><td class="n">320</td><td class="n">0</td>
+          <td class="n">0</td><td>Roth IRA</td><td><span class="chip cv">Custodian</span></td></tr>
+      <tr><td>Planning engagement</td><td>—</td><td class="n">0</td><td class="n">0</td>
+          <td class="n">1,500</td><td>External</td><td><span class="chip">Client reported</span></td></tr>
+      <tr class="total"><td colspan="2">Total <span class="basis">· gross flows</span></td>
+          <td class="n">4,850</td><td class="n">75</td><td class="n">1,500</td><td colspan="2"></td></tr>
+    </table></div>
+    <p class="note">Amounts are provided for tax professional review. <b>This report does not
+      determine deductibility.</b> The account each fee was paid from is shown because the payment
+      source can affect treatment.</p>
+
+    <h2>Margin &amp; investment interest expense</h2>
+    <div class="tw"><table>
+      <tr><th>Account</th><th class="n">Margin interest</th><th>Source</th></tr>
+      <tr><td>Joint Brokerage ···0000</td><td class="n">2,780</td><td><span class="chip cv">Custodian</span></td></tr>
+      <tr class="total"><td>Total</td><td class="n">2,780</td><td></td></tr>
+    </table></div>
+    <p class="note"><b>Reported separately from advisory fees by design.</b> Investment interest
+      expense and advisory fees are different items with different treatment and are not combined
+      anywhere in this report. Tax treatment to be determined by tax professional.</p>
+
+    <footer><span>Educational example — not an advisory deliverable. Synthetic data.</span>
+            <span>Page 9 of 9 · TCR-2026-SPEC-v2</span></footer>
+  </div>
+</div>
+
+</body>
+</html>

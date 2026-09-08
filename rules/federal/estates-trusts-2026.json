@@ -1,0 +1,17 @@
+{
+  "ruleSetId": "estates-trusts-2026",
+  "taxYear": 2026,
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "IRC 1(e); Rev. Proc. 2025-32",
+  "status": "RE_VERIFY_BEFORE_SHIPPING",
+  "secondarySource": "Edward Jones JonesLink Ordinary Income Tax Rates page (advisor-supplied, 2026-08-19)",
+  "transcriptionWarning": "The advisor-supplied table shows the 35% band starting at $11,702, which appears to be a typo for $11,701. DO NOT SHIP until confirmed against Rev. Proc. 2025-32. This is a live example of why secondary tables are located-from, not relied-on.",
+  "brackets2026": [[0, 0.10], [3300, 0.24], [11700, 0.35], [16000, 0.37]],
+  "brackets2025": [[0, 0.10], [3150, 0.24], [11450, 0.35], [15650, 0.37]],
+  "format": "[bracketFloorTaxableIncome, marginalRate]",
+  "whyThisMatters": {
+    "ruleId": "TRUST_COMPRESSED_BRACKETS",
+    "note": "A trust reaches the 37% bracket at about $16,000 of retained taxable income, versus about $768,700 for MFJ. When a trust is named as an IRA beneficiary and income is accumulated rather than distributed, inherited pre-tax dollars are taxed at near-top rates almost immediately. This is one of the strongest quantitative arguments for Roth conversion, and Master Spec section 21 requires modeling it. Compare the client's conversion cost today against the trust's rate, not the individual beneficiary's rate."
+  }
+}

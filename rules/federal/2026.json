@@ -1,0 +1,103 @@
+{
+  "ruleSetId": "federal-2026",
+  "taxYear": 2026,
+  "effectiveDate": "2026-01-01",
+  "expirationDate": "2026-12-31",
+  "lawMode": "current_law",
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "Rev. Proc. 2025-32",
+  "sourceUrl": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
+  "secondaryConfirmation": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+  "rules": {
+    "STD_DEDUCTION": {
+      "values": { "single": 16100, "mfj": 32200, "mfs": 16100, "hoh": 24150 },
+      "authority": "IRC 63(c); Rev. Proc. 2025-32"
+    },
+    "ADDITIONAL_STD_DEDUCTION_AGE_65": {
+      "values": { "single": 2050, "hoh": 2050, "mfj": 1650, "mfs": 1650 },
+      "perQualifyingIndividual": true,
+      "authority": "IRC 63(f); Rev. Proc. 2025-32",
+      "note": "Separate from and stacked with the OBBBA senior bonus deduction below."
+    },
+    "ORDINARY_BRACKETS": {
+      "single": [[0,0.10],[12400,0.12],[50400,0.22],[105700,0.24],[201775,0.32],[256225,0.35],[640600,0.37]],
+      "mfj":    [[0,0.10],[24800,0.12],[100800,0.22],[211400,0.24],[403550,0.32],[512450,0.35],[768700,0.37]],
+      "hoh":    [[0,0.10],[17700,0.12],[67450,0.22],[105700,0.24],[201750,0.32],[256200,0.35],[640600,0.37]],
+      "format": "[bracketFloorTaxableIncome, marginalRate]",
+      "authority": "IRC 1(j); Rev. Proc. 2025-32"
+    },
+    "PREFERENTIAL_RATE_THRESHOLDS": {
+      "single": { "zeroRateTop": 49450, "fifteenRateTop": 545500 },
+      "mfj":    { "zeroRateTop": 98900, "fifteenRateTop": 613700 },
+      "hoh":    { "zeroRateTop": 66200, "fifteenRateTop": 579600 },
+      "measuredAgainst": "taxable_income",
+      "authority": "IRC 1(h); Rev. Proc. 2025-32"
+    },
+    "SOCIAL_SECURITY_TAXABILITY": {
+      "ruleId": "IRC_86_SS_TAXABILITY",
+      "base1": { "single": 25000, "hoh": 25000, "mfj": 32000, "mfs": 0 },
+      "base2Additional": { "single": 9000, "hoh": 9000, "mfj": 12000, "mfs": 0 },
+      "maxInclusionRate": 0.85,
+      "indexedForInflation": false,
+      "indexingNote": "UNINDEXED SINCE 1984/1993 BY STATUTE. Never inflate these in projections.",
+      "authority": "IRC 86",
+      "worksheet": "Form 1040 instructions, Social Security Benefits Worksheet"
+    },
+    "SENIOR_BONUS_DEDUCTION": {
+      "ruleId": "OBBBA_SENIOR_DEDUCTION",
+      "amountPerQualifyingIndividual": 6000,
+      "minimumAge": 65,
+      "phaseoutStartMagi": { "single": 75000, "hoh": 75000, "mfj": 150000, "mfs": 75000 },
+      "phaseoutRatePerQualifyingIndividual": 0.06,
+      "availableWithItemizedDeductions": true,
+      "reducesAgi": false,
+      "firstTaxYear": 2025,
+      "lastTaxYear": 2028,
+      "doNotExtrapolate": true,
+      "authority": "IRC 151(d)(5) as added by P.L. 119-21 (OBBBA); allowed via IRC 63(b)/(d), NOT in the IRC 62 above-the-line list",
+      "worksheet": "Schedule 1-A (Form 1040), Part V, lines 33-36b",
+      "sourceUrl": "https://www.irs.gov/pub/irs-pdf/f1040s1a.pdf",
+      "criticalNote": "Schedule 1-A computes ONE phaseout amount on line 35 and enters it on BOTH line 36a and line 36b. With two qualifying spouses the household therefore loses 12 cents of deduction per dollar of MAGI, not 6 cents. Full phaseout: 175000 single, 250000 MFJ both 65+.",
+      "openDecision": "ROUNDING_POLICY - see PHASE-0 spec section 6. Must be resolved with a citation before shipping."
+    },
+    "NIIT": {
+      "ruleId": "IRC_1411_NIIT",
+      "rate": 0.038,
+      "thresholds": { "single": 200000, "hoh": 200000, "mfj": 250000, "mfs": 125000 },
+      "indexedForInflation": false,
+      "base": "lesser_of_net_investment_income_or_magi_excess",
+      "rothConversionIsNetInvestmentIncome": false,
+      "authority": "IRC 1411; Form 8960",
+      "criticalNote": "A Roth conversion is NOT net investment income, but it DOES raise MAGI and can therefore pull existing investment income into the tax."
+    },
+    "CHARITABLE_AGI_FLOOR": {
+      "ruleId": "OBBBA_CHARITABLE_FLOOR",
+      "floorRateOfAgi": 0.005,
+      "firstTaxYear": 2026,
+      "appliesTo": "itemized_charitable_contributions",
+      "authority": "IRS Publication 505 (2026)",
+      "sourceUrl": "https://www.irs.gov/publications/p505",
+      "status": "PRIMARY_SOURCE_CONFIRMED"
+    },
+    "CHARITABLE_NONITEMIZER_DEDUCTION": {
+      "values": { "single": 1000, "mfj": 2000 },
+      "firstTaxYear": 2026,
+      "status": "RE_VERIFY_BEFORE_SHIPPING",
+      "authority": "PENDING - secondary sources only as of 2026-08-19"
+    },
+    "ITEMIZED_DEDUCTION_BENEFIT_CAP": {
+      "maxRate": 0.35,
+      "appliesToBracket": 0.37,
+      "firstTaxYear": 2026,
+      "status": "RE_VERIFY_BEFORE_SHIPPING",
+      "authority": "PENDING - secondary sources only as of 2026-08-19"
+    },
+    "QCD_LIMIT": {
+      "amountPerIndividual": 111000,
+      "minimumAge": 70.5,
+      "status": "RE_VERIFY_BEFORE_SHIPPING",
+      "authority": "IRC 408(d)(8); confirm against IRS Pub 590-B (2026)"
+    }
+  }
+}

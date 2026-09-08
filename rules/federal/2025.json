@@ -1,0 +1,22 @@
+{
+  "ruleSetId": "federal-2025",
+  "taxYear": 2025,
+  "purpose": "Prior-year rules, required for historical-return validation (Master Spec section 30) and for two-year lookback logic.",
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "Rev. Proc. 2024-40",
+  "status": "RE_VERIFY_BEFORE_SHIPPING",
+  "secondarySource": "Edward Jones JonesLink Ordinary Income Tax Rates page (advisor-supplied, 2026-08-19)",
+  "rules": {
+    "ORDINARY_BRACKETS": {
+      "single": [[0,0.10],[11925,0.12],[48475,0.22],[103350,0.24],[197300,0.32],[250525,0.35],[626350,0.37]],
+      "mfj":    [[0,0.10],[23850,0.12],[96950,0.22],[206700,0.24],[394600,0.32],[501050,0.35],[751600,0.37]],
+      "mfs":    [[0,0.10],[11925,0.12],[48475,0.22],[103350,0.24],[197300,0.32],[250525,0.35],[375800,0.37]],
+      "hoh":    [[0,0.10],[17000,0.12],[64850,0.22],[103350,0.24],[197300,0.32],[250500,0.35],[626350,0.37]],
+      "format": "[bracketFloorTaxableIncome, marginalRate]"
+    },
+    "IRA_LIMITS": { "contributionLimit": 7000, "contributionLimit50Plus": 8000 },
+    "ELECTIVE_DEFERRAL": { "plans401k403b457b": 23500, "simpleIra": 16500, "catchUp401k": 7500, "catchUpSimple": 3500 },
+    "ROTH_IRA_MAGI_PHASEOUT": { "mfj": [236000, 245999], "singleOrHoh": [150000, 164999], "mfsSharedResidence": [0, 9999] }
+  }
+}

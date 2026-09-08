@@ -1,0 +1,62 @@
+{
+  "ruleSetId": "contribution-limits-2026",
+  "taxYear": 2026,
+  "verifiedDate": "2026-08-19",
+  "verifiedBy": "PENDING_ADVISOR_REVIEW",
+  "primaryAuthority": "IRS Notice on 2026 retirement plan limitations; Rev. Proc. 2025-32",
+  "status": "RE_VERIFY_AGAINST_IRS_NOTICE_BEFORE_SHIPPING",
+  "secondarySource": "Edward Jones 2026 Retirement Planning & Support card and 2026 IRAs card (advisor-supplied, 2026-08-19)",
+  "sourceNote": "Transcribed from an advisor reference card. Numeric tax limits are facts, but per rule R3 each must be traced to the IRS notice before shipping.",
+  "ira": {
+    "contributionLimit": 7500,
+    "catchUp50Plus": 1100,
+    "contributionLimit50Plus": 8600,
+    "catchUpAgeTest": "age 50 at year end"
+  },
+  "electiveDeferral": {
+    "plans401k403b457b": 24500,
+    "starter401k": 6000,
+    "pensionLinkedEmergencySavings": 2600,
+    "simpleIra": 17000,
+    "catchUp401k403b457bSarsep": 8000,
+    "catchUpSimple": 4000,
+    "catchUpStarter401k": 1100,
+    "superCatchUpAges60to63": 11250,
+    "superCatchUpSimple": 5250,
+    "rothCatchUpMandate": "For 2026, catch-up contributions to qualified plans by employees with prior-year compensation over $150,000 must be designated Roth."
+  },
+  "other": {
+    "simpleUniformNonElectiveEmployer": 5300,
+    "definedContributionAnnualAdditions": 72000,
+    "compensationLimit": 360000,
+    "definedBenefitAnnualLimit": 290000,
+    "highlyCompensatedEmployeeThreshold": 160000,
+    "keyEmployeeTopHeavyThreshold": 235000
+  },
+  "rothIraContributionMagiPhaseout": {
+    "ruleId": "IRC_408A_ROTH_MAGI_PHASEOUT",
+    "mfj": [242000, 251999],
+    "singleOrHoh": [153000, 167999],
+    "mfsSharedResidence": [0, 9999],
+    "note": "Phaseout of the ability to make a REGULAR Roth contribution. There is NO income limit on a Roth CONVERSION. Do not conflate them."
+  },
+  "traditionalIraDeductibilityMagi": {
+    "notCoveredByPlan": "no limit",
+    "singleOrHohCovered": { "fullThrough": 81000, "partialTo": 90999, "noneAtOrAbove": 91000 },
+    "mfjBothCovered": { "fullThrough": 129000, "partialTo": 148999, "noneAtOrAbove": 149000 },
+    "mfjCoveredSpouse": { "fullThrough": 129000, "partialTo": 148999, "noneAtOrAbove": 149000 },
+    "mfjNonCoveredSpouse": { "fullThrough": 242000, "partialTo": 251999, "noneAtOrAbove": 252000 },
+    "mfsEitherCovered": { "fullBelow": 10000, "noneAtOrAbove": 10000 },
+    "relevanceToConversions": "Non-deductible contributions create IRA basis on Form 8606, which makes part of every later conversion tax-free under the pro-rata rule. Master Spec section 6."
+  },
+  "saversCredit": {
+    "maximumCredit": { "mfj": 2000, "other": 1000 },
+    "rates": [
+      { "rate": 0.50, "mfjMagiMax": 48500, "mfsSingleMagiMax": 24250, "hohMagiMax": 36375 },
+      { "rate": 0.20, "mfjMagiMax": 52500, "mfsSingleMagiMax": 26250, "hohMagiMax": 39375 },
+      { "rate": 0.10, "mfjMagiMax": 80500, "mfsSingleMagiMax": 40250, "hohMagiMax": 60375 },
+      { "rate": 0.00, "mfjMagiMax": null,  "mfsSingleMagiMax": null,  "hohMagiMax": null }
+    ],
+    "conversionInteraction": "A Roth conversion raises MAGI and can phase out or destroy the saver's credit for a lower-income client. This is a real marginal cost the tool must model for households near these thresholds."
+  }
+}
