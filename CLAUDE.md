@@ -23,10 +23,15 @@ Claude Code loads this file automatically every session. It is the standing cont
 >   `PHASE-0-FIXTURE-SPEC.md` were never committed here. `MASTER-BUILD-SPEC.md` present is the
 >   Track-A build reference generated this session, which may differ from the "background
 >   requirements" doc §1 refers to.
-> - **Track B (this handoff) is NOT yet installed** — its payload (`docs/cpa-packet/**`, inheritance
->   & differential fixtures, the five new `src/rules/federal/*.json`, updated `oracle.py`,
->   `build_inheritance_fixtures.py`) was not delivered to the repo. §8.5 below is the intended
->   contract for it once the bundle lands.
+> - **Track B ASSETS are installed (2026-09-08); the MODULE is not built yet.** Installed:
+>   `cpa-packet/` specs+types+specimen (at repo root, matching §8.5's `cpa-packet/` paths — NOT
+>   `docs/cpa-packet/`), the five new `src/rules/federal/*.json`, `tests/fixtures/inheritance/`
+>   (16, not yet runner-wired — await B1a), `tests/fixtures/differential/DIFF-EJ-01`, and
+>   `tests/fixtures/rmd/RMD-09..11`. Engine fixtures now 66/66; suite 98/98. **Still missing from the
+>   bundle:** the updated `tools/oracle.py` (ULT reaches only 90 here, so RMD-10/11 at ages 95/100 are
+>   engine-verified but not independently oracle-generated) and the updated `tools/build_fixtures.py`
+>   (does not emit RMD-09..11 or DIFF-EJ-01 — they are preserved in INDEX by a merge shim). The
+>   `src/ledger/**` and `src/packet/**` module code does not exist — that is sessions B0→B3.
 
 ---
 

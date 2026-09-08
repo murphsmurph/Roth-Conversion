@@ -541,5 +541,37 @@
     "tests": [
       "rmd_ordering_rule"
     ]
+  },
+  {
+    "id": "RMD-09",
+    "folder": "rmd",
+    "title": "Uniform Lifetime Table RMD, age 90, balance $1,000,000",
+    "tests": [
+      "rmd_uniform_lifetime_table"
+    ]
+  },
+  {
+    "id": "RMD-10",
+    "folder": "rmd",
+    "title": "Uniform Lifetime Table RMD, age 95, balance $1,000,000",
+    "tests": [
+      "rmd_uniform_lifetime_table"
+    ]
+  },
+  {
+    "id": "RMD-11",
+    "folder": "rmd",
+    "title": "Uniform Lifetime Table RMD, age 100, balance $1,000,000",
+    "tests": [
+      "rmd_uniform_lifetime_table"
+    ]
+  },
+  {
+    "id": "DIFF-EJ-01",
+    "folder": "differential",
+    "title": "Edward Jones estimator, single 65+, SS $36k / QD-LTCG $30k / other $42k",
+    "tests": [
+      "differential_cross_check"
+    ]
   }
 ]

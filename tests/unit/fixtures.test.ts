@@ -177,6 +177,9 @@ const ADAPTERS: Record<string, (f: Fixture) => { expected: Flat; actual: Flat }>
   federal: yearAdapter, "social-security": yearAdapter,
   "senior-deduction": yearAdapter, "capital-gains": yearAdapter,
   rmd: rmdAdapter, irmaa: irmaaAdapter, aca: acaAdapter,
+  // Differential fixtures are full single-year returns; only OUR `expected` block is asserted.
+  // Any recorded third-party figures live in `notes` and are never compared (see USING-REFERENCE-DATA.md).
+  differential: yearAdapter,
 };
 
 const byFolder = new Map<string, IndexRow[]>();
