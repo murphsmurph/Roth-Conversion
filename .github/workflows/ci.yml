@@ -21,5 +21,10 @@ jobs:
       # 62/62 fixtures + 6/6 property tests + Phase 3-5 unit tests pass. RMD-08 was resolved at the
       # generator (tools/build_fixtures.py now derives its expected values from the oracle for its
       # own birth_year/tax_year; see docs/tax-rules/RMD-08-discrepancy.md), so the suite is gating.
-      - name: Fixture + property + engine suite
+      - name: Fixture + property + engine suite (incl. Track B guards)
         run: npm test
+      # Track B PKT suite is EXPECTED RED until session B1 (buildPacket is a stub). Non-gating until
+      # then; flip continue-on-error off when B1 turns it green, mirroring the Phase 0 pattern.
+      - name: Track B PKT fixtures (expected red until B1)
+        continue-on-error: true
+        run: npm run test:packet

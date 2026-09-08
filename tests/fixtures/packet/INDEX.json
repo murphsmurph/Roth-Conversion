@@ -1,0 +1,52 @@
+[
+  {
+    "id": "PKT-01",
+    "folder": "packet",
+    "title": "Simple \u2014 two accounts, dividends only, most pages suppress"
+  },
+  {
+    "id": "PKT-02",
+    "folder": "packet",
+    "title": "Full retiree \u2014 RMD, QCD, conversion, gains, fees, withholding"
+  },
+  {
+    "id": "PKT-03",
+    "folder": "packet",
+    "title": "Held-away retirement accounts unknown \u2014 RMD section forced to CPA Review"
+  },
+  {
+    "id": "PKT-04",
+    "folder": "packet",
+    "title": "Missing basis \u2014 noncovered lot, basis unknown"
+  },
+  {
+    "id": "PKT-05",
+    "folder": "packet",
+    "title": "Verified zeros \u2014 every optional field is a verified 0"
+  },
+  {
+    "id": "PKT-06",
+    "folder": "packet",
+    "title": "Cross-reference \u2014 one QCD appears on retirement and charitable pages"
+  },
+  {
+    "id": "PKT-07",
+    "folder": "packet",
+    "title": "Spousal basis \u2014 both spouses hold Form 8606 basis, per person"
+  },
+  {
+    "id": "PKT-08",
+    "folder": "packet",
+    "title": "Corrected-form expected \u2014 generated in January with REIT/fund data"
+  },
+  {
+    "id": "PKT-09",
+    "folder": "packet",
+    "title": "Supersession \u2014 v2 after a corrected 1099 names v1"
+  },
+  {
+    "id": "PKT-10",
+    "folder": "packet",
+    "title": "Mode switch \u2014 client_delivery without approval shows the DRAFT watermark"
+  }
+]

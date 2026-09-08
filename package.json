@@ -7,6 +7,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:packet": "vitest run --config vitest.packet.config.ts",
     "typecheck": "tsc --noEmit",
     "lint:magic": "node tools/check-magic-numbers.mjs",
     "build": "vite build",

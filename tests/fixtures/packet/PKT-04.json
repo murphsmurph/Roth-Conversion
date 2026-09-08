@@ -1,0 +1,152 @@
+{
+  "id": "PKT-04",
+  "title": "Missing basis \u2014 noncovered lot, basis unknown",
+  "exercises": "unknown basis renders as an em dash (never 0) and raises a flag.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P4",
+        "displayName": "C. Noncovered",
+        "dateOfBirth": "1955-11-20",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A6",
+        "displayName": "Brokerage",
+        "registration": "Brokerage",
+        "taxType": "taxable_brokerage",
+        "ownerId": "P4",
+        "subjectToRmd": false
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L20",
+        "taxYear": 2026,
+        "accountId": "A6",
+        "kind": "realized_disposition",
+        "tags": [
+          "noncovered",
+          "missing_basis"
+        ],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 30000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Sale of noncovered lot",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L20|A6|2026-06-15",
+        "detail": {
+          "security": "Legacy stock",
+          "shares": {
+            "state": "verified",
+            "value": 100,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "proceeds": {
+            "state": "verified",
+            "value": 30000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "costBasis": {
+            "state": "unknown",
+            "value": null,
+            "reason": "noncovered lot; basis not reported by custodian"
+          },
+          "acquisitionDate": {
+            "state": "unknown",
+            "value": null,
+            "reason": "unknown"
+          },
+          "holdingPeriod": "unknown",
+          "covered": {
+            "state": "verified",
+            "value": false,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "washSaleAdjustment": {
+            "state": "verified",
+            "value": 0,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          }
+        }
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A6"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-02-15",
+      "taxFormsIssuedAsOfDate": true
+    },
+    "compliance": {
+      "mode": "educational",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 0,
+    "qcdTotal": 0
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": null
+    },
+    "sectionStatus": {
+      "capital_gains": "partial"
+    },
+    "suppressedSections": [],
+    "flags": [
+      "FLAG_MISSING_BASIS"
+    ],
+    "renders": {
+      "L20.costBasis": "\u2014"
+    },
+    "crossReferences": []
+  },
+  "notes": "costBasis must render '\u2014', never '0'. A verified 0 and an unknown are different documents."
+}

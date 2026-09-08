@@ -1,0 +1,100 @@
+{
+  "id": "PKT-08",
+  "title": "Corrected-form expected \u2014 generated in January with REIT/fund data",
+  "exercises": "Packet generated before mid-February with REIT/MLP/fund data auto-flags CORRECTED_FORM_EXPECTED.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P8",
+        "displayName": "H. Early",
+        "dateOfBirth": "1953-03-03",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A11",
+        "displayName": "Brokerage",
+        "registration": "Brokerage",
+        "taxType": "taxable_brokerage",
+        "ownerId": "P8",
+        "subjectToRmd": false
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L60",
+        "taxYear": 2026,
+        "accountId": "A11",
+        "kind": "dividend",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 9000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "preliminary"
+          }
+        },
+        "description": "REIT / mutual-fund distribution (preliminary)",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "preliminary"
+        },
+        "dedupeKey": "L60|A11|2026-06-15"
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A11"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-01-20",
+      "taxFormsIssuedAsOfDate": false
+    },
+    "compliance": {
+      "mode": "educational",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 0,
+    "qcdTotal": 0
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": null
+    },
+    "sectionStatus": {
+      "investment_income": "partial"
+    },
+    "suppressedSections": [],
+    "flags": [
+      "FLAG_CORRECTED_FORM_EXPECTED"
+    ],
+    "page1": {
+      "dataAsOfDate": "2027-01-20",
+      "taxFormsIssuedAsOfDate": false
+    },
+    "crossReferences": []
+  },
+  "notes": "Page 1 must state the as-of date and that official forms had NOT been issued as of that date."
+}

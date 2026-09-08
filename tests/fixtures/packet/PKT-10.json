@@ -1,0 +1,104 @@
+{
+  "id": "PKT-10",
+  "title": "Mode switch \u2014 client_delivery without approval shows the DRAFT watermark",
+  "exercises": "educational renders the footer label; client_delivery without an approval record watermarks every page.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P10",
+        "displayName": "J. Mode",
+        "dateOfBirth": "1960-10-10",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A13",
+        "displayName": "Brokerage",
+        "registration": "Brokerage",
+        "taxType": "taxable_brokerage",
+        "ownerId": "P10",
+        "subjectToRmd": false
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L80",
+        "taxYear": 2026,
+        "accountId": "A13",
+        "kind": "dividend",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 2000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Ordinary dividends",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L80|A13|2026-06-15"
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A13"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-02-15",
+      "taxFormsIssuedAsOfDate": true
+    },
+    "compliance": {
+      "mode": "client_delivery",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 0,
+    "qcdTotal": 0
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": "DRAFT \u2014 NOT APPROVED FOR CLIENT USE"
+    },
+    "sectionStatus": {
+      "investment_income": "complete"
+    },
+    "suppressedSections": [],
+    "flags": [],
+    "alternateModes": {
+      "educational": {
+        "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+        "watermark": null
+      },
+      "client_delivery_unapproved": {
+        "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+        "watermark": "DRAFT \u2014 NOT APPROVED FOR CLIENT USE"
+      }
+    },
+    "crossReferences": []
+  },
+  "notes": "The watermark is the tripwire; do not flip approvedForClientUse to preview the layout."
+}
