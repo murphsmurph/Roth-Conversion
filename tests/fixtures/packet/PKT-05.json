@@ -1,0 +1,146 @@
+{
+  "id": "PKT-05",
+  "title": "Verified zeros \u2014 every optional field is a verified 0",
+  "exercises": "A verified 0 renders as the number 0; nothing renders as '\u2014' and nothing suppresses.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P5",
+        "displayName": "D. Zeroes",
+        "dateOfBirth": "1957-01-01",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A7",
+        "displayName": "Brokerage",
+        "registration": "Brokerage",
+        "taxType": "taxable_brokerage",
+        "ownerId": "P5",
+        "subjectToRmd": false
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L30",
+        "taxYear": 2026,
+        "accountId": "A7",
+        "kind": "dividend",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 0,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Ordinary dividends (verified none)",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L30|A7|2026-06-15"
+      },
+      {
+        "id": "L31",
+        "taxYear": 2026,
+        "accountId": "A7",
+        "kind": "interest",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 0,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Interest (verified none)",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L31|A7|2026-06-15"
+      },
+      {
+        "id": "L32",
+        "taxYear": 2026,
+        "accountId": "A7",
+        "kind": "fee",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 0,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Advisory fee (verified none)",
+        "provenance": {
+          "sourceType": "advisor_entered",
+          "asOfDate": "2027-02-15"
+        },
+        "dedupeKey": "L32|A7|2026-06-15",
+        "detail": {
+          "category": "advisory_program",
+          "paymentSource": "taxable_account"
+        }
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A7"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-02-15",
+      "taxFormsIssuedAsOfDate": true
+    },
+    "compliance": {
+      "mode": "educational",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 0,
+    "qcdTotal": 0
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": null
+    },
+    "sectionStatus": {
+      "investment_income": "complete",
+      "fees": "complete"
+    },
+    "suppressedSections": [],
+    "flags": [],
+    "crossReferences": []
+  },
+  "notes": "Verified zero != unknown: these sections are 'complete', not 'missing_data', and do not suppress."
+}

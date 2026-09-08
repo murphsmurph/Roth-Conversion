@@ -1,0 +1,108 @@
+{
+  "id": "PKT-09",
+  "title": "Supersession \u2014 v2 after a corrected 1099 names v1",
+  "exercises": "A reissued packet increments version and page 1 names what it supersedes.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P9",
+        "displayName": "I. Reissue",
+        "dateOfBirth": "1952-04-04",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A12",
+        "displayName": "Brokerage",
+        "registration": "Brokerage",
+        "taxType": "taxable_brokerage",
+        "ownerId": "P9",
+        "subjectToRmd": false
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L70",
+        "taxYear": 2026,
+        "accountId": "A12",
+        "kind": "dividend",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 9120,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "corrected_form_issued"
+          }
+        },
+        "description": "REIT distribution (corrected 1099)",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "corrected_form_issued"
+        },
+        "dedupeKey": "L70|A12|2026-06-15"
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A12"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-03-04",
+      "taxFormsIssuedAsOfDate": true
+    },
+    "compliance": {
+      "mode": "educational",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 0,
+    "qcdTotal": 0,
+    "report": {
+      "reportId": "TCR-2026-P9-v2",
+      "version": 2,
+      "supersedesVersion": 1,
+      "supersedesReason": "Corrected Form 1099 received for Account ...4471",
+      "generatedAt": "2027-03-04"
+    }
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": null
+    },
+    "sectionStatus": {
+      "investment_income": "complete"
+    },
+    "suppressedSections": [],
+    "flags": [
+      "FLAG_CORRECTED_FORM_ISSUED"
+    ],
+    "audit": {
+      "reportId": "TCR-2026-P9-v2",
+      "version": 2,
+      "supersedesVersion": 1
+    },
+    "crossReferences": []
+  },
+  "notes": "Never silently reissue the same version number with different numbers inside it (section 12)."
+}

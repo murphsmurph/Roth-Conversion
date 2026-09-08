@@ -1,0 +1,175 @@
+{
+  "id": "PKT-07",
+  "title": "Spousal basis \u2014 both spouses hold Form 8606 basis, per person",
+  "exercises": "Form 8606 basis is per individual; NO household subtotal may appear.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P7A",
+        "displayName": "F. Spouse-A",
+        "dateOfBirth": "1956-02-02",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "verified",
+            "value": 12000,
+            "provenance": {
+              "sourceType": "prior_tax_return",
+              "asOfDate": "2027-02-15"
+            }
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      },
+      {
+        "id": "P7B",
+        "displayName": "G. Spouse-B",
+        "dateOfBirth": "1958-08-08",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "verified",
+            "value": 8000,
+            "provenance": {
+              "sourceType": "prior_tax_return",
+              "asOfDate": "2027-02-15"
+            }
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A9",
+        "displayName": "Traditional IRA (A)",
+        "registration": "Traditional IRA (A)",
+        "taxType": "traditional_ira",
+        "ownerId": "P7A",
+        "subjectToRmd": true
+      },
+      {
+        "id": "A10",
+        "displayName": "Traditional IRA (B)",
+        "registration": "Traditional IRA (B)",
+        "taxType": "traditional_ira",
+        "ownerId": "P7B",
+        "subjectToRmd": true
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L50",
+        "taxYear": 2026,
+        "accountId": "A9",
+        "kind": "distribution",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 10000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "IRA distribution (A)",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L50|A9|2026-06-15",
+        "detail": {
+          "grossAmount": {
+            "state": "verified",
+            "value": 10000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "federalWithholding": {
+            "state": "verified",
+            "value": 0,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "stateWithholding": {
+            "state": "verified",
+            "value": 0,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "netToClient": {
+            "state": "verified",
+            "value": 10000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "qcdClassification": "not_qcd"
+        }
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A9",
+        "A10"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-02-15",
+      "taxFormsIssuedAsOfDate": true
+    },
+    "compliance": {
+      "mode": "educational",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 0,
+    "qcdTotal": 0
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": null
+    },
+    "sectionStatus": {
+      "retirement": "complete",
+      "form8606": "complete"
+    },
+    "suppressedSections": [],
+    "flags": [],
+    "form8606PerPerson": {
+      "P7A": 12000,
+      "P7B": 8000
+    },
+    "householdBasisSubtotalPresent": false,
+    "crossReferences": []
+  },
+  "notes": "A test must fail on any household-level basis figure (spec section 8 / Master Spec section 6)."
+}

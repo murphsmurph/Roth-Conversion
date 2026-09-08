@@ -1,0 +1,136 @@
+{
+  "id": "PKT-01",
+  "title": "Simple \u2014 two accounts, dividends only, most pages suppress",
+  "exercises": "Suppression: sections with only not_applicable fields are omitted.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P1",
+        "displayName": "A. Simple",
+        "dateOfBirth": "1958-03-02",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A1",
+        "displayName": "Brokerage",
+        "registration": "Brokerage",
+        "taxType": "taxable_brokerage",
+        "ownerId": "P1",
+        "subjectToRmd": false
+      },
+      {
+        "id": "A2",
+        "displayName": "Cash",
+        "registration": "Cash",
+        "taxType": "cash",
+        "ownerId": "P1",
+        "subjectToRmd": false
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L1",
+        "taxYear": 2026,
+        "accountId": "A1",
+        "kind": "dividend",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 4200,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Ordinary dividends",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L1|A1|2026-06-15"
+      },
+      {
+        "id": "L2",
+        "taxYear": 2026,
+        "accountId": "A2",
+        "kind": "interest",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 310,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Interest",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L2|A2|2026-06-15"
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A1",
+        "A2"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-02-15",
+      "taxFormsIssuedAsOfDate": true
+    },
+    "compliance": {
+      "mode": "educational",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 0,
+    "qcdTotal": 0
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": null
+    },
+    "sectionStatus": {
+      "investment_income": "complete",
+      "retirement": "not_applicable",
+      "charitable": "not_applicable",
+      "conversions": "not_applicable",
+      "plan529": "not_applicable"
+    },
+    "suppressedSections": [
+      "retirement",
+      "charitable",
+      "conversions",
+      "plan529"
+    ],
+    "flags": [],
+    "crossReferences": []
+  },
+  "notes": "Proves suppression works: no retirement/charitable/conversion/529 activity -> those pages omit."
+}

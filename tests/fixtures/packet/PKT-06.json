@@ -1,0 +1,137 @@
+{
+  "id": "PKT-06",
+  "title": "Cross-reference \u2014 one QCD appears on retirement and charitable pages",
+  "exercises": "A single ledger row reaches two pages via tags with a cross-reference and no double count.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P6",
+        "displayName": "E. Giver",
+        "dateOfBirth": "1949-05-05",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A8",
+        "displayName": "Traditional IRA",
+        "registration": "Traditional IRA",
+        "taxType": "traditional_ira",
+        "ownerId": "P6",
+        "subjectToRmd": true
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L40",
+        "taxYear": 2026,
+        "accountId": "A8",
+        "kind": "charitable_transfer",
+        "tags": [
+          "charitable",
+          "qcd",
+          "rmd_satisfying"
+        ],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 15000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Qualified charitable distribution",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L40|A8|2026-06-15",
+        "detail": {
+          "charityName": "Local Food Bank",
+          "giftType": "qcd",
+          "fairMarketValue": {
+            "state": "verified",
+            "value": 15000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "costBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "cleared": {
+            "state": "verified",
+            "value": true,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          }
+        }
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A8"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-02-15",
+      "taxFormsIssuedAsOfDate": true
+    },
+    "compliance": {
+      "mode": "educational",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 0,
+    "qcdTotal": 15000
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": null
+    },
+    "sectionStatus": {
+      "retirement": "complete",
+      "charitable": "complete"
+    },
+    "suppressedSections": [],
+    "flags": [
+      "FLAG_QCD"
+    ],
+    "crossReferences": [
+      {
+        "amount": 15000,
+        "alsoShownOn": "page 7 \u2014 Charitable Giving",
+        "describedAs": "qualified charitable distributions",
+        "ledgerIds": [
+          "L40"
+        ]
+      }
+    ],
+    "noDoubleCount": true
+  },
+  "notes": "The $15,000 is ONE row; page totals must be labeled gross vs net so a CPA never adds it twice."
+}

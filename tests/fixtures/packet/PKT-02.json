@@ -1,0 +1,367 @@
+{
+  "id": "PKT-02",
+  "title": "Full retiree \u2014 RMD, QCD, conversion, gains, fees, withholding",
+  "exercises": "The workhorse: most sections populated; conversion + QCD flags raise.",
+  "input": {
+    "taxYear": 2026,
+    "people": [
+      {
+        "id": "P2",
+        "displayName": "B. Retiree",
+        "dateOfBirth": "1950-07-01",
+        "form8606": {
+          "priorNondeductibleBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "currentYearNondeductibleContribution": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "yearEndAggregateTradSepSimpleValue": {
+            "state": "not_applicable",
+            "value": null
+          }
+        }
+      }
+    ],
+    "accounts": [
+      {
+        "id": "A3",
+        "displayName": "Traditional IRA",
+        "registration": "Traditional IRA",
+        "taxType": "traditional_ira",
+        "ownerId": "P2",
+        "subjectToRmd": true
+      },
+      {
+        "id": "A4",
+        "displayName": "Brokerage",
+        "registration": "Brokerage",
+        "taxType": "taxable_brokerage",
+        "ownerId": "P2",
+        "subjectToRmd": false
+      },
+      {
+        "id": "A5",
+        "displayName": "Roth IRA",
+        "registration": "Roth IRA",
+        "taxType": "roth_ira",
+        "ownerId": "P2",
+        "subjectToRmd": false
+      }
+    ],
+    "ledger": [
+      {
+        "id": "L10",
+        "taxYear": 2026,
+        "accountId": "A3",
+        "kind": "distribution",
+        "tags": [
+          "rmd_satisfying"
+        ],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 40000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "IRA RMD distribution",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L10|A3|2026-06-15",
+        "detail": {
+          "grossAmount": {
+            "state": "verified",
+            "value": 40000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "federalWithholding": {
+            "state": "verified",
+            "value": 4000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "stateWithholding": {
+            "state": "verified",
+            "value": 0,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "netToClient": {
+            "state": "verified",
+            "value": 36000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "qcdClassification": "not_qcd"
+        }
+      },
+      {
+        "id": "L11",
+        "taxYear": 2026,
+        "accountId": "A3",
+        "kind": "charitable_transfer",
+        "tags": [
+          "charitable",
+          "qcd",
+          "rmd_satisfying"
+        ],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 18000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Qualified charitable distribution",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L11|A3|2026-06-15",
+        "detail": {
+          "charityName": "Community Foundation",
+          "giftType": "qcd",
+          "fairMarketValue": {
+            "state": "verified",
+            "value": 18000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "costBasis": {
+            "state": "not_applicable",
+            "value": null
+          },
+          "cleared": {
+            "state": "verified",
+            "value": true,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          }
+        }
+      },
+      {
+        "id": "L12",
+        "taxYear": 2026,
+        "accountId": "A3",
+        "kind": "conversion",
+        "tags": [
+          "roth_conversion"
+        ],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 30000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Roth conversion",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L12|A3|2026-06-15"
+      },
+      {
+        "id": "L13",
+        "taxYear": 2026,
+        "accountId": "A4",
+        "kind": "realized_disposition",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 12000,
+          "provenance": {
+            "sourceType": "custodian_verified",
+            "asOfDate": "2027-02-15",
+            "documentStatus": "tax_form_issued"
+          }
+        },
+        "description": "Stock sale gain",
+        "provenance": {
+          "sourceType": "custodian_verified",
+          "asOfDate": "2027-02-15",
+          "documentStatus": "tax_form_issued"
+        },
+        "dedupeKey": "L13|A4|2026-06-15",
+        "detail": {
+          "security": "VTI",
+          "shares": {
+            "state": "verified",
+            "value": 50,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "proceeds": {
+            "state": "verified",
+            "value": 52000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "costBasis": {
+            "state": "verified",
+            "value": 40000,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "acquisitionDate": {
+            "state": "verified",
+            "value": "2015-01-05",
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "holdingPeriod": "long",
+          "covered": {
+            "state": "verified",
+            "value": true,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          },
+          "washSaleAdjustment": {
+            "state": "verified",
+            "value": 0,
+            "provenance": {
+              "sourceType": "custodian_verified",
+              "asOfDate": "2027-02-15",
+              "documentStatus": "tax_form_issued"
+            }
+          }
+        }
+      },
+      {
+        "id": "L14",
+        "taxYear": 2026,
+        "accountId": "A4",
+        "kind": "fee",
+        "tags": [],
+        "date": "2026-06-15",
+        "amount": {
+          "state": "verified",
+          "value": 4850,
+          "provenance": {
+            "sourceType": "advisor_entered",
+            "asOfDate": "2027-02-15"
+          }
+        },
+        "description": "Advisory program fee",
+        "provenance": {
+          "sourceType": "advisor_entered",
+          "asOfDate": "2027-02-15"
+        },
+        "dedupeKey": "L14|A4|2026-06-15",
+        "detail": {
+          "category": "advisory_program",
+          "paymentSource": "taxable_account"
+        }
+      }
+    ],
+    "scope": {
+      "includedAccounts": [
+        "A3",
+        "A4",
+        "A5"
+      ],
+      "heldAwayRetirementAccounts": "none",
+      "heldAwayTaxableAccounts": "none",
+      "dataAsOfDate": "2027-02-15",
+      "taxFormsIssuedAsOfDate": true
+    },
+    "compliance": {
+      "mode": "educational",
+      "approvedForClientUse": false
+    },
+    "engineOutput": null,
+    "conversionTotal": 30000,
+    "qcdTotal": 18000
+  },
+  "expected": {
+    "chrome": {
+      "footerLabel": "Educational example \u2014 not an advisory deliverable.",
+      "watermark": null
+    },
+    "sectionStatus": {
+      "retirement": "complete",
+      "charitable": "complete",
+      "conversions": "complete",
+      "capital_gains": "complete",
+      "fees": "complete",
+      "tax_payments": "complete"
+    },
+    "suppressedSections": [],
+    "flags": [
+      "FLAG_ROTH_CONVERSION",
+      "FLAG_QCD",
+      "FLAG_IRA_WITHHOLDING"
+    ],
+    "crossReferences": [
+      {
+        "amount": 18000,
+        "alsoShownOn": "page 7 \u2014 Charitable Giving",
+        "describedAs": "qualified charitable distributions",
+        "ledgerIds": [
+          "L11"
+        ]
+      },
+      {
+        "amount": 30000,
+        "alsoShownOn": "page 5 \u2014 Roth Conversions",
+        "describedAs": "Roth conversion",
+        "ledgerIds": [
+          "L12"
+        ]
+      }
+    ]
+  },
+  "notes": "The RMD distribution and QCD share account A3; the QCD is one row on three pages (section 7)."
+}
