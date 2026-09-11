@@ -29,6 +29,17 @@
   .disclaim b{color:#4d3d10}
   .layout{display:grid;grid-template-columns:354px minmax(0,1fr);gap:22px}
   @media(max-width:940px){.layout{grid-template-columns:1fr}}
+  /* Print: a clean single-column client handout — hide inputs/controls, unclip the table, keep cards whole. */
+  @media print{
+    body{background:#fff;color:#000}
+    .layout{display:block}
+    #inputPanel,.reset,#optRun,#tabs,button{display:none!important}
+    .tblscroll{max-height:none!important;overflow:visible!important;border:none}
+    .bigcard,.chartcard,.banner,.kpis,.verdict,.cards2{break-inside:avoid;page-break-inside:avoid;box-shadow:none}
+    .cards2{grid-template-columns:1fr 1fr}
+    svg{max-width:100%;height:auto}
+    header{break-after:avoid}
+  }
   .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;
     box-shadow:var(--shadow);overflow:hidden;align-self:start}
   .panel-h{padding:15px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fbfaf6,#fff)}
@@ -158,7 +169,7 @@
               <div class="seg" id="filing"><button data-f="single">Single</button><button data-f="mfj" aria-pressed="true">Married</button></div></div>
             <div class="row"><label>State of residence</label><select class="num" id="state"></select></div>
             <div class="row"><label>Project through age <span class="sm">of Spouse A</span></label><input class="num" id="endAge" type="number" value="95"></div>
-            <div class="row"><label>RMDs begin at age <span class="sm">73 current law</span></label><input class="num" id="rmdAge" type="number" value="73"></div>
+            <div class="row"><label>RMDs begin at age <span class="sm">SECURE 2.0: 73 if born 1951&ndash;59 &middot; 75 if born 1960+</span></label><input class="num" id="rmdAge" type="number" value="75"></div>
           </div>
         </div>
 
@@ -350,6 +361,7 @@
       </div>
 
       <div class="chartcard">
+        <div class="banner info" id="engineNote"><span class="ic">&#8505;</span><span><b>Two engines on this page.</b> The year-by-year projection, charts and totals use the original projector engine (full 50-state detail, QCDs, estate tax, Monte Carlo). The <b>Optimal conversion</b> panel above uses the independently verified engine, which additionally models the 2026 OBBBA senior deduction and includes dividends in Social Security provisional income &mdash; so its federal figures can differ slightly from this table. Where they differ, the validated panel is the more precise federal number.</span></div>
         <div class="tabs" id="tabs"><button data-t="convert" aria-pressed="true">Convert — year by year</button><button data-t="nothing">Do nothing — year by year</button></div>
         <div class="tblscroll"><table class="tbl" id="tbl"><thead></thead><tbody></tbody></table></div>
         <p class="chart-note"><span class="pill">shaded</span> RMD year &nbsp; <span class="pill">red bar</span> survivor (Single brackets) &nbsp; <span class="pill red">red row</span> depleted</p>
@@ -1881,6 +1893,14 @@ window.RTP = RTP;
     $("autoRate").innerHTML='Current effective tax rate: <b>'+(eff*100).toFixed(1)+'%</b><br><span style="color:var(--slate)">'+(S.married?"MFJ":"Single")+' &middot; fed marginal + '+ST[S.state].n+' state.'+(S.regime!=="same"?' Future rates '+(S.regime==="up"?"+":"\u2212")+S.regimePct+'% from age '+S.rmdAge+'.':' Full progressive brackets each year.')+'</span>';
 
     const errs=validate(),vb=$("valBanner");
+    // UI check (SECURE 2.0 sec. 107): the RMD applicable age depends on birth year — 73 for 1951–59,
+    // 75 for 1960+. This projection applies ONE RMD age to both spouses, so warn on a cohort mismatch.
+    if(window.RTP&&RTP.rmdApplicableAge){
+      const s2=RTP.rmdApplicableAge(2026-S.ageA).rmdApplicableAge;
+      if(S.rmdAge!==s2)errs.push("RMD age is set to "+S.rmdAge+", but Spouse A (born "+(2026-S.ageA)+") reaches RMD age at <b>"+s2+"</b> under SECURE 2.0. This projection applies one RMD age to both spouses; the Optimal-conversion panel computes each spouse's age correctly.");
+      if(S.married){const s2b=RTP.rmdApplicableAge(2026-S.ageB).rmdApplicableAge;
+        if(s2b!==s2)errs.push("The spouses fall in different SECURE 2.0 RMD cohorts (ages "+s2+" and "+s2b+"); this projection can only apply one RMD age to both.");}
+    }
     if(errs.length){vb.style.display="";vb.querySelector("span:last-child").innerHTML="<b>Check inputs:</b> "+errs.join(" ");}
     else vb.style.display="none";
     const convN=run(true),nothN=run(false);
@@ -2109,7 +2129,7 @@ window.RTP = RTP;
   $("tabs").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
     $("tabs").querySelectorAll("button").forEach(x=>x.removeAttribute("aria-pressed"));b.setAttribute("aria-pressed","true");activeTab=b.dataset.t;update();}));
 
-  const DEFAULTS={endAge:95,rmdAge:73,fillBkt:22,stopAge:73,growth:6,infl:2.5,heirRate:27,survRate:22,
+  const DEFAULTS={endAge:95,rmdAge:75,fillBkt:22,stopAge:73,growth:6,infl:2.5,heirRate:27,survRate:22,
     ageA:63,ssAgeA:70,ageB:61,ssAgeB:67,deathAgeA:84,basisPct:100,regimePct:30,vol:12,qcdStart:71,
     fedEstRate:40,stEstRate:0,
     roth:"100,000",cash:"250,000",ord:"20,000",spend:"85,000",fixedAmt:"60,000",
